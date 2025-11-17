@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('match_question', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('match_id')->constrained();
+            $table->foreignId('question_id')->constrained();
+            $table->foreignId('user_answer_id')->nullable()->constrained('answers', 'id');
+            $table->foreignId('correct_answer_id')->constrained('answers', 'id');
+            $table->integer('round_number');
+            $table->integer('user_guess_time_ms')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('match_question');
+    }
+};
