@@ -3,10 +3,9 @@ import { createRouter, createWebHistory } from "vue-router";
 
 // Eager loaded routes
 import HomeView from "../views/HomeView.vue";
-import TestView from "../views/TestView.vue";
 
 // Lazy loaded routes
-const LoginView = () => import("../views/TestView.vue");
+const TestView = () => import("../views/TestView.vue");
 
 
 const routes = [
