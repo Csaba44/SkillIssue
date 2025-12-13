@@ -30,6 +30,7 @@ const getUserData = async () => {
 onBeforeMount(getUserData);
 
 const logout = async () => {
+  await api.get("/api/csrf-cookie");
   const response = await api.post("/api/logout");
   console.log(response);
   await getUserData();
