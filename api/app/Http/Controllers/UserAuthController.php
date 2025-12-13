@@ -29,7 +29,8 @@ class UserAuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $validated = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required'
@@ -42,5 +43,16 @@ class UserAuthController extends Controller
         }
 
         return response()->json(["message" => "Az e-mail cím és jelszó kombináció nem megfelelő."]);
+    }
+
+    public function logout(Request $request)
+    {
+        auth()->guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'message' => 'Logged out'
+        ]);
     }
 }

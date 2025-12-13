@@ -28,6 +28,12 @@ const getUserData = async () => {
 };
 
 onBeforeMount(getUserData);
+
+const logout = async () => {
+  const response = await api.post("/api/logout");
+  console.log(response);
+  await getUserData();
+};
 </script>
 
 <template>
@@ -37,5 +43,5 @@ onBeforeMount(getUserData);
     <button type="submit">Login</button>
   </form>
 
-  <div v-else>Hello, {{ userData.name }}</div>
+  <div v-else>Hello, {{ userData.name }} <button @click="logout">Logout</button></div>
 </template>
