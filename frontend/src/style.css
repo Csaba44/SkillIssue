@@ -5,20 +5,20 @@
 }
 
 @theme {
-  --color-primary: #FE4C01;
-  --color-secondary: #FBD22F;
-  --color-accentGreen: #02CB74;
-  --color-accentPurple: #A06BF9;
+  --color-primary: #fe4c01;
+  --color-secondary: #fbd22f;
+  --color-accentGreen: #02cb74;
+  --color-accentPurple: #a06bf9;
 
-  --color-textBlack: #1F2937;
-  --color-textGray: #6B7280;
-  --color-textWhite: #FEFEFE;
+  --color-textBlack: #1f2937;
+  --color-textGray: #6b7280;
+  --color-textWhite: #fefefe;
   --color-textDisabled: #848484;
 
-  --color-success: #02CB74;
-  --color-error: #FD353D;
-  --color-warning: #FFA600;
+  --color-success: #02cb74;
+  --color-error: #fd353d;
+  --color-warning: #ffa600;
 
-  --color-bgDark: #030F39;
-  --color-bgLight: #F8F8F8;
+  --color-bgDark: #030f39;
+  --color-bgLight: #f8f8f8;
 }
