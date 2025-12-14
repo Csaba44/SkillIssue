@@ -11,7 +11,7 @@ class BadgeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->is_admin;
     }
 
     /**
@@ -21,6 +21,11 @@ class BadgeRequest extends FormRequest
      */
     public function rules(): array
     {
+        // No validation for DELETE
+        if ($this->method() === 'DELETE') {
+            return [];
+        }
+        
         return [
             "name" => "required|string",
             "description" => "required|string"

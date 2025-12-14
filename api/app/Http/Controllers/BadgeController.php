@@ -48,7 +48,7 @@ class BadgeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Badge $badge)
+    public function destroy(BadgeRequest $request, Badge $badge)
     {
         $badge->delete();
 
