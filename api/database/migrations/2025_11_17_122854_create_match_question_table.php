@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('match_question', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('match_id')->constrained();
+            $table->foreignId('game_match_id')->constrained();
             $table->foreignId('question_id')->constrained();
             $table->foreignId('user_answer_id')->nullable()->constrained('answers', 'id');
             $table->foreignId('correct_answer_id')->constrained('answers', 'id');

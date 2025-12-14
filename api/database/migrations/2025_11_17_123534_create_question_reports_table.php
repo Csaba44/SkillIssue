@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('comment');
             $table->enum('status', ReportStatusEnum::cases())->default(ReportStatusEnum::OPEN);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

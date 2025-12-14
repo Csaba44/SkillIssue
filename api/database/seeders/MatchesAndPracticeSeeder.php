@@ -46,7 +46,7 @@ class MatchesAndPracticeSeeder extends Seeder
 
         foreach ($matches as $matchData) {
             $matchData['created_at'] = $matchData['updated_at'] = now();
-            $matchId = DB::table('matches')->insertGetId($matchData);
+            $matchId = DB::table('game_matches')->insertGetId($matchData);
 
             // Add match questions (3 rounds per match)
             for ($round = 1; $round <= 3; $round++) {
@@ -56,7 +56,7 @@ class MatchesAndPracticeSeeder extends Seeder
                 $userAnswer = $answers->random(); // Fixed: Simple random selection
 
                 DB::table('match_question')->insert([
-                    'match_id' => $matchId,
+                    'game_match_id' => $matchId,
                     'question_id' => $question->id,
                     'user_answer_id' => $userAnswer->id,
                     'correct_answer_id' => $correctAnswer->id,
