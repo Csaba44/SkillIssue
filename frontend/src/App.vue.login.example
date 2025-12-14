@@ -4,7 +4,7 @@ import api from "./config/api";
 
 const formData = ref({
   email: "teszt.elek@gmail.com",
-  password: "tesztelek",
+  password: "password123",
 });
 
 const userData = ref(null);
