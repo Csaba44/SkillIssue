@@ -13,7 +13,12 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return response()->json([$request->user()]);
+        $user = $request->user();
+        $userData = array_merge($user->toArray(), [
+            'level' => $user->getLevelAttribute(),
+            'rank' => $user->getRankAttribute(),
+        ]);
+        return response()->json($userData);
     }
 
 

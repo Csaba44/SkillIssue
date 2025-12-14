@@ -11,6 +11,10 @@ class Level extends Model
         'min_xp',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     public function users()
     {
