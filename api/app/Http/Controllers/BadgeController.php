@@ -24,7 +24,7 @@ class BadgeController extends Controller
     {
         $badge = Badge::create($request->all());
 
-        return response()->json(["message" => "Sikeresen hozzáadva.", "badge" => $badge]);
+        return response()->json(["message" => "Sikeresen hozzáadva.", "badge" => $badge], 201);
     }
 
     /**

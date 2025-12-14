@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('streak_count')->default(0);
             $table->integer('elo')->default(1000);
             $table->integer('xp')->default(0);
+            $table->boolean('is_admin')->default(false);
             $table->integer('last_login_ip_hash')->nullable()->default(null);
             $table->datetime('last_login')->nullable()->default(null);
             $table->rememberToken();
