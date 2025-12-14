@@ -15,11 +15,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            // Core data first
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            SubjectSeeder::class,
+            MagyarIrodalomSeeder::class,
+            MatematikaSeeder::class,
+            TortenelemSeeder::class,
+
+            // Game system
+            GameSystemSeeder::class,
+
+            // Users and progress
+            UsersAndProgressSeeder::class,
+
+            // Matches and practice (depends on users and questions)
+            MatchesAndPracticeSeeder::class,
+
+            // Reports (depends on everything else)
+            ReportsSeeder::class,
         ]);
     }
 }
