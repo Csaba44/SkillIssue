@@ -29,5 +29,9 @@ class GameMatch extends Model
     public function opponent(): BelongsTo {
         return $this->belongsTo(User::class, "opponent_id");
     }
-    
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(MatchQuestion::class, 'match_id');
+    }
 }

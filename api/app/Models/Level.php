@@ -20,7 +20,7 @@ class Level extends Model
     {
         $nextLevelMinXp = Rank::where('min_xp', '>', $this->min_xp)->orderBy('min_xp', 'asc')->value('min_xp');
 
-        return User::where('xp', '>=', $this->min_elo)->when($nextLevelMinXp, function ($query) use ($nextLevelMinXp) {
+        return User::where('xp', '>=', $this->min_xp)->when($nextLevelMinXp, function ($query) use ($nextLevelMinXp) {
             $query->where('xp', '<', $nextLevelMinXp);
         })->get();
     }

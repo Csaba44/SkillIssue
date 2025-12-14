@@ -97,7 +97,7 @@ class MatchesAndPracticeSeeder extends Seeder
                 // Fixed: Simple random answer selection with 70% correct rate simulation
                 $userAnswer = $answers->random();
 
-                DB::table('practice_session_questions')->insert([
+                DB::table('practice_session_question')->insert([
                     'practice_session_id' => $sessionId,
                     'question_id' => $question->id,
                     'user_answer_id' => $userAnswer->id,
