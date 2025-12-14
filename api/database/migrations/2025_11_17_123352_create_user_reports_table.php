@@ -1,5 +1,6 @@
 <?php
 
+use App\ReportStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,7 @@ return new class extends Migration
             $table->foreignId('match_id')->constrained();
             $table->integer('round_number');
             $table->text('comment');
+            $table->enum('status', ReportStatusEnum::cases())->default(ReportStatusEnum::OPEN);
             $table->timestamps();
         });
     }
