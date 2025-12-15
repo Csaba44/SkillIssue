@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
@@ -28,4 +29,7 @@ Route::middleware("auth:sanctum")->group(function () {
     //          For admin users: GET, POST, PUT, DELETE
     Route::apiResource('/user-reports', UserReportController::class);
     Route::apiResource('/question-reports', QuestionReportController::class);
+
+    // Delete -> only for admins
+    Route::apiResource('/game-matches', GameMatchController::class)->only(['index', 'show', 'destroy']);
 });

@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GameMatch extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         "user_id",
         "opponent_id",
@@ -32,6 +34,6 @@ class GameMatch extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(MatchQuestion::class, 'match_id');
+        return $this->hasMany(MatchQuestion::class, 'game_match_id');
     }
 }

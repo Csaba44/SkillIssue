@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('xp_after');
             $table->string('match_uuid', 36);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

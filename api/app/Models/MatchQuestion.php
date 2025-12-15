@@ -10,7 +10,7 @@ class MatchQuestion extends Model
     protected $table = 'match_question';
 
     protected $fillable = [
-        'match_id',
+        'game_match_id',
         'question_id',
         'user_answer_id',
         'correct_answer_id',
@@ -20,7 +20,7 @@ class MatchQuestion extends Model
 
     public function gameMatch(): BelongsTo
     {
-        return $this->belongsTo(GameMatch::class, 'match_id');
+        return $this->belongsTo(GameMatch::class, 'game_match_id');
     }
 
     public function question(): BelongsTo
