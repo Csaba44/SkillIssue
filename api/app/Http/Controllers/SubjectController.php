@@ -25,7 +25,7 @@ class SubjectController extends Controller
     {
         $subject = Subject::create($request->all());
 
-        return response()->json(["message" => "Tantárgy sikeresen hozzáadva.", "subject" => $subject]);
+        return response()->json(["message" => "Tantárgy sikeresen hozzáadva.", "subject" => $subject], 201);
     }
 
     /**
