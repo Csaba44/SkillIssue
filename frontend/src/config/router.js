@@ -15,7 +15,7 @@ const routes = [
   { path: "/register", name: "register", component: RegisterView },
   { path: "/login", name: "login", component: LoginView },
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
-  { path: "/admin", name: "dashboard", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 ];
 
 const router = createRouter({
