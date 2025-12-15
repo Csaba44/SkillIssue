@@ -33,4 +33,8 @@ class Question extends Model
             'practice_session_id'
         )->withPivot('user_answer_id', 'correct_answer_id', 'round_number', 'user_guess_time_ms');
     }
+
+    public function questionReports(): HasMany {
+        return $this->hasMany(QuestionReport::class);
+    }
 }

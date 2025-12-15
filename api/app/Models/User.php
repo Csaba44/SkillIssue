@@ -56,6 +56,10 @@ class User extends Authenticatable
         return $this->hasMany(PracticeSession::class);
     }
 
+    public function questionReports(): HasMany {
+        return $this->HasMany(QuestionReport::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

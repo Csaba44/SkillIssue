@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -23,4 +23,5 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::apiResource('/badges', BadgeController::class);
     Route::apiResource('/users', UserController::class)->only(['index', 'update', 'destroy']);
     Route::apiResource('/user-reports', UserReportController::class);
+    Route::apiResource('/question-reports', QuestionReportController::class);
 });
