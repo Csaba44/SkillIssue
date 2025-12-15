@@ -8,12 +8,14 @@ import HomeView from "../views/HomeView.vue";
 const DashboardView = () => import("../views/Dashboard.vue");
 const RegisterView = () => import("../views/RegisterView.vue");
 const LoginView = () => import("../views/LoginView.vue");
+const AdminView = () => import("../views/AdminView.vue");
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
   { path: "/register", name: "register", component: RegisterView },
   { path: "/login", name: "login", component: LoginView },
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
+  { path: "/admin", name: "dashboard", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 ];
 
 const router = createRouter({
@@ -30,7 +32,12 @@ router.beforeEach(async (to) => {
       await userStore.verifySession();
     }
     
-    if (userStore.isAuthenticated == false) router.push("/login");
+    if (userStore.isAuthenticated == false) return router.push("/login");
+  }
+
+  if (to.meta.requiresAdmin && !userStore.user.is_admin) {
+    console.warn("Not enough privileges.");
+    return router.push("/");
   }
 });
 
