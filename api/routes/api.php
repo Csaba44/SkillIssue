@@ -22,6 +22,10 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::apiResource('/badges', BadgeController::class);
     Route::apiResource('/users', UserController::class)->only(['index', 'update', 'destroy']);
+
+    // Reports authorization rules:
+    //          For non-admin users: POST
+    //          For admin users: GET, POST, PUT, DELETE
     Route::apiResource('/user-reports', UserReportController::class);
     Route::apiResource('/question-reports', QuestionReportController::class);
 });
