@@ -1,20 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
-
+import { useUserStore } from "../stores/UserStore";
 
 // Eager loaded routes
 import HomeView from "../views/HomeView.vue";
 
 // Lazy loaded routes
-const TestView = () => import("../views/TestView.vue");
+const DashboardView = () => import("../views/Dashboard.vue");
 const RegisterView = () => import("../views/RegisterView.vue");
 const LoginView = () => import("../views/LoginView.vue");
 
-
 const routes = [
   { path: "/", name: "home", component: HomeView },
-  { path: "/test", name: "test", component: TestView },
   { path: "/register", name: "register", component: RegisterView },
   { path: "/login", name: "login", component: LoginView },
+  { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
@@ -22,5 +21,17 @@ const router = createRouter({
   routes: routes,
 });
 
+router.beforeEach(async (to) => {
+  const userStore = useUserStore();
+  
+  if (to.meta.requiresAuth) {
+    if (userStore.isAuthenticated == null)
+    {
+      await userStore.verifySession();
+    }
+    
+    if (userStore.isAuthenticated == false) router.push("/login");
+  }
+});
 
 export default router;
