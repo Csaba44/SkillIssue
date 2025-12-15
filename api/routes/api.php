@@ -3,6 +3,7 @@
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\QuestionReportController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
@@ -32,4 +33,15 @@ Route::middleware("auth:sanctum")->group(function () {
 
     // Delete -> only for admins
     Route::apiResource('/game-matches', GameMatchController::class)->only(['index', 'show', 'destroy']);
+
+    // Admins only
+    Route::apiResource('/subjects', SubjectController::class);
+
+    Route::prefix('subjects')->group(function () {
+        // Admins only
+        Route::apiResource('/', SubjectController::class);
+
+        // Get n random questions from subject
+        Route::get('/{subject}/random/{count}', [SubjectController::class, 'random']);
+    });
 });

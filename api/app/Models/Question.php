@@ -14,6 +14,11 @@ class Question extends Model
         "question"
     ];
 
+    protected $hidden = [
+        "created_at",
+        "updated_at"
+    ];
+
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);
