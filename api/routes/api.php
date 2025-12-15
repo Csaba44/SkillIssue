@@ -34,14 +34,7 @@ Route::middleware("auth:sanctum")->group(function () {
     // Delete -> only for admins
     Route::apiResource('/game-matches', GameMatchController::class)->only(['index', 'show', 'destroy']);
 
-    // Admins only
-    Route::apiResource('/subjects', SubjectController::class);
-
-    Route::prefix('subjects')->group(function () {
-        // Admins only
-        Route::apiResource('/', SubjectController::class);
-
-        // Get n random questions from subject
-        Route::get('/{subject}/random/{count}', [SubjectController::class, 'random']);
-    });
+    // Subjects
+    Route::apiResource('subjects', SubjectController::class); // Admin only
+    Route::get('subjects/{subject}/random/{count}', [SubjectController::class, 'random']);
 });
