@@ -21,4 +21,21 @@
 
   --color-bgDark: #030f39;
   --color-bgLight: #f8f8f8;
+
+  --color-buttonOrange: #fe4c01;
 }
+
+/*Navbar jobboldalról beúszás */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+.slide-enter-to,
+.slide-leave-from {
+  transform: translateX(0);
+}
+
