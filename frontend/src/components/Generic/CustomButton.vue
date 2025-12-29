@@ -14,12 +14,12 @@ const props = defineProps({
 <template>
 
     <RouterLink v-if="to" :to="to">
-        <Button class="hover:bg-secondary py-2 px-4 bg-gray-200 rounded-lg border-1 border-gray-300 drop-shadow-lg">
+        <Button class="hover:bg-secondary py-2 px-4 bg-gray-200 rounded-lg border-gray-300 drop-shadow-lg">
             {{title}}
         </Button>
     </RouterLink>
 
-    <Button style="background-color: var(--color-primary);" v-else class="font-bold text-white py-2 px-10 rounded-full border-1 border-gray-300 drop-shadow-lg">
+    <Button style="background-color: var(--color-primary);" v-else class="font-bold text-white py-2 px-10 rounded-full border-gray-300 drop-shadow-lg">
         {{title}}
     </Button>
 
