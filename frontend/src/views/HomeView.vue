@@ -11,6 +11,7 @@ const userStore = useUserStore();
 <template>
   <Navbar></Navbar>
   <Header></Header>
+  <div class="h-500"></div>
 
   <!--
   <div>
