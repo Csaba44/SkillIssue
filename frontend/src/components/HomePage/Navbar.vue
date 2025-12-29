@@ -20,7 +20,7 @@ const navItems = {
   services: "Szolgáltatásaink",
 };
 
-const navItemClass = "transform ease-out duration-600 motion-safe:hover:scale-108 text-lg";
+const navItemClass = "font-medium transform ease-out duration-600 motion-safe:hover:scale-108 text-lg";
 </script>
 
 <template>
