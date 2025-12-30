@@ -61,8 +61,8 @@ const currFormToShow = ref(route.query.register == 1 ? "register" : "login");
           </div>
         </div>
       </div>
-      <div class="row-span-2 lg:row-span-1 grid grid-cols-1 grid-rows-5 p-10 h-full items-center justify-center">
-        <div class="row-span-1 text-2xl lg:text-5xl font-bold text-textWhite flex flex-col text-center gap-5 justify-center">{{ currFormToShow == "login" ? "Bejelentkezés" : "Regisztráció" }}</div>
+      <div class="row-span-2 lg:row-span-1 grid grid-cols-1 grid-rows-6 p-10 h-full items-center justify-center">
+        <div class="row-span-1 lg:row-span-2 text-2xl lg:text-5xl font-bold text-textWhite flex flex-col text-center gap-5 justify-center items-center">{{ currFormToShow == "login" ? "Bejelentkezés" : "Regisztráció" }}</div>
 
         <LoginForm v-if="currFormToShow == 'login'" @switch-form="currFormToShow = 'register'"></LoginForm>
         <RegisterForm v-if="currFormToShow == 'register'" @switch-form="currFormToShow = 'login'"></RegisterForm>
