@@ -37,6 +37,14 @@ export const literatureCards = [
     iconRotate: 0,
     text: "Shakespeare",
   },
+  {
+    icon: "fa-solid fa-hands-bound",
+    iconTop: 30,
+    iconLeft: 0,
+    iconRotate: 0,
+    text: "Dosztojevszkij",
+    isInvisibleOnHeader: true,
+  },
 ];
 
 export const grammarCards = [

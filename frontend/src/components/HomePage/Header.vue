@@ -18,14 +18,14 @@ import { historyCards, literatureCards, grammarCards } from "../../utils/TopicCa
       <div class="flex lg:flex-col lg:absolute lg:-right-4">
         <div class="flex">
           <div class="flex">
-            <TopicCard v-for="(card, index) in historyCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
+            <TopicCard v-for="(card, index) in historyCards" v-show="!card.isInvisibleOnHeader" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
           </div>
         </div>
         <div class="flex lg:justify-end">
-          <TopicCard v-for="(card, index) in literatureCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
+          <TopicCard v-for="(card, index) in literatureCards" v-show="!card.isInvisibleOnHeader" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
         </div>
         <div class="flex">
-          <TopicCard v-for="(card, index) in grammarCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
+          <TopicCard v-for="(card, index) in grammarCards" v-show="!card.isInvisibleOnHeader" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
         </div>
       </div>
     </Container>
