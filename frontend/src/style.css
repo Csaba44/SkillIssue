@@ -42,17 +42,17 @@
 }
 
 .strokeYellow {
-  -webkit-text-stroke: 3px #988433;
+  -webkit-text-stroke: 5px #988433;
   paint-order: stroke fill;
 }
 
 .strokeGreen {
-  -webkit-text-stroke: 3px #00B894;
+  -webkit-text-stroke: 5px #02805D;
   paint-order: stroke fill;
 }
 
 .strokePurple {
-  -webkit-text-stroke: 3px #9B59B6;
+  -webkit-text-stroke: 5px #6146AC;
   paint-order: stroke fill;
 }
 

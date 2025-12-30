@@ -2,30 +2,26 @@
 import { defineProps } from "vue";
 
 const typeColors = {
-    history: { bg: "bg-accentYellow", stroke: "strokeYellow", strokeColor: "#988433" },
-    grammar: { bg: "bg-accentGreen", stroke: "strokeGreen", strokeColor: "#02805D" },
-    literature: { bg: "bg-accentPurple", stroke: "strokePurple", strokeColor: "#6146AC" },
+  literature: { bg: "bg-accentYellow", stroke: "strokeYellow", iconColor: "#988433" },
+  history: { bg: "bg-accentGreen", stroke: "strokeGreen", iconColor: "#02805D" },
+  grammar: { bg: "bg-accentPurple", stroke: "strokePurple", iconColor: "#6146AC" },
 };
 
 const props = defineProps({
-    icon: String,
-    iconTop: Number,
-    iconLeft: Number,
-    type: String,
-    text: String
+  icon: String,
+  iconTop: Number,
+  iconLeft: Number,
+  iconRotate: Number,
+  type: String,
+  text: String,
 });
-
-const getStrokeColor = (type) => typeColors[type]?.strokeColor || "#ffffff";
 </script>
 
 <template>
-    <div class="relative overflow-hidden flex items-center m-1 h-30 w-70 justify-center rounded-2xl"
-        :class="typeColors[props.type].bg">
-        <i class="absolute z-10 text-8xl"
-            :class="[icon, `top-[${props.iconTop}px]`, `left-[${props.iconLeft}px]`]"
-            :style="{ color: getStrokeColor(props.type) }"></i>
-        <p class="font-bold text-white text-center z-50 text-3xl" :class="typeColors[props.type].stroke">
-            {{ text }}
-        </p>
-    </div>
+  <div class="relative overflow-hidden flex items-center m-1 xl:h-30 xl:w-50 h-20 w-40 justify-center rounded-2xl" :class="typeColors[props.type].bg">
+    <i class="absolute z-10 xl:text-8xl text-6xl" :class="icon" :style="{ color: typeColors[type]?.iconColor, top: `${props.iconTop}px`, left: `${props.iconLeft}px`, rotate: `${props.iconRotate}deg` }"></i>
+    <p class="font-bold text-white text-center z-50 xl:text-2xl text-lg" :class="typeColors[props.type].stroke">
+      {{ text }}
+    </p>
+  </div>
 </template>
