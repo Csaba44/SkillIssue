@@ -9,7 +9,7 @@
   --color-secondary: #fbd22f;
   --color-accentGreen: #02cb74;
   --color-accentPurple: #a06bf9;
-  --color-accentYellow: #FBD22F;
+  --color-accentYellow: #fbd22f;
 
   --color-textBlack: #1f2937;
   --color-textGray: #6b7280;
@@ -22,7 +22,7 @@
 
   --color-bgDark: #030f39;
   --color-bgLight: #f8f8f8;
-  --color-bgAlternate: #0D1945;
+  --color-bgAlternate: #0d1945;
 
   --color-buttonOrange: #fe4c01;
 }
@@ -40,4 +40,3 @@
 .slide-leave-from {
   transform: translateX(0);
 }
-
