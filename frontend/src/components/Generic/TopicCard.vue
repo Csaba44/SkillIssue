@@ -36,9 +36,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="relative overflow-hidden flex items-center m-1 xl:h-30 xl:w-50 h-20 w-40 justify-center rounded-2xl" :class="typeColors[props.type].bg">
-    <i class="absolute z-10 xl:text-8xl text-6xl" :class="icon" :style="{ color: typeColors[type]?.iconColor, top: `${props.iconTop}px`, left: `${props.iconLeft}px`, rotate: `${props.iconRotate}deg` }"></i>
-    <p class="font-bold text-white text-center z-50 xl:text-2xl text-lg" :class="typeColors[props.type].stroke">
+  <div class="relative overflow-hidden flex items-center m-1 2xl:h-30 2xl:w-50 h-20 w-40 justify-center rounded-2xl" :class="typeColors[props.type].bg">
+    <i class="absolute z-5 2xl:text-8xl text-6xl" :class="icon" :style="{ color: typeColors[type]?.iconColor, top: `${props.iconTop}px`, left: `${props.iconLeft}px`, rotate: `${props.iconRotate}deg` }"></i>
+    <p class="font-bold text-white text-center z-10 2xl:text-2xl text-lg" :class="typeColors[props.type].stroke">
       {{ text }}
     </p>
   </div>
