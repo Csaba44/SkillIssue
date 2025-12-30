@@ -8,12 +8,30 @@ const typeColors = {
 };
 
 const props = defineProps({
-  icon: String,
-  iconTop: Number,
-  iconLeft: Number,
-  iconRotate: Number,
-  type: String,
-  text: String,
+  icon: {
+    type: String,
+    default: "fa-solid fa-flag",
+  },
+  iconTop: {
+    type: Number,
+    default: 12,
+  },
+  iconLeft: {
+    type: Number,
+    default: -20,
+  },
+  iconRotate: {
+    type: Number,
+    default: 0,
+  },
+  type: {
+    type: String,
+    default: "history",
+  },
+  text: {
+    type: String,
+    default: "Téma",
+  },
 });
 </script>
 
