@@ -70,3 +70,25 @@
     animation: scroll-x 10s linear infinite;
   }
 }
+@layer utilities {
+  @keyframes check-reveal-mask {
+    from {
+      -webkit-mask-position: 100% 0;
+      mask-position: 100% 0;
+    }
+    to {
+      -webkit-mask-position: 0 0;
+      mask-position: 0 0;
+    }
+  }
+
+  .animate-check-reveal {
+    -webkit-mask-image: linear-gradient(to right, black 40%, transparent 60%);
+    mask-image: linear-gradient(to right, black 40%, transparent 60%);
+
+    -webkit-mask-size: 200% 100%;
+    mask-size: 200% 100%;
+
+    animation: check-reveal-mask 220ms ease-out forwards;
+  }
+}
