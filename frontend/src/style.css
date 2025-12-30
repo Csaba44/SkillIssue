@@ -41,3 +41,20 @@
   transform: translateX(0);
 }
 
+.strokeYellow {
+  -webkit-text-stroke: 3px #988433;
+  paint-order: stroke fill;
+}
+
+.strokeGreen {
+  -webkit-text-stroke: 3px #00B894;
+  paint-order: stroke fill;
+}
+
+.strokePurple {
+  -webkit-text-stroke: 3px #9B59B6;
+  paint-order: stroke fill;
+}
+
+
+
