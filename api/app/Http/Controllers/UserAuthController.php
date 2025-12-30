@@ -42,7 +42,7 @@ class UserAuthController extends Controller
             return response()->json(["message" => "Üdvözöljük!"]);
         }
 
-        return response()->json(["message" => "Az e-mail cím és jelszó kombináció nem megfelelő."]);
+        return response()->json(["message" => "Az e-mail cím és jelszó kombináció nem megfelelő."], 401);
     }
 
     public function logout(Request $request)
