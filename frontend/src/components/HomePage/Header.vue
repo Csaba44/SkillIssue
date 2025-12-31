@@ -32,7 +32,7 @@ import { historyCards, literatureCards, grammarCards } from "../../utils/TopicCa
 
     <!-- MOBILE VIEW X SCROLL ANIM -->
     <Container class="lg:hidden flex items-end mb-5">
-      <div class="overflow-hidden">
+      <div class="overflow-hidden py-2">
         <div class="flex w-max animate-scroll-x">
           <TopicCard v-for="(card, index) in historyCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
           <TopicCard v-for="(card, index) in literatureCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
