@@ -1,7 +1,12 @@
 <script setup>
+import { onBeforeMount } from "vue";
 import { useUserStore } from "./stores/UserStore";
 const userStore = useUserStore();
-userStore.verifySession();
+
+onBeforeMount(async () => {
+  await userStore.verifySession();
+})
+
 import { Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 </script>

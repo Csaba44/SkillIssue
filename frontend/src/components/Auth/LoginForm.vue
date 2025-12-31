@@ -26,7 +26,6 @@ const loginSubmit = async () => {
     await userStore.verifySession();
 
     if (userStore.isAuthenticated) {
-      router.push("/");
       return "Sikeres bejelentkezés";
     }
 
@@ -35,7 +34,10 @@ const loginSubmit = async () => {
 
   toast.promise(loginPromise(), {
     loading: "Bejelentkezés folyamatban...",
-    success: (msg) => msg,
+    success: (msg) => {
+      router.push("/");
+      return msg;
+    },
     error: (error) => {
       if (!error.response) {
         return "Ellenőrizd az internetkapcsolatot.";
