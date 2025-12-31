@@ -17,6 +17,13 @@ const formData = ref({
 });
 
 const registerSubmit = async () => {
+  // Input verification
+  const toastErr = (err) => toast.error(err, { duration: 3000 });
+  if (!formData.value.accepted) return toastErr("El kell fogadnia az adatkezelési tájékoztatót.");
+  else if (formData.value.name.trim() == "" || formData.value.email.trim() == "" || formData.value.password.trim() == "" || formData.value.password2.trim() == "") return toastErr("Minden mező kitöltése kötelező.");
+  else if (formData.value.password !== formData.value.password2) return toastErr("A két jelszó nem egyezik.");
+  
+
   const registerPromise = async () => {
     await api.get("/api/csrf-cookie");
     const res = await api.post("/api/register", { name: formData.value.name, email: formData.value.email, password: formData.value.password });

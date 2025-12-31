@@ -17,6 +17,9 @@ const formData = ref({
 });
 
 const loginSubmit = async () => {
+  // Input verification
+  if (formData.value.email.trim() == "" || formData.value.password.trim() == "") return toast.error("Minden mező kitöltése kötelező.", { duration: 3000 });
+
   const loginPromise = async () => {
     await api.get("/api/csrf-cookie");
     const res = await api.post("/api/login", formData.value);
