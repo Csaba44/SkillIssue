@@ -17,29 +17,37 @@ const formData = ref({
 });
 
 const loginSubmit = async () => {
-  try {
+  const loginPromise = async () => {
     await api.get("/api/csrf-cookie");
-    const response = await api.post("/api/login", formData.value);
-    console.log(response);
+    const res = await api.post("/api/login", formData.value);
     await userStore.verifySession();
-    if (userStore.isAuthenticated) router.push("/");
-  } catch (error) {
-    if (!error.response) {
-      return toast.error("Kérem ellenőrizze az internetkapcsolatát.", { duration: 3000 });
-    } else if (error.response.status === 401) {
-      return toast.error(error.response.data.message, { duration: 3000 });
-    } else if (error.response.status !== 422) {
-      return toast.error("Ismeretlen hiba történt.", { duration: 3000 });
+
+    if (userStore.isAuthenticated) {
+      router.push("/");
+      return "Sikeres bejelentkezés";
     }
 
-    // 402 status
-    for (const key in error.response.data.errors) {
-      const contentError = error.response.data.errors[key];
-      contentError.forEach((err) => {
-        toast.error(err, { duration: 6000 });
-      });
-    }
-  }
+    throw new Error("Sikertelen bejelentkezés");
+  };
+
+  toast.promise(loginPromise(), {
+    loading: "Bejelentkezés folyamatban...",
+    success: (msg) => msg,
+    error: (error) => {
+      if (!error.response) {
+        return "Ellenőrizd az internetkapcsolatot.";
+      }
+
+      const { status, data } = error.response;
+
+      if (status === 401) return data.message;
+      if (status !== 422) return "Ismeretlen hiba történt.";
+
+      const errors = data.errors;
+      const firstKey = Object.keys(errors)[0];
+      return errors[firstKey][0];
+    },
+  });
 };
 </script>
 
