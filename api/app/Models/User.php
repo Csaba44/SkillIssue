@@ -48,16 +48,33 @@ class User extends Authenticatable
         return Level::where('min_xp', '<=', $this->xp)->orderBy('min_xp', 'desc')->first();
     }
 
-    public function reportsSent(): HasMany {
+    public function getNextRankAttribute()
+    {
+        return Rank::where('min_elo', '>', $this->elo)->orderBy('min_elo', 'asc')->first();
+    }
+
+    public function getNextLevelAttribute()
+    {
+        return Level::where('min_xp', '>', $this->xp)->orderBy('min_xp', 'asc')->first();
+    }
+
+    public function reportsSent(): HasMany
+    {
         return $this->hasMany(UserReport::class);
     }
 
-    public function practiceSessions(): HasMany {
+    public function practiceSessions(): HasMany
+    {
         return $this->hasMany(PracticeSession::class);
     }
 
-    public function questionReports(): HasMany {
+    public function questionReports(): HasMany
+    {
         return $this->HasMany(QuestionReport::class);
+    }
+
+    public function gameMatches(): HasMany {
+        return $this->hasMany(GameMatch::class);
     }
 
     /**

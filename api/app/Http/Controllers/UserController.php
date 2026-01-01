@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Models\GameMatch;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -14,9 +15,32 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+
+        $userMatchesCount = $user->gameMatches()->count();
+
+        $allUsersCount = User::count();
+
+        if ($allUsersCount === 0) {
+            $topPercentRounded = 100;
+        } else {
+            $usersCountWithLessMatches = User::withCount('gameMatches')
+                ->having('game_matches_count', '<', $userMatchesCount)
+                ->count();
+
+            $percentile = ($usersCountWithLessMatches / $allUsersCount) * 100;
+            $topPercent = 100 - $percentile;
+
+            $topPercentRounded = (int) ceil($topPercent);
+        }
+
         $userData = array_merge($user->toArray(), [
             'level' => $user->getLevelAttribute(),
             'rank' => $user->getRankAttribute(),
+            'next_level' => $user->getNextLevelAttribute(),
+            'next_rank' => $user->getNextRankAttribute(),
+            //'game_matches' => $user->gameMatches,
+            'top_ranking' => $topPercentRounded,
+            'matches_played' => $userMatchesCount,
         ]);
         return response()->json($userData);
     }

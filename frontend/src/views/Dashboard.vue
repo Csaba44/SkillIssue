@@ -57,7 +57,9 @@ const stopMatchmaking = () => {
         <div class="flex justify-center">
           <Widget title="Level" class="w-80 px-5 flex flex-col justify-between h-full">
             <h1 class="text-accentYellow text-6xl font-bold">{{ user.level.level }}</h1>
-            <p class="mt-auto">A következő szinthez szükséges: <span class="text-accentYellow">? XP</span></p>
+            <p class="mt-auto">
+              A következő szinthez szükséges: <span class="text-accentYellow">{{ user.next_level.min_xp - user.level.min_xp }} XP</span>
+            </p>
           </Widget>
         </div>
         <div class="flex justify-center">
@@ -70,8 +72,8 @@ const stopMatchmaking = () => {
         </div>
         <div class="flex justify-center">
           <Widget title="Játszott meccsek" class="w-80 px-5 flex flex-col justify-between h-full">
-            <h1 class="text-accentGreen text-6xl font-bold">?</h1>
-            <p class="mt-auto">TOP <span class="text-accentGreen">?% 🫡</span></p>
+            <h1 class="text-accentGreen text-6xl font-bold">{{ user.matches_played }}</h1>
+            <p class="mt-auto">TOP <span class="text-accentGreen">{{user.top_ranking}}% 🫡</span></p>
           </Widget>
         </div>
         <div class="flex justify-center">
