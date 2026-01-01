@@ -3,6 +3,12 @@ import Button from "../Generic/Button.vue";
 import Container from "../Generic/Container.vue";
 import TopicCard from "../Generic/TopicCard.vue";
 import { historyCards, literatureCards, grammarCards } from "../../utils/TopicCardList";
+import { useUserStore } from "../../stores/UserStore";
+import { storeToRefs } from "pinia";
+import { RouterLink } from "vue-router";
+
+const userStore = useUserStore();
+const { isAuthenticated } = storeToRefs(userStore);
 </script>
 
 <template>
@@ -11,7 +17,7 @@ import { historyCards, literatureCards, grammarCards } from "../../utils/TopicCa
       <i class="fa-solid fa-graduation-cap text-[700px] text-accentPurple opacity-5 absolute top-30 left-15"></i>
       <h1 class="text-3xl md:text-2xl xl:text-8xl font-bold text-white text-nowrap">Érettségire fel!</h1>
       <h2 class="text-lg md:text-xl lg:text-3xl mt-3 font-bold text-white w-full">Játssz, tanulj és készülj az érettségire!</h2>
-      <Button title="Vágjunk bele" class="mt-8 md:text-lg text-md text-nowrap" />
+      <RouterLink :to="isAuthenticated ? '/dashboard' : '/login?register=1'"><Button title="Vágjunk bele" class="mt-8 md:text-lg text-md text-nowrap" /></RouterLink>
     </Container>
 
     <Container class="hidden lg:flex relative h-full lg:justify-end justify-center items-center p-10">
