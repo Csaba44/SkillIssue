@@ -1,5 +1,25 @@
 <script setup>
+import { ref } from "vue";
 import Widget from "../Generic/Widget.vue";
+import { useUserStore } from "../../stores/UserStore";
+import { storeToRefs } from "pinia";
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+const selected = ref(false);
+
+const emit = defineEmits(["selected-gamemode-change"]);
+
+const props = defineProps({
+  isMatchmaking: Boolean,
+});
+
+const setSelected = (mode) => {
+  if (props.isMatchmaking) return;
+  if (selected === mode) return;
+  selected.value = mode;
+  emit("selected-gamemode-change", mode);
+};
 </script>
 
 <template>
@@ -10,13 +30,13 @@ import Widget from "../Generic/Widget.vue";
       </div>
 
       <nav class="text-textWhite text-lg flex justify-center items-center gap-5 font-medium text-nowrap">
-        <p class="cursor-pointer">Ranked</p>
-        <p class="cursor-pointer flex gap-1 items-center justify-center">Solo<span class="hidden sm:flex"> gyakorlás</span></p>
+        <button :disabled="props.isMatchmaking" @click="setSelected('Ranked')" :class="selected == 'Ranked' && 'text-error!'" class="disabled:text-textDisabled cursor-pointer enabled:hover:text-warning enabled:hover:scale-105 transition-all">Ranked</button>
+        <button :disabled="props.isMatchmaking" @click="setSelected('Solo')" :class="selected == 'Solo' && 'text-error!'" class="disabled:text-textDisabled cursor-pointer flex gap-1 items-center justify-center enabled:hover:text-warning enabled:hover:scale-105 transition-all">Solo<span class="hidden sm:flex"> gyakorlás</span></button>
       </nav>
 
       <div class="hidden md:flex gap-5 justify-end">
         <div class="flex flex-col">
-          <p>Elo 1776</p>
+          <p>Elo {{ user.elo }}</p>
           <div class="flex justify-between">
             <div class="w-[28%] h-1 bg-textWhite rounded-full flex overflow-hidden">
               <span class="w-full h-full bg-accentGreen"></span>
@@ -30,7 +50,7 @@ import Widget from "../Generic/Widget.vue";
           </div>
         </div>
         <div>
-          <span class="text-lg font-medium">3</span>
+          <span class="text-lg font-medium">{{ user.streak_count }}</span>
           <i class="fa-regular fa-fire text-primary text-lg"></i>
         </div>
       </div>

@@ -1,16 +1,88 @@
 <script setup>
 import Navbar from "../components/Dashboard/Navbar.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
+import Widget from "../components/Generic/Widget.vue";
 import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
+import Button from "../components/Generic/Button.vue";
+import { ref } from "vue";
 
 const userStore = useUserStore();
-const { isAuthenticated } = storeToRefs(userStore);
+const { isAuthenticated, user } = storeToRefs(userStore);
+
+const selectedGameMode = ref(false);
+const isMatchmaking = ref(false);
+
+const startMatchmaking = () => {
+  console.log(isAuthenticated.value);
+
+  if (!isAuthenticated.value) return;
+  if (isMatchmaking.value || !selectedGameMode.value) return;
+
+  if (selectedGameMode.value == "Ranked") {
+    // Handle matchmaking logic
+  } else {
+    // Start solo play
+  }
+
+  isMatchmaking.value = true;
+};
+
+const stopMatchmaking = () => {
+  if (!isMatchmaking) return;
+  if (selectedGameMode.value === "Solo") return;
+  isMatchmaking.value = false;
+};
 </script>
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden">
     <i class="fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2180px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
-    <Navbar />
+    <Navbar :is-matchmaking="isMatchmaking" @selected-gamemode-change="(mode) => (selectedGameMode = mode)" />
+
+    <Widget class="mt-10">
+      <h1 class="text-2xl font-bold">Hello, {{ user.name }} 👋 Jelenlegi online játékosok száma: <span class="text-accentGreen">1159 fő</span></h1>
+    </Widget>
+
+    <div class="w-full mt-10 grid grid-cols-1 grid-rows-[1fr_1fr_5fr] gap-0 lg:gap-25 items-center">
+      <div class="flex justify-center text-sm sm:text-lg">
+        <Button v-if="!isMatchmaking" @click="startMatchmaking()" :disabled="!selectedGameMode" class="text-wrap w- sm:w-min bg-success! text-black! h-min sm:text-nowrap" :title="selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : 'Kérlek válassz játékmódot!'" />
+        <Button v-else @click="stopMatchmaking()" :disabled="selectedGameMode === 'Solo'" class="w-min h-min text-nowrap bg-error!" title="Meccskeresés leállítása" />
+      </div>
+      <div class="flex justify-center text-center text-textWhite text-2xl md:text-5xl items-center">
+        <h1 v-if="isMatchmaking && selectedGameMode == 'Solo'">Indítás...</h1>
+        <h1 v-if="isMatchmaking && selectedGameMode == 'Ranked'">Meccskeresés <span class="text-accentGreen">folyamatban</span> <i class="fa-solid fa-clock text-accentGreen"></i> 1:12</h1>
+      </div>
+      <div class="w-full h-min grid sm:grid-cols-2 md:grid-cols-4 items-stretch justify-center gap-4 mt-15">
+        <div class="flex justify-center">
+          <Widget title="Level" class="w-80 px-5 flex flex-col justify-between h-full">
+            <h1 class="text-accentYellow text-6xl font-bold">{{ user.level.level }}</h1>
+            <p class="mt-auto">A következő szinthez szükséges: <span class="text-accentYellow">? XP</span></p>
+          </Widget>
+        </div>
+        <div class="flex justify-center">
+          <Widget title="Elo" class="w-80 px-5 flex flex-col justify-between h-full">
+            <h1 class="text-accentPurple text-6xl font-bold">{{ user.elo }}</h1>
+            <p class="mt-auto">
+              Jelenlegi rangod: <span class="text-accentPurple">{{ user.rank.name }}</span>
+            </p>
+          </Widget>
+        </div>
+        <div class="flex justify-center">
+          <Widget title="Játszott meccsek" class="w-80 px-5 flex flex-col justify-between h-full">
+            <h1 class="text-accentGreen text-6xl font-bold">?</h1>
+            <p class="mt-auto">TOP <span class="text-accentGreen">?% 🫡</span></p>
+          </Widget>
+        </div>
+        <div class="flex justify-center">
+          <Widget title="Streak" class="w-80 px-5 flex flex-col justify-between h-full">
+            <h1 class="text-primary text-6xl font-bold">{{ user.streak_count }} nap</h1>
+            <p class="mt-auto">
+              <span class="text-primary">{{ user.streak_count }} napja</span> konzisztensen gyakorolsz!
+            </p>
+          </Widget>
+        </div>
+      </div>
+    </div>
   </ProtectedPageContainer>
 </template>
