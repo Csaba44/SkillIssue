@@ -12,9 +12,9 @@ const { isAuthenticated } = storeToRefs(userStore);
 </script>
 
 <template>
-  <div id="home" class="absolute w-full min-h-full bg-bgDark grid lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 grid-rows-2 lg:items-center overflow-hidden">
+  <div id="home" class="w-full h-screen bg-bgDark grid lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 grid-rows-2 lg:items-center overflow-hidden">
     <Container class="mt-30 md:mt-0 h-full flex flex-col md:items-start items-center text-center md:text-left justify-center">
-      <i class="fa-solid fa-graduation-cap text-[700px] text-accentPurple opacity-5 absolute top-30 left-15"></i>
+      <i class="fa-solid fa-graduation-cap text-[700px] text-accentPurple opacity-5 fixed top-30 left-15"></i>
       <h1 class="text-3xl md:text-2xl xl:text-8xl font-bold text-white text-nowrap">Érettségire fel!</h1>
       <h2 class="text-lg md:text-xl lg:text-3xl mt-3 font-bold text-white w-full">Játssz, tanulj és készülj az érettségire!</h2>
       <RouterLink :to="isAuthenticated ? '/dashboard' : '/login?register=1'"><Button title="Vágjunk bele" class="mt-8 md:text-lg text-md text-nowrap" /></RouterLink>
