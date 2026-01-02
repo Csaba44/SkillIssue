@@ -5,7 +5,8 @@ import { useUserStore } from "../stores/UserStore";
 import HomeView from "../views/HomeView.vue";
 
 // Lazy loaded routes
-const DashboardView = () => import("../views/Dashboard.vue");
+const DashboardView = () => import("../views/DashboardView.vue");
+const GameView = () => import("../views/GameView.vue");
 const RegisterView = () => import("../views/RegisterView.vue");
 const LoginView = () => import("../views/LoginView.vue");
 const AdminView = () => import("../views/AdminView.vue");
@@ -15,6 +16,7 @@ const routes = [
   { path: "/register", name: "register", component: RegisterView },
   { path: "/login", name: "login", component: LoginView },
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
+  { path: "/game", name: "game", component: GameView, meta: { requiresAuth: true } },
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 ];
 
@@ -25,13 +27,12 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const userStore = useUserStore();
-  
+
   if (to.meta.requiresAuth) {
-    if (userStore.isAuthenticated == null)
-    {
+    if (userStore.isAuthenticated == null) {
       await userStore.verifySession();
     }
-    
+
     if (userStore.isAuthenticated == false) return router.push("/login");
   }
 
