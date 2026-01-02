@@ -6,6 +6,15 @@ import { historyCards, literatureCards, grammarCards } from "../../utils/TopicCa
 import { useUserStore } from "../../stores/UserStore";
 import { storeToRefs } from "pinia";
 import { RouterLink } from "vue-router";
+import { ref, onMounted } from "vue";
+
+const isAnimating = ref(false);
+
+onMounted(() => {
+  setTimeout(() => {
+    isAnimating.value = true;
+  }, 400);
+});
 
 const userStore = useUserStore();
 const { isAuthenticated } = storeToRefs(userStore);
@@ -34,20 +43,28 @@ const { isAuthenticated } = storeToRefs(userStore);
           <TopicCard v-for="(card, index) in grammarCards" v-show="!card.isInvisibleOnHeader" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
         </div>
       </div>
+      <div class="absolute bottom-6 right-6 hidden lg:flex gap-4 z-10">
+        <h1 class="text-6xl pb-5 mt-10 md:mt-70 font-bold text-white text-nowrap">Rólunk</h1>
+      </div>
     </Container>
 
     <!-- MOBILE VIEW X SCROLL ANIM -->
-    <Container class="lg:hidden flex items-end mb-5">
-      <div class="overflow-hidden py-2">
+    <Container class="lg:hidden flex items-end mb-15">
+      <div class="overflow-hidden py-2 pb-8">
         <div class="flex w-max animate-scroll-x">
-          <TopicCard v-for="(card, index) in historyCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
-          <TopicCard v-for="(card, index) in literatureCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
-          <TopicCard v-for="(card, index) in grammarCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
-          <TopicCard v-for="(card, index) in historyCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
-          <TopicCard v-for="(card, index) in literatureCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
-          <TopicCard v-for="(card, index) in grammarCards" :key="index" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
+          <TopicCard v-for="(card, index) in historyCards" :key="index" :isAnimated="isAnimating" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
+          <TopicCard v-for="(card, index) in literatureCards" :key="index" :isAnimated="isAnimating" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
+          <TopicCard v-for="(card, index) in grammarCards" :key="index" :isAnimated="isAnimating" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
+          <TopicCard v-for="(card, index) in historyCards" :key="index" :isAnimated="isAnimating" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="history" :text="card.text" />
+          <TopicCard v-for="(card, index) in literatureCards" :key="index" :isAnimated="isAnimating" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="literature" :text="card.text" />
+          <TopicCard v-for="(card, index) in grammarCards" :key="index" :isAnimated="isAnimating" :icon="card.icon" :iconTop="card.iconTop" :iconLeft="card.iconLeft" :icon-rotate="card.iconRotate" type="grammar" :text="card.text" />
         </div>
       </div>
     </Container>
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+      <svg class="w-full h-20 block" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path fill="rgb(229, 231, 235)" fill-opacity="1" d="M0,224L60,197.3C120,171,240,117,360,90.7C480,64,600,64,720,101.3C840,139,960,213,1080,229.3C1200,245,1320,203,1380,181.3L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+      </svg>
+    </div>
   </div>
 </template>
