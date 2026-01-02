@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+
+use function Symfony\Component\Clock\now;
 
 class UserAuthController extends Controller
 {
@@ -38,6 +41,22 @@ class UserAuthController extends Controller
 
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
+            $user = $request->user();
+
+            $user->update([
+                'last_login' => now(),
+            ]);
+
+            $ipHash = hash_hmac(
+                'sha256',
+                request()->ip(),
+                config('app.key')
+            );
+
+            UserLogin::create([
+                'user_id' => $user->id,
+                'ip_hash' => $ipHash
+            ]);
 
             return response()->json(["message" => "Üdvözöljük!"]);
         }

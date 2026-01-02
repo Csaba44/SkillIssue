@@ -77,6 +77,9 @@ class User extends Authenticatable
         return $this->hasMany(GameMatch::class);
     }
 
+    public function logins(): HasMany {
+        return $this->hasMany(UserLogin::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
