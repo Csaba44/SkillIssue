@@ -10,6 +10,7 @@
   --color-accentGreen: #02cb74;
   --color-accentPurple: #a06bf9;
   --color-accentYellow: #fbd22f;
+  --color-accentOrange: #FE4C01;
 
   --color-textBlack: #1f2937;
   --color-textGray: #6b7280;
@@ -25,6 +26,10 @@
   --color-bgAlternate: #0d1945;
 
   --color-buttonOrange: #fe4c01;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 /*Navbar jobboldalról beúszás */
@@ -55,6 +60,12 @@
   -webkit-text-stroke: 5px #6146ac;
   paint-order: stroke fill;
 }
+
+.strokeOrange {
+  -webkit-text-stroke: 5px #993418;
+  paint-order: stroke fill;
+}
+
 
 @layer utilities {
   @keyframes scroll-x {
