@@ -27,6 +27,10 @@
   --color-buttonOrange: #fe4c01;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 /*Navbar jobboldalról beúszás */
 .slide-enter-active,
 .slide-leave-active {
