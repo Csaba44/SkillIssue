@@ -18,7 +18,8 @@ const props = defineProps({
 
 <template>
     <div
-        class="bg-white  relative flex flex-col mx-5 md:h-110 md:w-80 2xl:mx-auto my-5 h-100 w-75 items-center justify-between xl:h-100 xl:w-70 2xl:h-120 2xl:w-90 rounded-4xl overflow-hidden shadow-md">
+        class="bg-white  relative flex flex-col mx-5 md:h-110 md:w-80 2xl:mx-auto my-5 h-100 w-75 items-center justify-between xl:h-100 xl:w-70 2xl:h-120 2xl:w-90 rounded-4xl overflow-hidden shadow-md
+        transition-all duration-800 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)]">
         <div class="absolute bottom-20 left-0 w-full h-full">
             <svg class="w-full h-full" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
                 <path :fill="typeColors[props.type].colorVar" d="
@@ -36,15 +37,15 @@ const props = defineProps({
         <i class="absolute top-20 text-6xl md:top-23 md:text-7xl xl:top-20 2xl:top-25 xl:text-7xl 2xl:text-8xl z-10" :class="props.icon"
             :style="{ color: typeColors[props.type].iconColor }"></i>
 
-        <p class="z-10  font-bold text-black text-4xl text-center mt-50 md:mt-60 xl:mt-50 2xl:mt-70">
+        <p class="z-10 px-1 font-bold text-black text-4xl xl:text-3xl 2xl:text-4xl text-center mt-50 md:mt-60 xl:mt-52 2xl:mt-70">
             {{ props.title }}
         </p>
 
         <div class="px-3 bottom-5 w-full">
-            <p class="z-10 text-lg text-gray-500 text-center mb-8 px-2 
+            <p class="z-10 text-lg text-gray-500  text-center mb-8 px-2 
                   overflow-hidden overflow-ellipsis break-words
-                  max-h-24">
-                {{ props.desc }}adsbhasbdasbdbasbdbsahdbashdbahasbdbhasbdhsba
+                  max-h-28">
+                {{ props.desc }}
             </p>
         </div>
 
