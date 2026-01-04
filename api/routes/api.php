@@ -4,6 +4,7 @@ use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
+use App\Http\Controllers\SingleQuestionController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
@@ -36,7 +37,9 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get('/subjects/{subject}/random/{count}', [SubjectController::class, 'random']);
 
     // Questions
+    Route::get('/questions/get-one', SingleQuestionController::class);
     Route::apiResource('/questions', QuestionController::class); // Admin only
+
     Route::post('/questions/{question}/answer', [QuestionController::class, 'storeAnswers']); // Admin only;
     Route::delete('/questions/{question}/answer', [QuestionController::class, 'deleteAnswers']); // Admin only;
 });
