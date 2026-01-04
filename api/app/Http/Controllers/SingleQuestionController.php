@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Question;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 
 class SingleQuestionController extends Controller
@@ -20,11 +21,26 @@ class SingleQuestionController extends Controller
             $randomQuestion = Question::with(['subject', 'answers'])->whereNotIn('id', $excludedQuestions)->get()->random(1);
             $randomQuestion = $randomQuestion[0];
 
-            
+            $userId = $request->user()->id;
+
+            $payload = [
+                'question_id' => $randomQuestion->id,
+                'user_id'  => [$userId],
+                'iat'         => time(),
+                'exp'         => time() + 8888, // seconds
+            ];
+
+
+            $token = JWT::encode(
+                $payload,
+                config('app.key'),
+                'HS256'
+            );
 
             return response()->json([
                 'success' => true,
                 'question' => $randomQuestion,
+                'token' => $token,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([

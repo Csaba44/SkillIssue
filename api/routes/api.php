@@ -11,6 +11,7 @@ use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
 use App\Http\Controllers\VerifyAnswerController;
+use App\Http\Middleware\EnsureQuestionTokenIsValid;
 use Illuminate\Support\Facades\Route;
 
 
@@ -45,8 +46,8 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::post('/questions/{question}/answer', [QuestionController::class, 'storeAnswers']); // Admin only;
     Route::delete('/questions/{question}/answer', [QuestionController::class, 'deleteAnswers']); // Admin only;
 
-    Route::post('/questions/correct-answer/{question}', CorrectAnswerController::class);
+    Route::post('/questions/correct-answer', CorrectAnswerController::class)->middleware(EnsureQuestionTokenIsValid::class);
 
     // Answers
-    Route::post('/answers/verify/{answer}', VerifyAnswerController::class);
+    Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware(EnsureQuestionTokenIsValid::class);
 });
