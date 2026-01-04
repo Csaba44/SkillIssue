@@ -39,7 +39,7 @@ import PricingCard from "../components/HomePage/PricingCard.vue";
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto justify-items-center">
         <PricingCard subscription="Alapcsomag" price="0" :features="['Középszintű érettséghez', 'Korlátlan gyakorlás', 'Pontok', 'XP rendszer', 'Napi streakek']" />
 
-        <PricingCard buttonTitle="Hamarosan..." subscription="Pro csomag" price="5000" :features="['Emelt szintű érettséghez', 'Minden az alapcsomagból', 'Részletes statisztikák', 'Co-op mód', 'Tanári konzultáció']" />
+        <PricingCard :buttonDisabled="true" buttonTitle="Hamarosan..." subscription="Pro csomag" price="---" :features="['Emelt szintű érettséghez', 'Minden az alapcsomagból', 'Részletes statisztikák', 'Co-op mód', 'Tanári konzultáció']" />
       </div>
     </Container>
   </section>

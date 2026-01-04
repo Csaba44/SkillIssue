@@ -8,7 +8,7 @@ const props = defineProps({
         default: "Alapcsomag",
     },
     price: {
-        type: Number,
+        type: String,
         default: 0,
     },
     features: {
@@ -18,6 +18,10 @@ const props = defineProps({
     buttonTitle: {
         type: String,
         default: "Vágjunk bele",
+    },
+    buttonDisabled:  {
+        type: Boolean,
+        default: false,
     }
 });
 
@@ -42,7 +46,7 @@ const props = defineProps({
             </ul>
         </div>
         <div class="flex justify-center mt-8">
-            <Button title="Vágjunk bele" class="md:text-lg text-md text-nowrap" />
+            <Button :title="props.buttonTitle" :disabled="props.buttonDisabled" class="md:text-lg text-md text-nowrap" />
         </div>
     </div>
 </template>
