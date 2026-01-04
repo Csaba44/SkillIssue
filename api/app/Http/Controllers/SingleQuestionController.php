@@ -17,9 +17,10 @@ class SingleQuestionController extends Controller
 
 
         try {
-            $randomQuestion = Question::with('subject')->whereNotIn('id', $excludedQuestions)->get()->random(1);
+            $randomQuestion = Question::with(['subject', 'answers'])->whereNotIn('id', $excludedQuestions)->get()->random(1);
             $randomQuestion = $randomQuestion[0];
 
+            
             return response()->json([
                 'success' => true,
                 'question' => $randomQuestion,

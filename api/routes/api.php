@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
+use App\Http\Controllers\VerifyAnswer;
 use Illuminate\Support\Facades\Route;
 
 
@@ -42,4 +44,9 @@ Route::middleware("auth:sanctum")->group(function () {
 
     Route::post('/questions/{question}/answer', [QuestionController::class, 'storeAnswers']); // Admin only;
     Route::delete('/questions/{question}/answer', [QuestionController::class, 'deleteAnswers']); // Admin only;
+
+    Route::post('/questions/correct-answer/{question}', CorrectAnswerController::class);
+
+    // Answers
+    Route::post('/answers/verify/{answer}', VerifyAnswer::class);
 });
