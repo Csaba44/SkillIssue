@@ -10,7 +10,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
-use App\Http\Controllers\VerifyAnswer;
+use App\Http\Controllers\VerifyAnswerController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -48,5 +48,5 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::post('/questions/correct-answer/{question}', CorrectAnswerController::class);
 
     // Answers
-    Route::post('/answers/verify/{answer}', VerifyAnswer::class);
+    Route::post('/answers/verify/{answer}', VerifyAnswerController::class);
 });

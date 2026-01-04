@@ -21,6 +21,7 @@ class SingleQuestionController extends Controller
             $randomQuestion = $randomQuestion[0];
 
             
+
             return response()->json([
                 'success' => true,
                 'question' => $randomQuestion,
