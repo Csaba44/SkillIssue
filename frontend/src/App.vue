@@ -5,7 +5,7 @@ const userStore = useUserStore();
 
 onBeforeMount(async () => {
   await userStore.verifySession();
-})
+});
 
 import { Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
@@ -15,5 +15,5 @@ import "vue-sonner/style.css";
   <main>
     <RouterView />
   </main>
-  <Toaster rich-colors position="bottom-left" :closeButton="true" closeButtonPosition="top-right" theme="light" ></Toaster>
+  <Toaster rich-colors position="bottom-left" :closeButton="true" closeButtonPosition="top-right" theme="light"></Toaster>
 </template>
