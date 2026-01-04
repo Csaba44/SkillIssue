@@ -3,7 +3,6 @@ import router from "../config/router";
 import Navbar from "../components/HomePage/Navbar.vue";
 import Header from "../components/HomePage/Header.vue";
 import Container from "../components/Generic/Container.vue";
-import wave from "../assets/wave.svg";
 import AboutCard from "../components/HomePage/AboutCard.vue";
 import PricingCard from "../components/HomePage/PricingCard.vue";
 </script>
