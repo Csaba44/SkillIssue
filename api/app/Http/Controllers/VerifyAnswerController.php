@@ -58,8 +58,6 @@ class VerifyAnswerController extends Controller
             // 2 solo => 1 level up
         }
 
-
-
         return response()->json([
             'success' => true,
             'is_correct' => $answer->is_correct,
