@@ -3,6 +3,7 @@
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
+use App\Http\Controllers\PracticeSessionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SingleQuestionController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
 use App\Http\Controllers\VerifyAnswerController;
 use App\Http\Middleware\EnsureQuestionTokenIsValid;
+use App\Models\PracticeSession;
 use Illuminate\Support\Facades\Route;
 
 
@@ -50,4 +52,7 @@ Route::middleware("auth:sanctum")->group(function () {
 
     // Answers
     Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware(EnsureQuestionTokenIsValid::class);
+
+    // Practice sessions
+    Route::apiResource('/practice-sessions', PracticeSessionController::class);
 });

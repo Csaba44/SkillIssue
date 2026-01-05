@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('opponent_id')->constrained('users', 'id');
             $table->integer('elo_before');
             $table->integer('xp_before');
-            $table->integer('elo_after');
-            $table->integer('xp_after');
+            $table->integer('elo_after')->nullable();
+            $table->integer('xp_after')->nullable();
             $table->string('match_uuid', 36);
             $table->timestamps();
             $table->softDeletes();

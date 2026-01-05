@@ -18,6 +18,7 @@ class EnsureQuestionTokenIsValid
     public function handle(Request $request, Closure $next): Response
     {
         $validated = $request->validate([
+            'game_token' => 'required|string',
             'question_token' => 'required|string'
         ]);
 
@@ -30,18 +31,25 @@ class EnsureQuestionTokenIsValid
                 new Key(config('app.key'), 'HS256')
             );
 
-            $decoded_user_id = $decoded->user_id;
+            $decodedGameToken = JWT::decode(
+                $request->game_token,
+                new Key(config('app.key'), 'HS256')
+            );
 
-            if (!in_array($userId, $decoded_user_id)) {
+            $decoded_user_id = $decoded->user_id;
+            $decoded_game_user_id = $decodedGameToken->user_id;
+
+            if (!in_array($userId, $decoded_user_id) || $decoded_game_user_id != $userId) {
                 return response()->json([
                     'success' => false,
                     'error' => 'A kérdés nem a te fiókodhoz tartozik.'
                 ], 403);
             }
 
-            $request->merge(['question_id' => $decoded->question_id]);
+            $request->merge(['question_id' => $decoded->question_id, 'session_id' => $decodedGameToken->session_id]);
             return $next($request);
         } catch (\Exception $e) {
+            dd($e);
             return response()->json([
                 'success' => false,
                 'error' => 'A kérdés nem a te fiókodhoz tartozik.'

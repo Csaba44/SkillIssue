@@ -5,7 +5,7 @@ import Widget from "../components/Generic/Widget.vue";
 import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
 import Button from "../components/Generic/Button.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
@@ -33,6 +33,8 @@ const stopMatchmaking = () => {
   if (selectedGameMode.value === "Solo") return;
   isMatchmaking.value = false;
 };
+
+const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp)
 </script>
 
 <template>
@@ -58,7 +60,7 @@ const stopMatchmaking = () => {
           <Widget title="Level" class="w-80 px-5 flex flex-col justify-between h-full">
             <h1 class="text-accentYellow text-6xl font-bold">{{ user.level.level }}</h1>
             <p class="mt-auto">
-              A következő szinthez szükséges: <span class="text-accentYellow">{{ user.next_level.min_xp - user.level.min_xp }} XP</span>
+              A következő szinthez szükséges: <span class="text-accentYellow">{{ xpToNext}} XP</span>
             </p>
           </Widget>
         </div>
