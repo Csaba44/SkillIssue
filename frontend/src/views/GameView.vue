@@ -1,8 +1,18 @@
 <script setup>
+import { onBeforeMount, ref } from "vue";
 import RankedWidget from "../components/Game/RankedWidget.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
+import api from "../config/api";
 
-const mockQuestion = "Melyik a legrégebbi magyar nyelvemlék?";
+const to_exclude = ref([]);
+const question = ref("");
+const answers = ref([]);
+
+onBeforeMount(async () => {
+  await api.get("/api/questions/get-one");
+});
+
+/*const mockQuestion = "Melyik a legrégebbi magyar nyelvemlék?";
 
 const mockAnswers = [
   {
@@ -25,7 +35,7 @@ const mockAnswers = [
     question_id: 1,
     answer: "Jókai Mór novellái",
   },
-];
+];*/
 </script>
 
 <template>

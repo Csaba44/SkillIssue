@@ -14,8 +14,6 @@ class SingleQuestionController extends Controller
     public function __invoke(Request $request)
     {
         $excludedQuestions = $request->exclude;
-        $excludedQuestions = explode(',', $excludedQuestions);
-
 
         try {
             $randomQuestion = Question::with(['subject', 'answers'])->whereNotIn('id', $excludedQuestions)->get()->random(1);

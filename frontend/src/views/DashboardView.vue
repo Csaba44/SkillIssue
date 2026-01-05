@@ -6,6 +6,10 @@ import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
 import Button from "../components/Generic/Button.vue";
 import { computed, ref } from "vue";
+import api from "../config/api";
+import { toast } from "vue-sonner";
+import router from "../config/router";
+
 
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
@@ -13,7 +17,7 @@ const { isAuthenticated, user } = storeToRefs(userStore);
 const selectedGameMode = ref(false);
 const isMatchmaking = ref(false);
 
-const startMatchmaking = () => {
+const startMatchmaking = async () => {
   console.log(isAuthenticated.value);
 
   if (!isAuthenticated.value) return;
@@ -22,7 +26,22 @@ const startMatchmaking = () => {
   if (selectedGameMode.value == "Ranked") {
     // Handle matchmaking logic
   } else {
-    // Start solo play
+    try {
+      const response = await api.post("/api/practice-sessions");
+
+      if (!response.data.success || !response.data.game_token) {
+        return toast.error("Ismeretlen hiba történt a játék létrehozása közben!");
+      }
+
+      router.push("/game/solo/" + response.data.game_token);
+    } catch (error) {
+      console.log(error);
+      if (!error.response) {
+        return toast.error("Ellenőrizd az internetkapcsolatod!");
+      }
+
+      return toast.error("Ismeretlen hiba történt a játék létrehozása közben!");
+    }
   }
 
   isMatchmaking.value = true;
@@ -34,7 +53,7 @@ const stopMatchmaking = () => {
   isMatchmaking.value = false;
 };
 
-const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp)
+const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
 </script>
 
 <template>
@@ -60,7 +79,7 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp)
           <Widget title="Level" class="w-80 px-5 flex flex-col justify-between h-full">
             <h1 class="text-accentYellow text-6xl font-bold">{{ user.level.level }}</h1>
             <p class="mt-auto">
-              A következő szinthez szükséges: <span class="text-accentYellow">{{ xpToNext}} XP</span>
+              A következő szinthez szükséges: <span class="text-accentYellow">{{ xpToNext }} XP</span>
             </p>
           </Widget>
         </div>
@@ -75,7 +94,9 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp)
         <div class="flex justify-center">
           <Widget title="Játszott meccsek" class="w-80 px-5 flex flex-col justify-between h-full">
             <h1 class="text-accentGreen text-6xl font-bold">{{ user.matches_played }}</h1>
-            <p class="mt-auto">TOP <span class="text-accentGreen">{{user.top_ranking}}% 🫡</span></p>
+            <p class="mt-auto">
+              TOP <span class="text-accentGreen">{{ user.top_ranking }}% 🫡</span>
+            </p>
           </Widget>
         </div>
         <div class="flex justify-center">
