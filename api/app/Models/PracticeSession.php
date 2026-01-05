@@ -43,6 +43,14 @@ class PracticeSession extends Model
             ->withPivot('question_id', 'user_answer_id', 'round_number', 'user_guess_time_ms');
     }
 
+    public function correctAnswersCount(): int
+    {
+        return $this->sessionQuestions->filter(function ($sq) {
+            return $sq->user_answer_id === $sq->correct_answer_id;
+        })->count();
+    }
+
+
     public function sessionQuestions(): HasMany
     {
         return $this->hasMany(PracticeSessionQuestion::class);

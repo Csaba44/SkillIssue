@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->integer('rounds');
             $table->integer('xp_before');
-            $table->integer('xp_after');
+            $table->integer('xp_after')->nullable();
             $table->timestamps();
         });
     }

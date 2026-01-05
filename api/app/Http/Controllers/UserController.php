@@ -17,14 +17,23 @@ class UserController extends Controller
         $user = $request->user();
 
         $userMatchesCount = $user->gameMatches()->count();
+        $userPracticesCount = $user->practiceSessions()->count();
+
+        $allMatchesCount = $userMatchesCount + $userPracticesCount;
 
         $allUsersCount = User::count();
 
         if ($allUsersCount === 0) {
-            $topPercentRounded = 100;
+            $topPercentRounded = 1;
         } else {
-            $usersCountWithLessMatches = User::withCount('gameMatches')
-                ->having('game_matches_count', '<', $userMatchesCount)
+            $usersCountWithLessMatches = User::withCount([
+                'gameMatches',
+                'practiceSessions'
+            ])
+                ->get()
+                ->filter(function ($u) use ($allMatchesCount) {
+                    return ($u->game_matches_count + $u->practice_sessions_count) < $allMatchesCount;
+                })
                 ->count();
 
             $percentile = ($usersCountWithLessMatches / $allUsersCount) * 100;
@@ -40,7 +49,7 @@ class UserController extends Controller
             'next_rank' => $user->getNextRankAttribute(),
             //'game_matches' => $user->gameMatches,
             'top_ranking' => $topPercentRounded,
-            'matches_played' => $userMatchesCount,
+            'matches_played' => $allMatchesCount,
         ]);
         return response()->json($userData);
     }
