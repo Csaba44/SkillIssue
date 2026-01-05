@@ -1,47 +1,44 @@
 <script setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, useTemplateRef } from "vue";
 import RankedWidget from "../components/Game/RankedWidget.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import api from "../config/api";
+import { toast } from "vue-sonner";
 
-const to_exclude = ref([]);
-const question = ref("");
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const question = ref("Betöltés folyamatban...");
+const subject = ref("Betöltés folyamatban...");
 const answers = ref([]);
 
 onBeforeMount(async () => {
-  await api.get("/api/questions/get-one");
+  try {
+    const res = await api.post("/api/questions/get-one", { game_token: route.params.gameToken });
+
+    if (res.status !== 200) {
+      return toast.error("Ismeretlen hiba történt a kérdés lekérése során.");
+    }
+
+    question.value = res.data.question.question;
+    subject.value = res.data.question.subject.name;
+    answers.value = res.data.question.answers;
+  } catch (error) {
+    console.log(error);
+    if (!error.response) {
+      return toast.error("Ellenőrizze az internetkapcsolatát!");
+    }
+
+    return toast.error("Ismeretlen hiba történt a kérdés lekérése során.");
+  }
 });
-
-/*const mockQuestion = "Melyik a legrégebbi magyar nyelvemlék?";
-
-const mockAnswers = [
-  {
-    id: 1,
-    question_id: 1,
-    answer: "Leuveni krónika",
-  },
-  {
-    id: 2,
-    question_id: 1,
-    answer: "Halotti beszéd",
-  },
-  {
-    id: 3,
-    question_id: 1,
-    answer: "Kölcsey Himnusza",
-  },
-  {
-    id: 4,
-    question_id: 1,
-    answer: "Jókai Mór novellái",
-  },
-];*/
 </script>
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden" :gameSelectionDisabled="true">
     <div class="w-full h-full flex items-center justify-center">
-      <RankedWidget :question="mockQuestion" :answers="mockAnswers" :currRoundNumber="1" :totalRounds="5" />
+      <RankedWidget :question="question" :answers="answers" :currRoundNumber="1" :totalRounds="5" />
     </div>
   </ProtectedPageContainer>
 </template>
