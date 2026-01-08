@@ -1,1 +1,0 @@
-import{a,o,d as t,v as n,n as l}from"./index-DvQJnh4s.js";const c={class:"bg-bgDark w-screen min-h-screen p-8 flex"},p={__name:"ProtectedPageContainer",props:{class:String},setup(e){const s=e;return(r,d)=>(o(),a("div",c,[t("div",{class:l(["bg-bgAlternate w-full rounded-md border border-white/25 min-h-full p-5",s.class])},[n(r.$slots,"default")],2)]))}};export{p as _};
