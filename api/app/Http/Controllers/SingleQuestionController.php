@@ -16,26 +16,15 @@ class SingleQuestionController extends Controller
      */
     public function __invoke(Request $request)
     {
+        $maxRounds = config('app.max_rounds');
+
+
         try {
-            $validated = $request->validate([
-                "game_token" => "required|string"
-            ]);
+            $userId = $request->user()->id;
 
+            $tokenSessionId = $request->session_id;
 
-            $decodedGameToken = JWT::decode(
-                $validated["game_token"],
-                new Key(config('app.key'), 'HS256')
-            );
-
-            $tokenUserId = $decodedGameToken->user_id;
-            $tokenSessionId = $decodedGameToken->session_id;
-
-            if ($request->user()->id !== $tokenUserId) {
-                return response()->json(["message" => "A játszma nem a te fiókodhoz tartozik."], 403);
-            }
-
-
-
+            // Get the previous questions, that we will exclude when fetching the database
             $excludedQuestions = PracticeSessionQuestion::where(
                 'practice_session_id',
                 $tokenSessionId
@@ -48,9 +37,7 @@ class SingleQuestionController extends Controller
                 ->get()
                 ->random();
 
-
-            $userId = $request->user()->id;
-
+            // Create a question token
             $payload = [
                 'question_id' => $randomQuestion->id,
                 'user_id'  => [$userId],
@@ -65,6 +52,7 @@ class SingleQuestionController extends Controller
                 'HS256'
             );
 
+            // Get the correct answer (and make it hidden again)
             $randomQuestion->answers->makeVisible('is_correct');
             $correctAnswerId = $randomQuestion->answers
                 ->firstWhere('is_correct', 1)
@@ -72,11 +60,22 @@ class SingleQuestionController extends Controller
             $randomQuestion->answers->makeHidden('is_correct');
 
 
+            // Get the current round's number
             $lastRound = PracticeSessionQuestion::where('practice_session_id', $tokenSessionId)
                 ->max('round_number');
 
             $currentRound = ($lastRound ?? 0) + 1;
 
+
+            // Get if it's the end of the session
+            if ($currentRound > $maxRounds) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'A játszma véget ért.',
+                ], 410);
+            }
+
+            // Add the question
             PracticeSessionQuestion::create([
                 'practice_session_id' => $tokenSessionId,
                 'question_id' => $randomQuestion->id,
@@ -87,6 +86,7 @@ class SingleQuestionController extends Controller
 
             return response()->json([
                 'success' => true,
+                'current_round' => $currentRound,
                 'question' => $randomQuestion,
                 'token' => $token,
             ], 200);

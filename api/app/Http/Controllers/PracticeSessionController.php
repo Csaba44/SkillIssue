@@ -24,7 +24,8 @@ class PracticeSessionController extends Controller
         $userId = $request->user()->id;
         $userXp = $request->user()->xp;
 
-        $ROUNDS = 5;
+        $ROUNDS = config('app.max_rounds');
+
 
         $practiceSession = PracticeSession::create([
             "user_id" => $userId,
