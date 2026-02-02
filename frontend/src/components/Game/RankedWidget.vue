@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import Timer from "./Timer.vue";
 import AnswerButton from "./AnswerButton.vue";
 import { ref } from "vue";
+import Button from "../Generic/Button.vue";
 
 const props = defineProps({
   question: String,
@@ -32,6 +33,8 @@ const onAnswerSelect = (id) => {
 
   selectedAnswer.value = id;
 };
+
+const onNextQuestionClicked = async () => {};
 </script>
 
 <template>
@@ -46,6 +49,10 @@ const onAnswerSelect = (id) => {
       <template v-for="answer in answers">
         <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded" :isSelected="answer.id === selectedAnswer">{{ answer.answer }}</AnswerButton>
       </template>
+
+      <div class="w-full flex items-center justify-center">
+        <Button title="Következő" class="mt-3 bg-accentGreen! max-w-50!" @click="onNextQuestionClicked" />
+      </div>
     </div>
 
     <p class="text-xl text-center py-4 font-bold text-error">{{ currRoundNumber }} / {{ totalRounds }} kör</p>
