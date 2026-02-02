@@ -1,0 +1,15 @@
+services:
+  mysql:
+    image: mysql:8.0.36
+    env_file:
+      - .env.dev
+    ports:
+      - 3306:3306
+    volumes:
+      - skillissue_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$MYSQL_ROOT_PASSWORD || exit 1"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+      start_period: 30s
