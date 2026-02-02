@@ -11,6 +11,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Nette\Utils\Json;
 
+use function Laravel\Prompts\error;
+
 class VerifyAnswerController extends Controller
 {
     /**
@@ -18,26 +20,24 @@ class VerifyAnswerController extends Controller
      */
     public function __invoke(VerifyAnswerRequest $request, Answer $answer)
     {
-        $correctAnswer = Answer::where([["question_id", "=", $answer->question_id], ["is_correct", "=", 1]])->first();
-
-        $sessionQuestion = PracticeSessionQuestion::create([
-            'practice_session_id' => $request->session_id,
-            'question_id' => $answer->question_id,
+        $pracSessQuestion = PracticeSessionQuestion::where('practice_session_id', $request->session_id)
+            ->where('question_id', $answer->question_id)
+            ->firstOrFail();
+        $pracSessQuestion->update([
             'user_answer_id' => $answer->id,
-            'correct_answer_id' => $correctAnswer->id,
-            'round_number' => $request->current_round,
-            'user_guess_time_ms' => $request->user_guess_time_ms
+            'user_guess_time_ms' => $request->user_guess_time_ms,
         ]);
 
         $awardedXp = -1;
 
-        if ($request->current_round == 5) {
+        if ($pracSessQuestion->round_number == config("app.max_rounds")) {
             $practiceSession = PracticeSession::find($request->session_id);
 
             $currentXp = $request->user()->xp;
 
             $correctAnswerCount = $practiceSession->correctAnswersCount();
 
+            error_log($correctAnswerCount);
             $awardedXp = $correctAnswerCount * 10;
 
             $newXp = $currentXp + $awardedXp;
@@ -61,6 +61,7 @@ class VerifyAnswerController extends Controller
         return response()->json([
             'success' => true,
             'is_correct' => $answer->is_correct,
+            'correct_answer_id' => $pracSessQuestion->correct_answer_id,
             'game_ended' => $awardedXp != -1,
             'xp_gained' => $awardedXp != -1 ? $awardedXp : false,
         ], 200);

@@ -88,7 +88,7 @@ class SingleQuestionController extends Controller
                 'success' => true,
                 'current_round' => $currentRound,
                 'question' => $randomQuestion,
-                'token' => $token,
+                'question_token' => $token,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([

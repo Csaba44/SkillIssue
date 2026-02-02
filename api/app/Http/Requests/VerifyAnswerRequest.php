@@ -22,7 +22,6 @@ class VerifyAnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "current_round" => "required|integer|min:1|max:5",
             "user_guess_time_ms" => "required|integer|min:1",
         ];
     }
