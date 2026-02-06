@@ -53,26 +53,48 @@ const stopMatchmaking = () => {
   isMatchmaking.value = false;
 };
 
+const setSelected = (mode) => {
+
+  if (isMatchmaking.value) return;
+  if (selectedGameMode.value === mode) return;
+  selectedGameMode.value = mode;
+};
+
 const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
 </script>
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden">
-    <i class="fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
-    <Navbar :is-matchmaking="isMatchmaking" @selected-gamemode-change="(mode) => (selectedGameMode = mode)" />
+    <!----<i
+      class="fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+  -->
+      <Navbar/>
+
+    <nav class="z-5 text-textWhite text-lg flex justify-center items-center gap-5 font-medium text-nowrap">
+      <button :disabled="isMatchmaking" @click="setSelected('Ranked')" :class="selectedGameMode == 'Ranked' && 'text-error!'"
+        class="disabled:text-textDisabled cursor-pointer enabled:hover:text-warning enabled:hover:scale-105 transition-all">Ranked</button>
+      <button :disabled="isMatchmaking" @click="setSelected('Solo')" :class="selectedGameMode == 'Solo' && 'text-error!'"
+        class="disabled:text-textDisabled cursor-pointer flex gap-1 items-center justify-center enabled:hover:text-warning enabled:hover:scale-105 transition-all">Solo<span
+          class="hidden sm:flex"> gyakorlás</span></button>
+    </nav>
 
     <Widget class="mt-10">
-      <h1 class="text-2xl font-bold">Hello, {{ user.name }} 👋 Jelenlegi online játékosok száma: <span class="text-accentGreen">1159 fő</span></h1>
+      <h1 class="text-2xl font-bold">Hello, {{ user.name }} 👋 Jelenlegi online játékosok száma: <span
+          class="text-accentGreen">1159 fő</span></h1>
     </Widget>
 
     <div class="w-full mt-10 grid grid-cols-1 grid-rows-[1fr_1fr_5fr] gap-0 lg:gap-25 items-center">
       <div class="flex justify-center text-sm sm:text-lg">
-        <Button v-if="!isMatchmaking" @click="startMatchmaking()" :disabled="!selectedGameMode" class="text-wrap w- sm:w-min bg-success! text-black! h-min sm:text-nowrap" :title="selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : 'Kérlek válassz játékmódot!'" />
-        <Button v-else @click="stopMatchmaking()" :disabled="selectedGameMode === 'Solo'" class="w-min h-min text-nowrap bg-error!" title="Meccskeresés leállítása" />
+        <Button v-if="!isMatchmaking" @click="startMatchmaking()" :disabled="!selectedGameMode"
+          class="text-wrap w- sm:w-min bg-success! text-black! h-min sm:text-nowrap"
+          :title="selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : 'Kérlek válassz játékmódot!'" />
+        <Button v-else @click="stopMatchmaking()" :disabled="selectedGameMode === 'Solo'"
+          class="w-min h-min text-nowrap bg-error!" title="Meccskeresés leállítása" />
       </div>
       <div class="flex justify-center text-center text-textWhite text-2xl md:text-5xl items-center">
         <h1 v-if="isMatchmaking && selectedGameMode == 'Solo'">Indítás...</h1>
-        <h1 v-if="isMatchmaking && selectedGameMode == 'Ranked'">Meccskeresés <span class="text-accentGreen">folyamatban</span> <i class="fa-solid fa-clock text-accentGreen"></i> 1:12</h1>
+        <h1 v-if="isMatchmaking && selectedGameMode == 'Ranked'">Meccskeresés <span
+            class="text-accentGreen">folyamatban</span> <i class="fa-solid fa-clock text-accentGreen"></i> 1:12</h1>
       </div>
       <div class="w-full h-min grid sm:grid-cols-2 md:grid-cols-4 items-stretch justify-center gap-4 mt-15">
         <div class="flex justify-center">
