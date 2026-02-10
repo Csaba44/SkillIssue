@@ -15,25 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            // Core data first
 
+        $this->call([
             SubjectSeeder::class,
             MagyarIrodalomSeeder::class,
             MatematikaSeeder::class,
             TortenelemSeeder::class,
-
-            // Game system
             GameSystemSeeder::class,
-
-            // Users and progress
-            UsersAndProgressSeeder::class,
-
-            // Matches and practice (depends on users and questions)
-            MatchesAndPracticeSeeder::class,
-
-            // Reports (depends on everything else)
-            ReportsSeeder::class,
         ]);
+
+        if (app()->environment('local')) {
+            $this->call([
+                UsersAndProgressSeeder::class,
+                MatchesAndPracticeSeeder::class,
+                ReportsSeeder::class,
+            ]);
+        }
     }
 }

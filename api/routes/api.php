@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware("guest")->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
     Route::post('/login', [UserAuthController::class, 'login']);
+    Route::get("/test", function () {
+        return response()->json(["message" => "Service healthy"]);
+    });
 });
 
 Route::middleware("auth:sanctum")->group(function () {
