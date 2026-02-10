@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/",
+  baseURL: import.meta.env.PROD
+    ? "http://api.skillissue.hu"
+    : "/",
   timeout: 10000,
   withCredentials: true,
   withXSRFToken: true,

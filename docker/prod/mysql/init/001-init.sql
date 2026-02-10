@@ -1,12 +1,12 @@
 -- database
-CREATE DATABASE IF NOT EXISTS laravelprod
+CREATE DATABASE IF NOT EXISTS skillissue
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
 -- user
 CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'USER_PASSWORD';
 
--- can only modify this database
+-- privileges
 GRANT
   SELECT,
   INSERT,
@@ -14,8 +14,11 @@ GRANT
   DELETE,
   CREATE,
   ALTER,
+  DROP,
   INDEX,
-  DROP
-ON laravelprod.* TO 'appuser'@'%';
+  REFERENCES,
+  CREATE TEMPORARY TABLES,
+  LOCK TABLES
+ON skillissue.* TO 'appuser'@'%';
 
 FLUSH PRIVILEGES;
