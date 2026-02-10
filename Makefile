@@ -6,8 +6,10 @@ COMPOSE_PROD=docker-compose.prod.yml
 
 VERSION ?= latest
 
-BACKEND_IMAGE=skillissue-backend
-FRONTEND_IMAGE=skillissue-frontend
+DOCKER_USER=csabi44
+
+BACKEND_IMAGE=$(DOCKER_USER)/skillissue-backend
+FRONTEND_IMAGE=$(DOCKER_USER)/skillissue-frontend
 
 # -------------------------
 # HELP
@@ -25,20 +27,24 @@ help:
 	@echo "  make dev-down-v     Stop dev stack and REMOVE volumes (DB reset)"
 	@echo ""
 	@echo "BUILD:"
-	@echo "  make build          Build all prod images (:latest)"
-	@echo "  make build VERSION=x.y.z   Build and tag images with version"
+	@echo "  make build                  Build prod images (:latest)"
+	@echo "  make build VERSION=x.y.z    Build and tag images with version"
+	@echo ""
+	@echo "PUBLISH:"
+	@echo "  make push                   Push images to Docker Hub"
+	@echo "  make release VERSION=x.y.z  Build + push images"
 	@echo ""
 	@echo "PROD:"
 	@echo "  make prod-up        Start prod stack (foreground)"
 	@echo "  make prod-up-d      Start prod stack (detached)"
 	@echo "  make prod-down      Stop prod stack"
-	@echo "  make dev-down-v     Stop prod stack and REMOVE volumes (DB reset)"
+	@echo "  make prod-down-v    Stop prod stack and REMOVE volumes (DB reset)"
+	@echo "  make prod-db-seed   Seed production database (USE ONLY ONCE)"
 	@echo ""
 	@echo "UTILS:"
 	@echo "  make logs           Tail prod logs"
 	@echo "  make ps             Show running containers"
 	@echo ""
-
 
 # -------------------------
 # DEV
@@ -65,7 +71,7 @@ dev-down-v:
 	docker compose -f $(COMPOSE_DEV) down -v
 
 # -------------------------
-# BUILD (PROD)
+# BUILD (PROD IMAGES)
 # -------------------------
 .PHONY: build
 build:
@@ -77,8 +83,37 @@ build:
 	docker build -t $(FRONTEND_IMAGE):$(VERSION) --target prod ./frontend
 	docker tag $(FRONTEND_IMAGE):$(VERSION) $(FRONTEND_IMAGE):latest
 
-	@echo "Images built and tagged: $(VERSION), latest"
+	@echo ""
+	@echo "Images built:"
+	@echo "  $(BACKEND_IMAGE):$(VERSION)"
+	@echo "  $(FRONTEND_IMAGE):$(VERSION)"
+	@echo ""
 
+# -------------------------
+# PUSH (DOCKER HUB)
+# -------------------------
+.PHONY: push
+push:
+	@echo "Pushing BACKEND image..."
+	docker push $(BACKEND_IMAGE):$(VERSION)
+	docker push $(BACKEND_IMAGE):latest
+
+	@echo "Pushing FRONTEND image..."
+	docker push $(FRONTEND_IMAGE):$(VERSION)
+	docker push $(FRONTEND_IMAGE):latest
+
+	@echo "Images pushed to Docker Hub."
+
+# -------------------------
+# RELEASE (BUILD + PUSH)
+# -------------------------
+.PHONY: release
+release: build push
+	@echo ""
+	@echo "Release completed:"
+	@echo "  $(BACKEND_IMAGE):$(VERSION)"
+	@echo "  $(FRONTEND_IMAGE):$(VERSION)"
+	@echo ""
 
 # -------------------------
 # PROD
@@ -98,6 +133,10 @@ prod-down:
 .PHONY: prod-down-v
 prod-down-v:
 	docker compose -f $(COMPOSE_PROD) down -v
+
+.PHONY: prod-db-seed
+prod-db-seed:
+	docker compose -f $(COMPOSE_PROD) run --rm artisan db:seed
 
 # -------------------------
 # UTILS
