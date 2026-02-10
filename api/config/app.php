@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'max_rounds' => env('MAX_ROUNDS', 5),
+
+
 ];

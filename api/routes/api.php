@@ -12,6 +12,7 @@ use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserReportController;
 use App\Http\Controllers\VerifyAnswerController;
+use App\Http\Middleware\EnsurePracticeSessionTokenIsValid;
 use App\Http\Middleware\EnsureQuestionTokenIsValid;
 use App\Models\PracticeSession;
 use Illuminate\Support\Facades\Route;
@@ -42,16 +43,16 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::get('/subjects/{subject}/random/{count}', [SubjectController::class, 'random']);
 
     // Questions
-    Route::get('/questions/get-one', SingleQuestionController::class);
+    Route::post('/questions/get-one', SingleQuestionController::class)->middleware(EnsurePracticeSessionTokenIsValid::class);
     Route::apiResource('/questions', QuestionController::class); // Admin only
 
     Route::post('/questions/{question}/answer', [QuestionController::class, 'storeAnswers']); // Admin only;
     Route::delete('/questions/{question}/answer', [QuestionController::class, 'deleteAnswers']); // Admin only;
 
-    Route::post('/questions/correct-answer', CorrectAnswerController::class)->middleware(EnsureQuestionTokenIsValid::class);
+    Route::post('/questions/correct-answer', CorrectAnswerController::class)->middleware([EnsureQuestionTokenIsValid::class, EnsurePracticeSessionTokenIsValid::class]);
 
     // Answers
-    Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware(EnsureQuestionTokenIsValid::class);
+    Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware([EnsureQuestionTokenIsValid::class, EnsurePracticeSessionTokenIsValid::class]);
 
     // Practice sessions
     Route::apiResource('/practice-sessions', PracticeSessionController::class);
