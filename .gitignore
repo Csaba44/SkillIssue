@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-/.env.dev
-=======
 .env.dev
 .env
 .env.staging
->>>>>>> origin/docker
+.env.prod
