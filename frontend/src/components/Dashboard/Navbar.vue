@@ -36,36 +36,56 @@ const eloToNextRank = computed(() => user.value.next_rank.min_elo - user.value.e
 
 <template>
   <div class="w-full flex justify-center items-center">
-    <Widget class="rounded-full! px-10 gap-5 grid grid-rows-2 grid-cols-1 sm:grid-rows-1 sm:grid-cols-2 md:grid-cols-3 items-center justify-center">
-      <div class="text-center sm:text-left">
-        <h1 class="text-xl text-white font-bold">Skill<span class="text-primary">Issue</span></h1>
+    <Widget class="rounded-full! px-10 py-4 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 items-center">
+
+      <div class="text-center md:text-left">
+        <h1 class="text-xl text-white font-bold">
+          Skill<span class="text-primary">Issue</span>
+        </h1>
+      </div>
+
+
+      <div class="hidden md:flex justify-center">
+        <div class="flex flex-col items-center w-80 relative group">
+
+          <p class="text-sm text-white/60">
+            {{ user.rank.name }} • <span class="text-white font-semibold">{{ user.elo }}</span> Elo
+          </p>
+
+
+          <div class="w-full h-2 bg-white/10 rounded-full mt-2 overflow-hidden">
+            <div
+              class="h-full bg-gradient-to-r from-accentPurple via-accentGreen to-accentGreen transition-all duration-500"
+              :style="{
+                width: ((user.elo - user.rank.min_elo) /
+                  (user.next_rank.min_elo - user.rank.min_elo)) * 100 + '%'
+              }"></div>
+          </div>
+
+          <div class="absolute top-10 bg-bgDark text-textWhite text-xs px-3 py-1 rounded-md
+             opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100
+             transition-all duration-200 pointer-events-none whitespace-nowrap">
+            {{ eloToNextRank }} Elo a következő rangig
+          </div>
+
+        </div>
       </div>
 
 
 
-      <div class="hidden md:flex gap-5 justify-end">
-        <div class="flex flex-col cursor-pointer relative group">
-          <p>Elo {{ user.elo }}</p>
+      <div class="flex justify-center md:justify-end items-center gap-6 mt-4 md:mt-0">
 
-          <div class="flex justify-between gap-1">
-            <div v-for="(percentChunk, idx) in eloPercentArr" :key="idx" class="w-1/3 h-1 bg-textWhite rounded-full overflow-hidden">
-              <span class="h-full bg-accentGreen block" :style="{ width: percentChunk + '%' }"></span>
-            </div>
-          </div>
-          
-          <div class="absolute left-1/2 top-9 -translate-x-1/2 bg-bgDark text-textWhite text-xs px-3 py-1 rounded-md opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap">-{{ eloToNextRank }} Elo</div>
-        </div>
-
-        <div>
+        <div class="flex items-center gap-2">
           <span class="text-lg font-medium">{{ user.streak_count }}</span>
           <i class="fa-regular fa-fire text-primary text-lg"></i>
         </div>
 
         <div>
-          <span class="text-lg font-medium">{{ user.name}}</span>
+          <span class="text-lg font-medium">{{ user.name }}</span>
         </div>
-        
+
       </div>
+
     </Widget>
   </div>
 </template>
