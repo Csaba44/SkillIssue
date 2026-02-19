@@ -146,7 +146,7 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
     </section>
 
 
-    <section class="mt-24 grid sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+    <section class="mt-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
 
       <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-yellow-400/20 
               hover:shadow-yellow-400/20 hover:shadow-lg transition-all">
