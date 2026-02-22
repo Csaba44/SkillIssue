@@ -74,8 +74,11 @@ onBeforeMount(async () => {
 <template>
   <ProtectedPageContainer class="relative overflow-hidden" :gameSelectionDisabled="true">
     <div class="w-full h-full flex items-center justify-center">
-      <RankedWidget v-if="!hasEnded" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="5" />
-      <p v-else>A játszma véget ért.</p>
+      <RankedWidget v-if="!hasEnded" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId"
+        :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="5" />
+      <div v-else class="text-center text-3xl font-bold text-accentGreen">
+        A játszma véget ért.
+      </div>
     </div>
   </ProtectedPageContainer>
 </template>
