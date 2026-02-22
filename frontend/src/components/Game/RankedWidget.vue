@@ -23,19 +23,23 @@ const { isAuthenticated, user } = storeToRefs(userStore);
 
 const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
+const isSubmitting = ref(false);
 
 watch(
   () => props.question,
   () => {
     selectedAnswer.value = null;
     countdownEnded.value = false;
+    isSubmitting.value = false;
   },
 );
 const onCountdownEnd = () => {
   if (!isAuthenticated.value) return;
+  if (isSubmitting.value) return;
 
   console.log("IDŐ LEJÁRT!");
   countdownEnded.value = true;
+  isSubmitting.value = true;
   emit("onGetNextQuestion", selectedAnswer.value);
 };
 
@@ -48,9 +52,11 @@ const onAnswerSelect = (id) => {
 
 const getNext = () => {
   console.log(selectedAnswer);
+  if (isSubmitting.value) return; 
 
   if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott kérdés.");
 
+  isSubmitting.value = true;
   emit("onGetNextQuestion", selectedAnswer.value);
 };
 </script>
@@ -71,7 +77,7 @@ const getNext = () => {
       </template>
 
       <div class="w-full flex items-center justify-center">
-        <Button title="Következő" class="mt-3 bg-accentGreen! max-w-50!" @click="getNext" />
+        <Button title="Következő" class="mt-3 bg-accentGreen! max-w-50!" @click="getNext" :disabled="isSubmitting" />
       </div>
     </div>
 
