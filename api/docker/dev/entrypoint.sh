@@ -1,13 +1,10 @@
 #!/bin/sh
-
-if [ ! -f .env ]; then
-  echo ".env missing"
+if [ -z "$APP_KEY" ]; then
+  echo "APP_KEY missing, refusing to start"
   exit 1
 fi
 
-if ! grep -q "^APP_KEY=base64:" .env; then
-  echo "Generating APP_KEY..."
-  php artisan key:generate
-fi
+echo "Running migrations (dev, seeded)..."
+php artisan migrate --seed
 
 exec "$@"
