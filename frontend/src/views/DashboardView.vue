@@ -65,71 +65,134 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden">
-    <!----<i
-      class="fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
-  -->
-      <Navbar/>
+    <i
+      class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+    <Navbar />
 
-    <nav class="z-5 text-textWhite text-lg flex justify-center items-center gap-5 font-medium text-nowrap">
-      <button :disabled="isMatchmaking" @click="setSelected('Ranked')" :class="selectedGameMode == 'Ranked' && 'text-error!'"
-        class="disabled:text-textDisabled cursor-pointer enabled:hover:text-warning enabled:hover:scale-105 transition-all">Ranked</button>
-      <button :disabled="isMatchmaking" @click="setSelected('Solo')" :class="selectedGameMode == 'Solo' && 'text-error!'"
-        class="disabled:text-textDisabled cursor-pointer flex gap-1 items-center justify-center enabled:hover:text-warning enabled:hover:scale-105 transition-all">Solo<span
-          class="hidden sm:flex"> gyakorlás</span></button>
-    </nav>
+    <section class="mt-20 flex flex-col items-center text-center text-textWhite">
+      <h2 class="text-4xl font-bold mb-10">
+        Válassz játékmódot
+      </h2>
+      <div class="flex flex-col sm:flex-row gap-8">
 
-    <Widget class="mt-10">
-      <h1 class="text-2xl font-bold">Hello, {{ user.name }} 👋 Jelenlegi online játékosok száma: <span
-          class="text-accentGreen">1159 fő</span></h1>
-    </Widget>
+        <div @click="setSelected('Ranked')" :class="selectedGameMode === 'Ranked'
+          ? 'border-primary bg-primary/10 scale-105'
+          : 'border-white/10 bg-white/5'" class="cursor-pointer w-60 p-6 rounded-2xl border 
+             backdrop-blur-lg transition-all duration-300 hover:scale-105">
+          <i class="fa-solid fa-trophy text-3xl text-primary mb-4"></i>
+          <h3 class="text-xl font-semibold">Ranked</h3>
+          <p class="text-sm text-white/60 mt-2">
+            Kompetitív rangsorolt meccs
+          </p>
+        </div>
 
-    <div class="w-full mt-10 grid grid-cols-1 grid-rows-[1fr_1fr_5fr] gap-0 lg:gap-25 items-center">
-      <div class="flex justify-center text-sm sm:text-lg">
-        <Button v-if="!isMatchmaking" @click="startMatchmaking()" :disabled="!selectedGameMode"
-          class="text-wrap w- sm:w-min bg-success! text-black! h-min sm:text-nowrap"
-          :title="selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : 'Kérlek válassz játékmódot!'" />
-        <Button v-else @click="stopMatchmaking()" :disabled="selectedGameMode === 'Solo'"
-          class="w-min h-min text-nowrap bg-error!" title="Meccskeresés leállítása" />
+        <div @click="setSelected('Solo')" :class="selectedGameMode === 'Solo'
+          ? 'border-accentGreen bg-accentGreen/10 scale-105'
+          : 'border-white/10 bg-white/5'" class="cursor-pointer w-60 p-6 rounded-2xl border 
+             backdrop-blur-lg transition-all duration-300 hover:scale-105">
+          <i class="fa-solid fa-bullseye text-3xl text-accentGreen mb-4"></i>
+          <h3 class="text-xl font-semibold">Solo</h3>
+          <p class="text-sm text-white/60 mt-2">
+            Egyjátékos gyakorlás
+          </p>
+        </div>
+
       </div>
-      <div class="flex justify-center text-center text-textWhite text-2xl md:text-5xl items-center">
-        <h1 v-if="isMatchmaking && selectedGameMode == 'Solo'">Indítás...</h1>
-        <h1 v-if="isMatchmaking && selectedGameMode == 'Ranked'">Meccskeresés <span
-            class="text-accentGreen">folyamatban</span> <i class="fa-solid fa-clock text-accentGreen"></i> 1:12</h1>
+
+      <div class="mt-12 flex flex-col items-center gap-6">
+
+        <button v-if="!isMatchmaking" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full
+           bg-gradient-to-r from-accentGreen to-success
+           text-black
+           shadow-lg shadow-green-500/30
+           hover:scale-105 transition-all duration-300
+           disabled:opacity-40 disabled:cursor-not-allowed">
+          {{ selectedGameMode
+            ? `Meccskeresés elkezdése [${selectedGameMode}]`
+            : 'Kérlek válassz játékmódot!' }}
+        </button>
+
+        <button v-else @click="stopMatchmaking" :disabled="selectedGameMode === 'Solo'" class="px-14 py-5 text-xl font-bold rounded-full
+           bg-gradient-to-r from-red-500 to-error
+           text-white
+           shadow-lg shadow-red-500/30
+           hover:scale-105 transition-all duration-300
+           disabled:opacity-40 disabled:cursor-not-allowed">
+          Meccskeresés leállítása
+        </button>
+
+        <div class="text-center text-2xl md:text-4xl font-semibold text-white min-h-[40px]">
+
+          <span v-if="isMatchmaking && selectedGameMode === 'Solo'">
+            Indítás...
+          </span>
+
+          <span v-if="isMatchmaking && selectedGameMode === 'Ranked'">
+            Meccskeresés
+            <span class="text-accentGreen">folyamatban</span>
+            <i class="fa-solid fa-clock text-accentGreen ml-2"></i>
+            1:12
+          </span>
+
+        </div>
+
       </div>
-      <div class="w-full h-min grid sm:grid-cols-2 md:grid-cols-4 items-stretch justify-center gap-4 mt-15">
-        <div class="flex justify-center">
-          <Widget title="Level" class="w-80 px-5 flex flex-col justify-between h-full">
-            <h1 class="text-accentYellow text-6xl font-bold">{{ user.level.level }}</h1>
-            <p class="mt-auto">
-              A következő szinthez szükséges: <span class="text-accentYellow">{{ xpToNext }} XP</span>
-            </p>
-          </Widget>
-        </div>
-        <div class="flex justify-center">
-          <Widget title="Elo" class="w-80 px-5 flex flex-col justify-between h-full">
-            <h1 class="text-accentPurple text-6xl font-bold">{{ user.elo }}</h1>
-            <p class="mt-auto">
-              Jelenlegi rangod: <span class="text-accentPurple">{{ user.rank.name }}</span>
-            </p>
-          </Widget>
-        </div>
-        <div class="flex justify-center">
-          <Widget title="Játszott meccsek" class="w-80 px-5 flex flex-col justify-between h-full">
-            <h1 class="text-accentGreen text-6xl font-bold">{{ user.matches_played }}</h1>
-            <p class="mt-auto">
-              TOP <span class="text-accentGreen">{{ user.top_ranking }}% 🫡</span>
-            </p>
-          </Widget>
-        </div>
-        <div class="flex justify-center">
-          <Widget title="Streak" class="w-80 px-5 flex flex-col justify-between h-full">
-            <h1 class="text-primary text-6xl font-bold">{{ user.streak_count }} nap</h1>
-            <p class="mt-auto">
-              <span class="text-primary">{{ user.streak_count }} napja</span> konzisztensen gyakorolsz!
-            </p>
-          </Widget>
-        </div>
+
+
+      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">
+        ● 1159 játékos online
       </div>
-    </div>
+
+    </section>
+
+
+    <section class="mt-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+
+      <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-yellow-400/20 
+              hover:shadow-yellow-400/20 hover:shadow-lg transition-all">
+        <p class="text-white/60">Level</p>
+        <h3 class="text-5xl text-accentYellow font-bold mt-2">
+          {{ user.level.level }}
+        </h3>
+        <p class="text-sm mt-3 text-white/60">
+          {{ xpToNext }} XP a következő szintig
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-purple-400/20 
+              hover:shadow-purple-400/20 hover:shadow-lg transition-all">
+        <p class="text-white/60">Elo</p>
+        <h3 class="text-5xl text-accentPurple font-bold mt-2">
+          {{ user.elo }}
+        </h3>
+        <p class="text-sm mt-3 text-white/60">
+          {{ user.rank.name }}
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-green-400/20 
+              hover:shadow-green-400/20 hover:shadow-lg transition-all">
+        <p class="text-white/60">Meccsek</p>
+        <h3 class="text-5xl text-accentGreen font-bold mt-2">
+          {{ user.matches_played }}
+        </h3>
+        <p class="text-sm mt-3 text-white/60">
+          TOP {{ user.top_ranking }}%
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-orange-400/20 
+              hover:shadow-orange-400/20 hover:shadow-lg transition-all">
+        <p class="text-white/60">Streak</p>
+        <h3 class="text-5xl text-orange-400 font-bold mt-2">
+          {{ user.streak_count }} nap
+        </h3>
+        <p class="text-sm mt-3 text-white/60">
+          Így tovább! 🔥
+        </p>
+      </div>
+
+    </section>
+
   </ProtectedPageContainer>
 </template>

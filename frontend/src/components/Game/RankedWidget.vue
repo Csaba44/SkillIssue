@@ -23,19 +23,23 @@ const { isAuthenticated, user } = storeToRefs(userStore);
 
 const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
+const isSubmitting = ref(false);
 
 watch(
   () => props.question,
   () => {
     selectedAnswer.value = null;
     countdownEnded.value = false;
+    isSubmitting.value = false;
   },
 );
 const onCountdownEnd = () => {
   if (!isAuthenticated.value) return;
+  if (isSubmitting.value) return;
 
   console.log("IDŐ LEJÁRT!");
   countdownEnded.value = true;
+  isSubmitting.value = true;
   emit("onGetNextQuestion", selectedAnswer.value);
 };
 
@@ -48,33 +52,67 @@ const onAnswerSelect = (id) => {
 
 const getNext = () => {
   console.log(selectedAnswer);
+  if (isSubmitting.value) return;
 
   if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott kérdés.");
 
+  isSubmitting.value = true;
   emit("onGetNextQuestion", selectedAnswer.value);
 };
 </script>
 
 <template>
-  <Widget v-if="isAuthenticated" class="w-[90%] md:w-[75%] lg:w-[60%] xl:w-[40%] flex flex-col gap-3 p-8">
-    <h2 class="font-bold text-2xl">
-      <span class="text-textWhite">{{ user.name }}</span> <i class="fa-sharp fa-solid fa-swords text-accentYellow"></i> <span class="text-error">Ellenfél János</span>
-    </h2>
-    <h1 class="text-center mt-3 text-2xl">{{ props.question }}</h1>
-    <Timer :key="currRoundNumber" @countdown-end="onCountdownEnd" />
+  <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%]
+           backdrop-blur-2xl
+           bg-white/5
+           border border-white/10
+           shadow-2xl shadow-black/40
+           rounded-3xl
+           flex flex-col items-center
+           px-10 py-12
+           gap-6
+           text-textWhite">
 
-    <div class="w-full px-10 flex flex-col gap-3">
-      <template v-for="answer in answers">
-        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId">
-          {{ answer.answer }}
-        </AnswerButton>
-      </template>
+    <div class="w-full flex justify-between items-center text-sm text-white/60">
+      <span>{{ user.name }}</span>
+      <span class="font-bold text-error">
+        {{ currRoundNumber }} / {{ totalRounds }} kör
+      </span>
+    </div>
 
-      <div class="w-full flex items-center justify-center">
-        <Button title="Következő" class="mt-3 bg-accentGreen! max-w-50!" @click="getNext" />
+    <div class="flex items-center gap-3 text-lg font-semibold">
+      <span class="text-white">{{ user.name }}</span>
+      <i class="fa-solid fa-swords text-accentYellow text-xl"></i>
+      <span class="text-error">Ellenfél János</span>
+    </div>
+
+    <div class="text-center space-y-4">
+      <h1 class="text-2xl md:text-3xl font-bold leading-snug">
+        {{ props.question }}
+      </h1>
+
+      <div class="flex justify-center">
+        <Timer :key="currRoundNumber" @countdown-end="onCountdownEnd" />
       </div>
     </div>
 
-    <p class="text-xl text-center py-4 font-bold text-error">{{ currRoundNumber }} / {{ totalRounds }} kör</p>
+    <div class="w-full flex flex-col gap-4 mt-4">
+      <template v-for="answer in answers" :key="answer.id">
+        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded"
+          :isSelected="answer.id === selectedAnswer"
+          :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId">
+          {{ answer.answer }}
+        </AnswerButton>
+      </template>
+    </div>
+
+    <Button title="Következő" class="mt-6 bg-gradient-to-r from-accentGreen to-success
+             text-black font-bold
+             rounded-full
+             px-10 py-3
+             shadow-lg shadow-green-500/30
+             hover:scale-105
+             transition-all duration-300" :disabled="isSubmitting" @click="getNext" />
+
   </Widget>
 </template>
