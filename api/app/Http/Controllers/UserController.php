@@ -42,12 +42,14 @@ class UserController extends Controller
             $topPercentRounded = (int) ceil($topPercent);
         }
 
+        $levelAttribute = $user->getLevelAttribute();
+        $rankAttribute = $user->getRankAttribute();
+
         $userData = array_merge($user->toArray(), [
-            'level' => $user->getLevelAttribute(),
-            'rank' => $user->getRankAttribute(),
-            'next_level' => $user->getNextLevelAttribute(),
-            'next_rank' => $user->getNextRankAttribute(),
-            //'game_matches' => $user->gameMatches,
+            'level' => $levelAttribute,
+            'rank' => $rankAttribute,
+            'next_level' => $user->getNextLevelAttribute() ?? $levelAttribute,
+            'next_rank' => $user->getNextRankAttribute() ?? $rankAttribute,
             'top_ranking' => $topPercentRounded,
             'matches_played' => $allMatchesCount,
         ]);
