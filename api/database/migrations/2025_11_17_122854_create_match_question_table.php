@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('user_guess_time_ms')->nullable();
             $table->timestamps();
 
+            $table->softDeletes();
             $table->unique(['game_match_id', 'round_number']);
         });
     }

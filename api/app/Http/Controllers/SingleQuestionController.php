@@ -91,11 +91,14 @@ class SingleQuestionController extends Controller
                 'question_token' => $token,
             ], 200);
         } catch (\Throwable $th) {
+            Log::error('SingleQuestion error', [
+                'exception' => $th,
+            ]);
+
             return response()->json([
                 'success' => false,
-                'question' => [],
-                'error' => 'Nincs elegendő kérdés az adatbázisban.',
-            ]);
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 }

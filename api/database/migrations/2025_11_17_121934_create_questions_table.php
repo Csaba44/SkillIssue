@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('question');
             $table->timestamps();
 
+            $table->softDeletes();
             $table->unique(['subject_id', 'question']);
         });
     }

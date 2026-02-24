@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_correct');
             $table->timestamps();
 
+            $table->softDeletes();
             $table->unique(['question_id', 'answer']);
         });
     }
