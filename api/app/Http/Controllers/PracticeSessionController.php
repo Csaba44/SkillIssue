@@ -38,7 +38,7 @@ class PracticeSessionController extends Controller
             'rounds' => $ROUNDS,
             'session_id' => $practiceSession->id,
             'iat'         => time(),
-            'exp'         => time() + 99999, // 200 seconds
+            'exp'         => time() + 3600,
         ];
 
 

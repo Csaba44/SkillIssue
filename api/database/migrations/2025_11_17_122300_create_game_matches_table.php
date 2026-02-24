@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('xp_before');
             $table->integer('elo_after')->nullable();
             $table->integer('xp_after')->nullable();
-            $table->string('match_uuid', 36)->unique();
+            $table->uuid('match_uuid');
             $table->timestamps();
 
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
+use App\Http\Controllers\internal\GameMatchController as InternalGameMatchController;
 use App\Http\Controllers\PracticeSessionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
@@ -26,6 +27,12 @@ Route::middleware("guest")->group(function () {
     });
 });
 
+/* INTERNAL SERVICE2SERVICE ROUTES */
+Route::prefix('/internal')->group(function () {
+    Route::post('/game-matches', [InternalGameMatchController::class, 'store']);
+});
+
+
 Route::middleware("auth:sanctum")->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
 
@@ -45,6 +52,14 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::apiResource('/subjects', SubjectController::class); // Admin only
     Route::get('/subjects/{subject}/random/{count}', [SubjectController::class, 'random']);
 
+
+
+    // Practice sessions
+    Route::apiResource('/practice-sessions', PracticeSessionController::class);
+
+
+
+
     // Questions
     Route::post('/questions/get-one', SingleQuestionController::class)->middleware(EnsurePracticeSessionTokenIsValid::class);
     Route::apiResource('/questions', QuestionController::class); // Admin only
@@ -56,7 +71,4 @@ Route::middleware("auth:sanctum")->group(function () {
 
     // Answers
     Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware([EnsureQuestionTokenIsValid::class, EnsurePracticeSessionTokenIsValid::class]);
-
-    // Practice sessions
-    Route::apiResource('/practice-sessions', PracticeSessionController::class);
 });
