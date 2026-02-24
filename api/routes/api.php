@@ -15,6 +15,7 @@ use App\Http\Controllers\UserReportController;
 use App\Http\Controllers\VerifyAnswerController;
 use App\Http\Middleware\EnsurePracticeSessionTokenIsValid;
 use App\Http\Middleware\EnsureQuestionTokenIsValid;
+use App\Http\Middleware\EnsureServiceTokenIsValid;
 use App\Models\PracticeSession;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +29,7 @@ Route::middleware("guest")->group(function () {
 });
 
 /* INTERNAL SERVICE2SERVICE ROUTES */
-Route::prefix('/internal')->group(function () {
+Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {
     Route::post('/game-matches', [InternalGameMatchController::class, 'store']);
 });
 
