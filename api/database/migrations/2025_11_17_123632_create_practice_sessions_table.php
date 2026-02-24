@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('xp_before');
             $table->integer('xp_after')->nullable();
             $table->timestamps();
+
+            $table->index('user_id');
         });
     }
 

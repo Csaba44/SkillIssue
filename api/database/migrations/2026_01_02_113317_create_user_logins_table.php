@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->text('ip_hash');
             $table->timestamps();
+            $table->index('user_id');
         });
     }
 

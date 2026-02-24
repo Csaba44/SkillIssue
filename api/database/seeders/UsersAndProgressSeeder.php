@@ -18,7 +18,6 @@ class UsersAndProgressSeeder extends Seeder
                 'elo' => 1200,
                 'xp' => 450,
                 'streak_count' => 3,
-                'last_login' => now(),
             ],
             [
                 'name' => 'Kovács Anna',
@@ -27,7 +26,6 @@ class UsersAndProgressSeeder extends Seeder
                 'elo' => 950,
                 'xp' => 250,
                 'streak_count' => 7,
-                'last_login' => now(),
             ],
             [
                 'name' => 'Nagy Béla',
@@ -36,7 +34,6 @@ class UsersAndProgressSeeder extends Seeder
                 'elo' => 1400,
                 'xp' => 1200,
                 'streak_count' => 1,
-                'last_login' => now(),
             ],
         ];
 
@@ -53,7 +50,6 @@ class UsersAndProgressSeeder extends Seeder
                     'elo'          => $userData['elo'],
                     'xp'           => $userData['xp'],
                     'streak_count' => $userData['streak_count'],
-                    'last_login'   => $userData['last_login'],
                     'updated_at'   => now(),
                     'created_at'   => now(),
                 ]

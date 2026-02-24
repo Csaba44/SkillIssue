@@ -20,6 +20,11 @@ return new class extends Migration
             $table->integer('round_number');
             $table->integer('user_guess_time_ms')->nullable();
             $table->timestamps();
+
+            $table->unique(
+                ['practice_session_id', 'round_number'],
+                'psq_session_round_unique'
+            );
         });
     }
 

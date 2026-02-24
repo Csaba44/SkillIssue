@@ -29,8 +29,6 @@ class User extends Authenticatable
         'elo',
         'xp',
         'is_admin',
-        'last_login_ip_hash',
-        'last_login'
     ];
 
     public function badges(): BelongsToMany
@@ -73,11 +71,13 @@ class User extends Authenticatable
         return $this->HasMany(QuestionReport::class);
     }
 
-    public function gameMatches(): HasMany {
+    public function gameMatches(): HasMany
+    {
         return $this->hasMany(GameMatch::class);
     }
 
-    public function logins(): HasMany {
+    public function logins(): HasMany
+    {
         return $this->hasMany(UserLogin::class);
     }
     /**
@@ -88,8 +88,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'last_login_ip_hash',
-        'last_login'
     ];
 
     /**

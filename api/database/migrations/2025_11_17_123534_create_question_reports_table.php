@@ -20,6 +20,8 @@ return new class extends Migration
             $table->enum('status', ReportStatusEnum::cases())->default(ReportStatusEnum::OPEN);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['user_id', 'question_id']);
         });
     }
 

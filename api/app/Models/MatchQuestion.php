@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MatchQuestion extends Model
 {
+    use SoftDeletes;
     protected $table = 'match_question';
 
     protected $fillable = [

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('ranks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('min_elo');
+            $table->string('name')->unique();
+            $table->integer('min_elo')->unique();
             $table->timestamps();
         });
     }
