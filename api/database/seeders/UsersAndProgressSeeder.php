@@ -5,13 +5,11 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UsersAndProgressSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create test users with different progress
         $users = [
             [
                 'name' => 'Teszt Elek',
@@ -39,28 +37,52 @@ class UsersAndProgressSeeder extends Seeder
                 'xp' => 1200,
                 'streak_count' => 1,
                 'last_login' => now(),
-            ]
+            ],
         ];
 
         foreach ($users as $userData) {
-            $userData['created_at'] = $userData['updated_at'] = now();
-            $userId = DB::table('users')->insertGetId($userData);
 
-            // Assign badges to users
-            $badges = match (true) {
-                $userData['xp'] >= 1000 => [1, 2, 3, 4, 5],
-                $userData['xp'] >= 300 => [1, 2, 4],
+            // USER
+            DB::table('users')->updateOrInsert(
+                [
+                    'email' => $userData['email'],
+                ],
+                [
+                    'name'         => $userData['name'],
+                    'password'     => $userData['password'],
+                    'elo'          => $userData['elo'],
+                    'xp'           => $userData['xp'],
+                    'streak_count' => $userData['streak_count'],
+                    'last_login'   => $userData['last_login'],
+                    'updated_at'   => now(),
+                    'created_at'   => now(),
+                ]
+            );
+
+            $userId = DB::table('users')
+                ->where('email', $userData['email'])
+                ->value('id');
+
+            // BADGES LOGIC
+            $badgeIds = match (true) {
+                $userData['xp'] >= 1000        => [1, 2, 3, 4, 5],
+                $userData['xp'] >= 300         => [1, 2, 4],
                 $userData['streak_count'] >= 5 => [1, 2],
-                default => [1]
+                default                        => [1],
             };
 
-            foreach ($badges as $badgeId) {
-                DB::table('badge_user')->insert([
-                    'user_id' => $userId,
-                    'badge_id' => $badgeId,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
+            // ASSIGN BADGES (PIVOT)
+            foreach ($badgeIds as $badgeId) {
+                DB::table('badge_user')->updateOrInsert(
+                    [
+                        'user_id'  => $userId,
+                        'badge_id' => $badgeId,
+                    ],
+                    [
+                        'updated_at' => now(),
+                        'created_at' => now(),
+                    ]
+                );
             }
         }
     }
