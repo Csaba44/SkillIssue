@@ -80,6 +80,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserLogin::class);
     }
+
+    public function bans(): HasMany
+    {
+        return $this->hasMany(Ban::class);
+    }
+
+    public function getIsBannedAttribute()
+    {
+        $ban = $this->bans()
+            ->where('release_date', '>', now())
+            ->latest('release_date')
+            ->first();
+
+        return $ban ?: false;
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
