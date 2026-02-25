@@ -25,7 +25,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'streak_count',
         'elo',
         'xp',
         'is_admin',

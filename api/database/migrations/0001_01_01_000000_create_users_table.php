@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->integer('streak_count')->default(0);
             $table->integer('elo')->default(1000);
             $table->integer('xp')->default(0);
             $table->boolean('is_admin')->default(false);

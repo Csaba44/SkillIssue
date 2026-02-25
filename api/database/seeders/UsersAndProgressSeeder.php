@@ -17,7 +17,6 @@ class UsersAndProgressSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'elo' => 1200,
                 'xp' => 450,
-                'streak_count' => 3,
             ],
             [
                 'name' => 'Kovács Anna',
@@ -25,7 +24,6 @@ class UsersAndProgressSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'elo' => 950,
                 'xp' => 250,
-                'streak_count' => 7,
             ],
             [
                 'name' => 'Nagy Béla',
@@ -33,7 +31,6 @@ class UsersAndProgressSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'elo' => 1400,
                 'xp' => 1200,
-                'streak_count' => 1,
             ],
         ];
 
@@ -49,7 +46,6 @@ class UsersAndProgressSeeder extends Seeder
                     'password'     => $userData['password'],
                     'elo'          => $userData['elo'],
                     'xp'           => $userData['xp'],
-                    'streak_count' => $userData['streak_count'],
                     'updated_at'   => now(),
                     'created_at'   => now(),
                 ]
@@ -63,7 +59,6 @@ class UsersAndProgressSeeder extends Seeder
             $badgeIds = match (true) {
                 $userData['xp'] >= 1000        => [1, 2, 3, 4, 5],
                 $userData['xp'] >= 300         => [1, 2, 4],
-                $userData['streak_count'] >= 5 => [1, 2],
                 default                        => [1],
             };
 
