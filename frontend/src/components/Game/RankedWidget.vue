@@ -54,7 +54,7 @@ const getNext = () => {
   console.log(selectedAnswer);
   if (isSubmitting.value) return;
 
-  if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott kérdés.");
+  if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott válasz.");
 
   isSubmitting.value = true;
   emit("onGetNextQuestion", selectedAnswer.value);
