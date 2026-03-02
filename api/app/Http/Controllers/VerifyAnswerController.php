@@ -23,9 +23,18 @@ class VerifyAnswerController extends Controller
         $pracSessQuestion = PracticeSessionQuestion::where('practice_session_id', $request->session_id)
             ->where('question_id', $answer->question_id)
             ->firstOrFail();
+
+        $alreadyAnswered = $pracSessQuestion->user_answer_id != NULL;
+
+        if ($alreadyAnswered) {
+            return response()->json([
+                "error" => "Már válaszoltál erre a kérdésre."
+            ], 409);
+        }
+
         $pracSessQuestion->update([
             'user_answer_id' => $answer->id,
-            'user_guess_time_ms' => $request->user_guess_time_ms,
+            'user_guess_time_ms' => 1, // placeholder
         ]);
 
         $awardedXp = -1;

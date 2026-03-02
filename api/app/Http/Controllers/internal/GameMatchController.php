@@ -43,7 +43,6 @@ class GameMatchController extends Controller
                 'match_uuid' => $uuid,
                 'user_a_id' => $userA->id,
                 'user_b_id' => $userB->id,
-                'scope' => 'ranked_match',
                 'iat' => time(),
                 'exp' => time() + 3600,
             ];

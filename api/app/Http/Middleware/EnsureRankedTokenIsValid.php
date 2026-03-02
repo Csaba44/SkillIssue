@@ -27,11 +27,12 @@ class EnsureRankedTokenIsValid
                 $validated["ranked_token"],
                 new Key(config('app.key'), 'HS256')
             );
+
             /*
+            Structure: 
             'match_uuid' => $uuid,
             'user_a_id' => $userA->id,
             'user_b_id' => $userB->id,
-            'scope' => 'ranked_match',
             'iat' => time(),
             'exp' => time() + 3600,
             */
@@ -39,7 +40,12 @@ class EnsureRankedTokenIsValid
             $gameMatches = GameMatch::where('match_uuid', $decoded->match_uuid)->get();
 
 
-            $request->merge(['question_id' => $decoded->question_id]);
+            // Append data to request
+            $request->merge([
+                'match_uuid' => $decoded->match_uuid,
+                'user_a_id' => $decoded->user_a_id,
+                'user_b_id' => $decoded->user_b_id
+            ]);
             return $next($request);
         } catch (\Exception $e) {
             return response()->json([
