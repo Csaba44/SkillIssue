@@ -18,6 +18,7 @@ class MatchQuestion extends Model
         'correct_answer_id',
         'round_number',
         'user_guess_time_ms',
+        'round_expires_at'
     ];
 
     public function gameMatch(): BelongsTo

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GameMatch;
 use App\Models\MatchQuestion;
 use App\Models\Question;
+use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -87,14 +88,16 @@ class SingleQuestionController extends Controller
                 "game_match_id" => $matches[0]->id,
                 "question_id" => $randomQuestion->id,
                 "correct_answer_id" => $correctAnswerId,
-                "round_number" => $currentRound
+                "round_number" => $currentRound,
+                "round_expires_at" => Carbon::now()->addSeconds(45)
             ]);
 
             MatchQuestion::create([
                 "game_match_id" => $matches[1]->id,
                 "question_id" => $randomQuestion->id,
                 "correct_answer_id" => $correctAnswerId,
-                "round_number" => $currentRound
+                "round_number" => $currentRound,
+                "round_expires_at" => Carbon::now()->addSeconds(45)
             ]);
         });
 
