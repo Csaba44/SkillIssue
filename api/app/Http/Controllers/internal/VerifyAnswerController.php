@@ -8,7 +8,6 @@ use App\Models\GameMatch;
 use App\Models\MatchQuestion;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Psr\Http\Message\ResponseFactoryInterface;
 
 class VerifyAnswerController extends Controller
 {
@@ -19,6 +18,9 @@ class VerifyAnswerController extends Controller
         $validated = $request->validate([
             "answering_user_id" => "required|integer|exists:users,id"
         ]);
+
+        $userA = User::findOrFail($request->user_a_id);
+        $userB = User::findOrFail($request->user_b_id);
 
         $this->authorizeUser($validated['answering_user_id'], $request);
 
@@ -40,7 +42,7 @@ class VerifyAnswerController extends Controller
 
         $finishedForUser = $this->isUserFinished($session->id);
         $matches = GameMatch::findPairByUuid($request->match_uuid);
-        $allFinished = $this->areAllUsersFinished($matches);
+        $allFinished = $this->isGameFinished($matches, $MAX_ROUNDS);
 
         $response = [
             'success' => true,
@@ -55,11 +57,12 @@ class VerifyAnswerController extends Controller
         }
 
         if ($allFinished) {
-            $result = $this->determineMatchResult($matches);
+            $result = $this->determineMatchResult($matches, $userA, $userB);
 
             $response['game_finished'] = true;
             $response['scores'] = $result['scores'];
             $response['winner_id'] = $result['winner_id'];
+            $response['elo_changes'] = $result['elo_changes'];
         }
 
         return response()->json($response);
@@ -122,7 +125,7 @@ class VerifyAnswerController extends Controller
             ->count();
     }
 
-    private function determineMatchResult($matches): array
+    private function determineMatchResult($matches, User $userA, User $userB): array
     {
         $scores = [];
 
@@ -130,19 +133,58 @@ class VerifyAnswerController extends Controller
             $scores[$match->user_id] = $this->calculateScore($match->id);
         }
 
-        $userIds = array_keys($scores);
+        $scoreA = $scores[$userA->id];
+        $scoreB = $scores[$userB->id];
 
-        if ($scores[$userIds[0]] > $scores[$userIds[1]]) {
-            $winnerId = $userIds[0];
-        } elseif ($scores[$userIds[1]] > $scores[$userIds[0]]) {
-            $winnerId = $userIds[1];
+        if ($scoreA > $scoreB) {
+            $winnerId = $userA->id;
+            $scoreResultA = 1;
+        } elseif ($scoreB > $scoreA) {
+            $winnerId = $userB->id;
+            $scoreResultA = 0;
         } else {
             $winnerId = null;
+            $scoreResultA = 0.5;
         }
+
+        // elo change
+        $eloChangeA = $this->calculateEloChange($userA->elo, $userB->elo, $scoreResultA);
+        $eloChangeB = $this->calculateEloChange($userB->elo, $userA->elo, 1 - $scoreResultA);
+
+        // clamp -35..35
+        $eloChangeA = max(-35, min(35, $eloChangeA));
+        $eloChangeB = max(-35, min(35, $eloChangeB));
+
+        // minimum win gain
+        if ($winnerId !== null) {
+
+            if ($eloChangeA > 0) {
+                $eloChangeA = max(10, $eloChangeA);
+            }
+
+            if ($eloChangeB > 0) {
+                $eloChangeB = max(10, $eloChangeB);
+            }
+        }
+
+        // update elo
+        $userA->elo += $eloChangeA;
+        $userB->elo += $eloChangeB;
+
+        // XP (10 per correct answer)
+        $userA->xp += $scoreA * 10;
+        $userB->xp += $scoreB * 10;
+
+        $userA->save();
+        $userB->save();
 
         return [
             'scores' => $scores,
-            'winner_id' => $winnerId
+            'winner_id' => $winnerId,
+            'elo_changes' => [
+                $userA->id => $eloChangeA,
+                $userB->id => $eloChangeB
+            ]
         ];
     }
 
@@ -151,5 +193,38 @@ class VerifyAnswerController extends Controller
         if ($question->round_expires_at <= now()) {
             abort(410, "A kérdés ideje lejárt.");
         }
+    }
+
+    private function calculateEloChange(int $ratingA, int $ratingB, float $scoreA, int $k = 30): int
+    {
+        $expectedA = 1 / (1 + pow(10, ($ratingB - $ratingA) / 400));
+
+        $change = $k * ($scoreA - $expectedA);
+
+        return (int) round($change);
+    }
+
+    private function isGameFinished($matches, int $maxRounds): bool
+    {
+        foreach ($matches as $match) {
+
+            $lastRound = MatchQuestion::where('game_match_id', $match->id)
+                ->max('round_number');
+
+            if ($lastRound < $maxRounds) {
+                return false;
+            }
+
+            $unanswered = MatchQuestion::where('game_match_id', $match->id)
+                ->where('round_number', $maxRounds)
+                ->whereNull('user_answer_id')
+                ->exists();
+
+            if ($unanswered) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
