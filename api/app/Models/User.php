@@ -81,7 +81,6 @@ class User extends Authenticatable
         return $this->hasMany(UserLogin::class);
     }
 
-<<<<<<< HEAD
     public function getStreakAttribute()
     {
         $dates = $this->gameMatches->pluck('created_at')
@@ -103,7 +102,6 @@ class User extends Authenticatable
 
         return $streak;
     }
-=======
     public function bans(): HasMany
     {
         return $this->hasMany(Ban::class);
@@ -119,7 +117,6 @@ class User extends Authenticatable
         return $ban ?: false;
     }
 
->>>>>>> refactor/game-routes
     /**
      * The attributes that should be hidden for serialization.
      *
