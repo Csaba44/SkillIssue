@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_id')->constrained();
-            $table->text('question');
+            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->string('question');
             $table->timestamps();
+
+            $table->softDeletes();
+            $table->unique(['subject_id', 'question']);
         });
     }
 

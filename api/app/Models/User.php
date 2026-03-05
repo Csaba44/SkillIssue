@@ -28,7 +28,7 @@ class User extends Authenticatable
         'password',
         'elo',
         'xp',
-        'is_admin'
+        'is_admin',
     ];
 
     public function badges(): BelongsToMany
@@ -81,6 +81,7 @@ class User extends Authenticatable
         return $this->hasMany(UserLogin::class);
     }
 
+<<<<<<< HEAD
     public function getStreakAttribute()
     {
         $dates = $this->gameMatches->pluck('created_at')
@@ -102,6 +103,23 @@ class User extends Authenticatable
 
         return $streak;
     }
+=======
+    public function bans(): HasMany
+    {
+        return $this->hasMany(Ban::class);
+    }
+
+    public function getIsBannedAttribute()
+    {
+        $ban = $this->bans()
+            ->where('release_date', '>', now())
+            ->latest('release_date')
+            ->first();
+
+        return $ban ?: false;
+    }
+
+>>>>>>> refactor/game-routes
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -110,8 +128,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'last_login_ip_hash',
-        'last_login'
     ];
 
     /**

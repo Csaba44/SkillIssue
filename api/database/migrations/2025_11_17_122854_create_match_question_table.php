@@ -18,8 +18,12 @@ return new class extends Migration
             $table->foreignId('user_answer_id')->nullable()->constrained('answers', 'id');
             $table->foreignId('correct_answer_id')->constrained('answers', 'id');
             $table->integer('round_number');
+            $table->dateTime('round_expires_at');
             $table->integer('user_guess_time_ms')->nullable();
             $table->timestamps();
+
+            $table->softDeletes();
+            $table->unique(['game_match_id', 'round_number']);
         });
     }
 

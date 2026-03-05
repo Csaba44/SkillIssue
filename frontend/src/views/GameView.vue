@@ -42,6 +42,7 @@ const getNextQuestion = async (selectedAnswerId) => {
 
     // Get next question
     const res = await api.post("/api/questions/get-one", { game_token: route.params.gameToken });
+    console.log(res);
 
     if (res.status !== 200) {
       return toast.error("Ismeretlen hiba történt a kérdés lekérése során.");
@@ -74,11 +75,8 @@ onBeforeMount(async () => {
 <template>
   <ProtectedPageContainer class="relative overflow-hidden" :gameSelectionDisabled="true">
     <div class="w-full h-full flex items-center justify-center">
-      <RankedWidget v-if="!hasEnded" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId"
-        :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="5" />
-      <div v-else class="text-center text-3xl font-bold text-accentGreen">
-        A játszma véget ért.
-      </div>
+      <RankedWidget v-if="!hasEnded" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="5" />
+      <div v-else class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
     </div>
   </ProtectedPageContainer>
 </template>

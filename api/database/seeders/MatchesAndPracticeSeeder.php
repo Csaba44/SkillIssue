@@ -62,6 +62,7 @@ class MatchesAndPracticeSeeder extends Seeder
                     'correct_answer_id' => $correctAnswer->id,
                     'round_number' => $round,
                     'user_guess_time_ms' => rand(5000, 15000),
+                    'round_expires_at' => now(),
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);

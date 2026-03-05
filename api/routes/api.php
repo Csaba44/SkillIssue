@@ -3,6 +3,9 @@
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
+use App\Http\Controllers\internal\GameMatchController as InternalGameMatchController;
+use App\Http\Controllers\internal\SingleQuestionController as InternalSingleQuestionController;
+use App\Http\Controllers\internal\VerifyAnswerController as InternalVerifyAnswerController;
 use App\Http\Controllers\PracticeSessionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
@@ -14,6 +17,9 @@ use App\Http\Controllers\UserReportController;
 use App\Http\Controllers\VerifyAnswerController;
 use App\Http\Middleware\EnsurePracticeSessionTokenIsValid;
 use App\Http\Middleware\EnsureQuestionTokenIsValid;
+use App\Http\Middleware\EnsureRankedQuestionTokenIsValid;
+use App\Http\Middleware\EnsureRankedTokenIsValid;
+use App\Http\Middleware\EnsureServiceTokenIsValid;
 use App\Models\PracticeSession;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +31,14 @@ Route::middleware("guest")->group(function () {
         return response()->json(["message" => "Service healthy"]);
     });
 });
+
+/* INTERNAL SERVICE2SERVICE ROUTES */
+Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {
+    Route::post('/game-matches', [InternalGameMatchController::class, 'store']);
+    Route::post('/questions/get-one', InternalSingleQuestionController::class)->middleware(EnsureRankedTokenIsValid::class);
+    Route::post('/answers/verify/{answer}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
+});
+
 
 Route::middleware("auth:sanctum")->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
@@ -45,6 +59,14 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::apiResource('/subjects', SubjectController::class); // Admin only
     Route::get('/subjects/{subject}/random/{count}', [SubjectController::class, 'random']);
 
+
+
+    // Practice sessions
+    Route::apiResource('/practice-sessions', PracticeSessionController::class);
+
+
+
+
     // Questions
     Route::post('/questions/get-one', SingleQuestionController::class)->middleware(EnsurePracticeSessionTokenIsValid::class);
     Route::apiResource('/questions', QuestionController::class); // Admin only
@@ -56,7 +78,4 @@ Route::middleware("auth:sanctum")->group(function () {
 
     // Answers
     Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware([EnsureQuestionTokenIsValid::class, EnsurePracticeSessionTokenIsValid::class]);
-
-    // Practice sessions
-    Route::apiResource('/practice-sessions', PracticeSessionController::class);
 });

@@ -20,20 +20,39 @@ class GameMatch extends Model
         "match_uuid",
     ];
 
-    public function reports(): HasMany {
+    public function reports(): HasMany
+    {
         return $this->hasMany(UserReport::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, "user_id");
     }
 
-    public function opponent(): BelongsTo {
+    public function opponent(): BelongsTo
+    {
         return $this->belongsTo(User::class, "opponent_id");
     }
 
     public function questions(): HasMany
     {
         return $this->hasMany(MatchQuestion::class, 'game_match_id');
+    }
+
+    public static function findPairByUuid(string $uuid)
+    {
+        $matches = self::where('match_uuid', $uuid)->get();
+
+        if ($matches->count() !== 2) {
+            throw new \RuntimeException("Invalid match pair for uuid: {$uuid}");
+        }
+
+        return $matches;
+    }
+
+    public function scopeByUuid($query, string $uuid)
+    {
+        return $query->where('match_uuid', $uuid);
     }
 }

@@ -43,10 +43,6 @@ class UserAuthController extends Controller
             $request->session()->regenerate();
             $user = $request->user();
 
-            $user->update([
-                'last_login' => now(),
-            ]);
-
             $ipHash = hash_hmac(
                 'sha256',
                 request()->ip(),

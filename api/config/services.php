@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'internal' => [
+        'token' => env('SERVICE_TOKEN'),
+    ],
+
 ];

@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Question extends Model
 {
+    use SoftDeletes;
+
+
     protected $fillable = [
         "subject_id",
         "question"
@@ -40,7 +44,8 @@ class Question extends Model
         )->withPivot('user_answer_id', 'correct_answer_id', 'round_number', 'user_guess_time_ms');
     }
 
-    public function questionReports(): HasMany {
+    public function questionReports(): HasMany
+    {
         return $this->hasMany(QuestionReport::class);
     }
 }

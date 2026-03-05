@@ -20,10 +20,16 @@ class GameSystemSeeder extends Seeder
         ];
 
         foreach ($levels as $level) {
-            DB::table('levels')->insert(array_merge($level, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
+            DB::table('levels')->updateOrInsert(
+                [
+                    'level' => $level['level'],
+                ],
+                [
+                    'min_xp' => $level['min_xp'],
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
         }
 
         // Create ranks (like Rainbow Six Siege)
@@ -38,10 +44,16 @@ class GameSystemSeeder extends Seeder
         ];
 
         foreach ($ranks as $rank) {
-            DB::table('ranks')->insert(array_merge($rank, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
+            DB::table('ranks')->updateOrInsert(
+                [
+                    'name' => $rank['name'],
+                ],
+                [
+                    'min_elo' => $rank['min_elo'],
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
         }
 
         // Create badges (achievements)
@@ -54,10 +66,16 @@ class GameSystemSeeder extends Seeder
         ];
 
         foreach ($badges as $badge) {
-            DB::table('badges')->insert(array_merge($badge, [
-                'created_at' => now(),
-                'updated_at' => now()
-            ]));
+            DB::table('badges')->updateOrInsert(
+                [
+                    'name' => $badge['name'],
+                ],
+                [
+                    'description' => $badge['description'],
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
         }
     }
 }
