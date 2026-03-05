@@ -50,6 +50,7 @@ class UserController extends Controller
             //'game_matches' => $user->gameMatches,
             'top_ranking' => $topPercentRounded,
             'matches_played' => $allMatchesCount,
+            'streak_count'=>$user->getStreakAttribute()
         ]);
         return response()->json($userData);
     }

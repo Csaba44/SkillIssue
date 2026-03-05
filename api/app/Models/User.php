@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Ramsey\Uuid\Type\Integer;
 
 class User extends Authenticatable
 {
@@ -25,12 +26,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'streak_count',
         'elo',
         'xp',
-        'is_admin',
-        'last_login_ip_hash',
-        'last_login'
+        'is_admin'
     ];
 
     public function badges(): BelongsToMany
@@ -73,12 +71,36 @@ class User extends Authenticatable
         return $this->HasMany(QuestionReport::class);
     }
 
-    public function gameMatches(): HasMany {
+    public function gameMatches(): HasMany
+    {
         return $this->hasMany(GameMatch::class);
     }
 
-    public function logins(): HasMany {
+    public function logins(): HasMany
+    {
         return $this->hasMany(UserLogin::class);
+    }
+
+    public function getStreakAttribute()
+    {
+        $dates = $this->gameMatches->pluck('created_at')
+            ->concat($this->practiceSessions->pluck('created_at'))
+            ->map->format('Y-m-d')
+            ->unique();
+
+        $streak = 0;
+        $checkDate = now()->format('Y-m-d');
+
+        if (!$dates->contains($checkDate)) {
+            $checkDate = now()->subDay()->format('Y-m-d');
+        }
+
+        while ($dates->contains($checkDate)) {
+            $streak++;
+            $checkDate = \Carbon\Carbon::parse($checkDate)->subDay()->format('Y-m-d');
+        }
+
+        return $streak;
     }
     /**
      * The attributes that should be hidden for serialization.
