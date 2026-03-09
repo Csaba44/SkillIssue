@@ -8,25 +8,17 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 
-########################
-# BUILD STAGE
-########################
-FROM base AS build
-RUN npm run build
 
 ########################
 # DEV STAGE
 ########################
 FROM base AS dev
-EXPOSE 5173
+EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
 ########################
-# PROD STAGE (nginx)
+# PROD STAGE
 ########################
-FROM nginx:alpine AS prod
+FROM base AS prod
 
-COPY --from=build /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "run", "start"]

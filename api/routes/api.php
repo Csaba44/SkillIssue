@@ -23,14 +23,17 @@ use App\Http\Middleware\EnsureServiceTokenIsValid;
 use App\Models\PracticeSession;
 use Illuminate\Support\Facades\Route;
 
+// Healthcheck
+Route::get("/health", function () {
+    return response()->json(["message" => "Service healthy"]);
+});
 
 Route::middleware("guest")->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
     Route::post('/login', [UserAuthController::class, 'login']);
-    Route::get("/test", function () {
-        return response()->json(["message" => "Service healthy"]);
-    });
 });
+
+
 
 /* INTERNAL SERVICE2SERVICE ROUTES */
 Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {

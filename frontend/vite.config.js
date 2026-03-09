@@ -10,6 +10,12 @@ export default defineConfig({
       "/api": {
         target: "http://nginx",
         changeOrigin: true,
+      },
+      "/socket.io": {
+        target: "http://websocket:3000",
+        changeOrigin: true,
+        secure: false,
+        ws: true,
       }
     }
   },

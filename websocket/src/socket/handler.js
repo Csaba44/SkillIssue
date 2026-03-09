@@ -1,5 +1,8 @@
-import { testService } from "../services/TestService.js";
+import { io } from "../server.js";
+
 
 export function handleConnection(socket) {
-  socket.on("test", testService);
+  socket.on("test", (data) => {
+    io.emit("test", { message: "pong", received: data });
+  });
 }

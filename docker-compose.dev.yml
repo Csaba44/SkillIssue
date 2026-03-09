@@ -74,6 +74,21 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+  websocket:
+    container_name: skillissue_websocket
+    build:
+      context: ./websocket
+      target: dev
+    env_file:
+      - .env.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./websocket:/app
+      - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
 
 volumes:
   mysql_data_skillissue:

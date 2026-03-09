@@ -10,6 +10,7 @@ DOCKER_USER=csabi44
 
 BACKEND_IMAGE=$(DOCKER_USER)/skillissue-backend
 FRONTEND_IMAGE=$(DOCKER_USER)/skillissue-frontend
+WEBSOCKET_IMAGE=$(DOCKER_USER)/skillissue-websocket
 
 # -------------------------
 # HELP
@@ -40,6 +41,7 @@ help:
 	@echo "  make prod-down      Stop prod stack"
 	@echo "  make prod-down-v    Stop prod stack and REMOVE volumes (DB reset)"
 	@echo "  make prod-db-seed   Seed production database (USE ONLY ONCE)"
+	@echo "  make prod-pull      Pull latest images for prod stack"
 	@echo ""
 	@echo "UTILS:"
 	@echo "  make logs           Tail prod logs"
@@ -83,10 +85,15 @@ build:
 	docker build -t $(FRONTEND_IMAGE):$(VERSION) --target prod ./frontend
 	docker tag $(FRONTEND_IMAGE):$(VERSION) $(FRONTEND_IMAGE):latest
 
+	@echo "Building WEBSOCKET image ($(VERSION))..."
+	docker build -t $(WEBSOCKET_IMAGE):$(VERSION) --target prod ./websocket
+	docker tag $(WEBSOCKET_IMAGE):$(VERSION) $(WEBSOCKET_IMAGE):latest
+
 	@echo ""
 	@echo "Images built:"
 	@echo "  $(BACKEND_IMAGE):$(VERSION)"
 	@echo "  $(FRONTEND_IMAGE):$(VERSION)"
+	@echo "  $(WEBSOCKET_IMAGE):$(VERSION)"
 	@echo ""
 
 # -------------------------
@@ -102,6 +109,10 @@ push:
 	docker push $(FRONTEND_IMAGE):$(VERSION)
 	docker push $(FRONTEND_IMAGE):latest
 
+	@echo "Pushing WEBSOCKET image..."
+	docker push $(WEBSOCKET_IMAGE):$(VERSION)
+	docker push $(WEBSOCKET_IMAGE):latest
+
 	@echo "Images pushed to Docker Hub."
 
 # -------------------------
@@ -113,6 +124,7 @@ release: build push
 	@echo "Release completed:"
 	@echo "  $(BACKEND_IMAGE):$(VERSION)"
 	@echo "  $(FRONTEND_IMAGE):$(VERSION)"
+	@echo "  $(WEBSOCKET_IMAGE):$(VERSION)"
 	@echo ""
 
 # -------------------------
@@ -137,6 +149,10 @@ prod-down-v:
 .PHONY: prod-db-seed
 prod-db-seed:
 	docker compose -f $(COMPOSE_PROD) run --rm artisan db:seed
+
+.PHONY: prod-pull
+prod-pull:
+	docker compose -f $(COMPOSE_PROD) pull
 
 # -------------------------
 # UTILS

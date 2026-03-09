@@ -10,6 +10,7 @@ const GameView = () => import("../views/GameView.vue");
 const RegisterView = () => import("../views/RegisterView.vue");
 const LoginView = () => import("../views/LoginView.vue");
 const AdminView = () => import("../views/AdminView.vue");
+const HealthView = () => import("../views/HealthView.vue");
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -18,6 +19,9 @@ const routes = [
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
   { path: "/game/solo/:gameToken", name: "game", component: GameView, meta: { requiresAuth: true } },
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
+
+  // Test connection with backend services
+  { path: "/health", name: "health", component: HealthView, meta: { requiresAuth: true, requiresAdmin: true } },
 ];
 
 const router = createRouter({
