@@ -133,7 +133,7 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
 
       <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-orange-400/20 hover:shadow-orange-400/20 hover:shadow-lg transition-all">
         <p class="text-white/60">Streak</p>
-        <h3 class="text-5xl text-orange-400 font-bold mt-2">? nap</h3>
+        <h3 class="text-5xl text-orange-400 font-bold mt-2">{{ user.streak_count }} nap</h3>
         <p class="text-sm mt-3 text-white/60">Így tovább! 🔥</p>
       </div>
     </section>

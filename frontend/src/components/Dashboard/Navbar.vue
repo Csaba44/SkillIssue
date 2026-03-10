@@ -62,7 +62,7 @@ const eloToNextRank = computed(() => user.value.next_rank.min_elo - user.value.e
 
       <div class="flex justify-center md:justify-end items-center gap-6 mt-4 md:mt-0">
         <div class="flex items-center gap-2">
-          <span class="text-lg font-medium">?</span>
+          <span class="text-lg font-medium">{{ user.streak_count }}</span>
           <i class="fa-regular fa-fire text-primary text-lg"></i>
         </div>
 
