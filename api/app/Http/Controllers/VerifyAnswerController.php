@@ -32,9 +32,13 @@ class VerifyAnswerController extends Controller
             ], 409);
         }
 
+        $createdAtTime = $pracSessQuestion->created_at;
+        $now = now();
+        $guessTime = abs($now->diffInMilliseconds($createdAtTime));
+
         $pracSessQuestion->update([
             'user_answer_id' => $answer->id,
-            'user_guess_time_ms' => 1, // placeholder
+            'user_guess_time_ms' => $guessTime
         ]);
 
         $awardedXp = -1;
