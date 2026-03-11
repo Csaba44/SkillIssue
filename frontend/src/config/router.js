@@ -3,6 +3,7 @@ import { useUserStore } from "../stores/UserStore";
 
 // Eager loaded routes
 import HomeView from "../views/HomeView.vue";
+import ProfileView from "../views/ProfileView.vue";
 
 // Lazy loaded routes
 const DashboardView = () => import("../views/DashboardView.vue");
@@ -19,6 +20,7 @@ const routes = [
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
   { path: "/game/solo/:gameToken", name: "game", component: GameView, meta: { requiresAuth: true } },
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: "/profiles/:id", name: "profile", component: ProfileView },
 
   // Test connection with backend services
   { path: "/health", name: "health", component: HealthView, meta: { requiresAuth: true, requiresAdmin: true } },
