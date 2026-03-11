@@ -144,6 +144,21 @@ class User extends Authenticatable
         return (int) ceil($topPercent);
     }
 
+    public function getWinStreakAttribute()
+    {
+        $matches = $this->gameMatches()->orderBy('created_at', 'desc')->get();
+        $streak = 0;
+
+        foreach ($matches as $match) {
+            if ($match->elo_after > $match->elo_before) {
+                $streak++;
+            } else {
+                break;
+            }
+        }
+        return 5;
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

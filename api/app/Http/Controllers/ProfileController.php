@@ -44,6 +44,7 @@ class ProfileController extends Controller
             'top_ranking' => $user->getPlayerTopPercentileAttribute(),
             'matches_played' => $user->getPlayedMatchesCountAttribute(),
             'streak_count' => $user->getStreakAttribute(),
+            'winstreak_count'=>$user->getWinStreakAttribute(),
             'game_matches' => $matches
         ]);
 
