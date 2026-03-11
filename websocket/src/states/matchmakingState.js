@@ -1,4 +1,5 @@
 export const gameState = {
   matchmakingQueue: new Map(),
-  inGame: new Map()
+  pendingGames: new Map(),
+  ongoingGames: new Map()
 }

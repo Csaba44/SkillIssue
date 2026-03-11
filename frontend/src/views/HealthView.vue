@@ -17,7 +17,6 @@ onMounted(async () => {
 async function checkAPI() {
   try {
     const res = await api.get("/api/health");
-    console.log(res);
 
     if (res.status === 200) {
       apiStatus.value = "healthy";

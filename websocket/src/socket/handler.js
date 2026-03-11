@@ -17,6 +17,10 @@ export function handleConnection(socket) {
     matchmakingController.leaveMatchmaking(socket);
   });
 
+  socket.on("matchmaking:confirm", (tmpUuid) => {
+    matchmakingController.confirmMatchmaking(socket, tmpUuid);
+  });
+
   socket.on("disconnect", () => {
     matchmakingController.leaveMatchmaking(socket);
   });

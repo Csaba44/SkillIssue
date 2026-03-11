@@ -4,19 +4,24 @@ import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer
 import Widget from "../components/Generic/Widget.vue";
 import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import router from "../config/router";
 import { useMatchmakingStore } from "../stores/MatchmakingStore";
+import MatchConfirmPopup from "../components/Dashboard/MatchConfirmPopup.vue";
 
 const mm = useMatchmakingStore();
-const { timer } = storeToRefs(mm);
+//const { matchToConfirm } = storeToRefs(matchToConfirm);
 
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const selectedGameMode = ref(false);
+
+onUnmounted(() => {
+  mm.stop();
+});
 
 const waitTime = computed(() => {
   return {
@@ -147,5 +152,7 @@ onBeforeMount(() => {
         <p class="text-sm mt-3 text-white/60">Így tovább! 🔥</p>
       </div>
     </section>
+
+    <MatchConfirmPopup v-if="mm.matchToConfirm" />
   </ProtectedPageContainer>
 </template>

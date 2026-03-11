@@ -20,8 +20,6 @@ const props = defineProps({
   },
   autocomplete: String,
 });
-
-console.log(props.accentColor);
 </script>
 
 <template>

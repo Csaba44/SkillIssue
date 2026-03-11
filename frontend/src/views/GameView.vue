@@ -21,13 +21,11 @@ const getNextQuestion = async (selectedAnswerId) => {
   try {
     // Submit previous if there was a selected answer
     if (selectedAnswerId) {
-      console.log("Kiválaszottt: ", selectedAnswerId);
       const res = await api.post(`/api/answers/verify/${selectedAnswerId}`, {
         question_token: questionToken.value,
         game_token: route.params.gameToken,
         user_guess_time_ms: 1000,
       });
-      console.log(res);
 
       if (res.status !== 200) return;
 
@@ -42,7 +40,6 @@ const getNextQuestion = async (selectedAnswerId) => {
 
     // Get next question
     const res = await api.post("/api/questions/get-one", { game_token: route.params.gameToken });
-    console.log(res);
 
     if (res.status !== 200) {
       return toast.error("Ismeretlen hiba történt a kérdés lekérése során.");

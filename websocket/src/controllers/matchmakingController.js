@@ -1,6 +1,7 @@
 import { io } from "../server.js";
 import { matchmake } from "../services/matchmake.js";
 import { gameState } from "../states/matchmakingState.js";
+import crypto from "crypto";
 
 
 export function joinMatchmaking(socket) {
@@ -21,7 +22,7 @@ export function joinMatchmaking(socket) {
     lastHeartbeat: Date.now()
   });
 
-  console.log("matchmaking joined, user:", socket.user.name);
+  console.log("[MATCHMAKING UPDATE] matchmaking joined, user:", socket.user.name);
 
   io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 }
@@ -34,7 +35,7 @@ export function leaveMatchmaking(socket) {
 
   gameState.matchmakingQueue.delete(socket.id);
 
-  console.log("matchmaking left, user:", socket.user.name);
+  console.log("[MATCHMAKING UPDATE] matchmaking left, user:", socket.user.name);
 
   io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 
@@ -53,24 +54,59 @@ function getQueuePlayers() {
 
 export function runMatchmaking() {
   const players = getQueuePlayers();
-  console.log("[QUEUE LENGTH] " + players.length + " players");
-  console.log("[IN GAME LENGTH] " + gameState.inGame.size + " players");
+  console.log("[QUEUE COUNT] " + players.length + " players");
+  console.log("[PENDING GAMES CONT] " + gameState.pendingGames.size + " players");
+  console.log("[ONGOING GAMES COUNT] " + gameState.ongoingGames.size + " players");
   const pairs = matchmake(players);
 
   pairs.forEach(pair => {
+    const tmpUuid = "tmp_" + crypto.randomUUID();
+
+    const pendingMatch = {
+      tmpUuid,
+      playerA: { ...pair[0], confirmed: false },
+      playerB: { ...pair[1], confirmed: false },
+      createdAt: Date.now(),
+    };
+    gameState.pendingGames.set(tmpUuid, pendingMatch);
+
+
     pair.forEach(player => {
       const socketId = player.socketId;
-      // TODO: send confirmation popup, if accepted, put them to separate room
 
-      //gameState.matchmakingQueue.delete(socketId);
-      //gameState.inGame.set(socketId, player);
+      io.to(socketId).emit("matchmaking:confirmation-needed", tmpUuid);
+      gameState.matchmakingQueue.delete(socketId);
     });
+
   });
 
   io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 }
 
+function confirmMatchmaking(socket, tmpUuid) {
+  const pendingMatch = gameState.pendingGames.get(tmpUuid);
+
+  let confirmingPlayer = null;
+
+  if (socket.user.id === pendingMatch.playerA.userId) {
+    confirmingPlayer = "playerA";
+  } else if (socket.user.id === pendingMatch.playerB.userId) {
+    confirmingPlayer = "playerB";
+  }
+
+  pendingMatch[confirmingPlayer].confirmed = true;
+
+  const bothConfirmed = pendingMatch.playerA.confirmed && pendingMatch.playerB.confirmed;
+
+  console.log("[PLAYER PAIR FOUND] " + (bothConfirmed ? 'ALL PLAYERS' : confirmingPlayer) + " accepted the game");
+
+  if (bothConfirmed) {
+    // TODO: put game in ongoing, create match via API.
+  }
+}
+
 export const matchmakingController = {
   leaveMatchmaking,
-  joinMatchmaking
+  joinMatchmaking,
+  confirmMatchmaking
 }

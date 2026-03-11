@@ -2,6 +2,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { userAuthMiddleware } from "./middleware/UserAuthMiddleware.js";
 import { runMatchmaking } from "./controllers/matchmakingController.js";
+import { cleanPendingMatches } from "./services/cleanPendingMatches.js";
 
 const MM_TICKS = 2000; // Run matchmaking every 2 seconds
 
@@ -24,6 +25,7 @@ io.use(userAuthMiddleware);
 
 setInterval(() => {
   runMatchmaking();
+  cleanPendingMatches();
 }, MM_TICKS);
 
 httpServer.listen(3000, "0.0.0.0", () => {

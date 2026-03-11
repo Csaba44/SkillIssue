@@ -9,7 +9,9 @@ export const useMatchmakingStore = defineStore("matchmaking", {
     playersInQueue: 0,
     startedAt: null,
     timer: 0,
-    intervalId: null
+    intervalId: null,
+    matchToConfirm: null,
+    isConfirmed: false,
   }),
 
   actions: {
@@ -31,6 +33,8 @@ export const useMatchmakingStore = defineStore("matchmaking", {
       this.isSearching = false;
       this.timer = 0;
       this.startedAt = null;
+      this.matchToConfirm = null;
+      this.isConfirmed = false;
 
       if (this.intervalId) {
         clearInterval(this.intervalId);
@@ -38,10 +42,32 @@ export const useMatchmakingStore = defineStore("matchmaking", {
       }
     },
 
+    confirm() {
+      socket.emit("matchmaking:confirm", this.matchToConfirm);
+      this.isConfirmed = true;
+    },
+
     initListeners() {
 
       socket.on("matchmaking:queue-length-updated", (length) => {
         this.playersInQueue = length;
+      });
+      socket.on("matchmaking:confirmation-needed", (uuid) => {
+        this.matchToConfirm = uuid;
+      });
+      socket.on("matchmaking:not-accepted", () => {
+        this.isSearching = false;
+        this.timer = 0;
+        this.startedAt = null;
+        this.matchToConfirm = null;
+        this.isConfirmed = false;
+
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+
+        toast.warning("A játszmát töröltük, mivel az egyik játékos nem fogadta el.");
       });
 
       socket.on("matchmaking:error", (err) => {
