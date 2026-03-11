@@ -33,12 +33,12 @@ async function checkAPI() {
 function checkWS() {
   try {
     socket.on("connect", () => {
-      socket.emit("test", { message: "ping" });
-    });
-
-    socket.on("test", (data) => {
-      wsStatus.value = "healthy";
-      socket.disconnect();
+      socket.emit("test", { message: "ping" }, (data) => {
+        if (data.message === "pong") {
+          wsStatus.value = "healthy";
+          socket.disconnect();
+        }
+      });
     });
 
     socket.on("connect_error", (err) => {
