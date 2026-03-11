@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { io } from "socket.io-client";
 import api from "../config/api";
+import { socket } from "../config/websocket";
 
 const apiStatus = ref("checking");
 const wsStatus = ref("checking");
@@ -32,8 +32,6 @@ async function checkAPI() {
 
 function checkWS() {
   try {
-    const socket = io();
-
     socket.on("connect", () => {
       socket.emit("test", { message: "ping" });
     });
