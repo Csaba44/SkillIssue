@@ -4,27 +4,33 @@ import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer
 import Widget from "../components/Generic/Widget.vue";
 import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
-import Button from "../components/Generic/Button.vue";
-import { computed, onBeforeMount, ref, watch } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import router from "../config/router";
-import { socket } from "../config/websocket";
+import { useMatchmakingStore } from "../stores/MatchmakingStore";
+
+const mm = useMatchmakingStore();
+const { timer } = storeToRefs(mm);
 
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const selectedGameMode = ref(false);
-const isMatchmaking = ref(false);
 
-const playersInQueue = ref();
+const waitTime = computed(() => {
+  return {
+    minutes: Math.floor(mm.timer / 60).toString(),
+    seconds: (mm.timer % 60).toString().padStart(2, "0"),
+  };
+});
 
 const startMatchmaking = async () => {
   if (!isAuthenticated.value) return;
-  if (isMatchmaking.value || !selectedGameMode.value) return;
+  if (mm.isSearching || !selectedGameMode.value) return;
 
   if (selectedGameMode.value == "Ranked") {
-    rankedMatchmaking();
+    mm.start();
   } else {
     try {
       const response = await api.post("/api/practice-sessions");
@@ -43,27 +49,17 @@ const startMatchmaking = async () => {
       return toast.error("Ismeretlen hiba történt a játék létrehozása közben!");
     }
   }
-
-  isMatchmaking.value = true;
-};
-
-const rankedMatchmaking = () => {
-  socket.emit("matchmaking:join");
 };
 
 const stopMatchmaking = () => {
-  if (!isMatchmaking) return;
+  if (!mm.isSearching) return;
   if (selectedGameMode.value === "Solo") return;
 
-  if (!socket.connected) socket.connect();
-
-  socket.emit("matchmaking:leave");
-
-  isMatchmaking.value = false;
+  mm.stop();
 };
 
 const setSelected = (mode) => {
-  if (isMatchmaking.value) return;
+  if (mm.isSearching) return;
   if (selectedGameMode.value === mode) return;
   selectedGameMode.value = mode;
 };
@@ -71,16 +67,7 @@ const setSelected = (mode) => {
 const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
 
 onBeforeMount(() => {
-  socket.connect();
-
-  socket.on("matchmaking:queue-length-updated", (length) => {
-    playersInQueue.value = length;
-  });
-
-  socket.on("matchmaking:error", (error) => {
-    isMatchmaking.value = false;
-    toast.error(error.message);
-  });
+  mm.initListeners();
 });
 </script>
 
@@ -106,25 +93,25 @@ onBeforeMount(() => {
       </div>
 
       <div class="mt-12 flex flex-col items-center gap-6">
-        <button v-if="!isMatchmaking" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+        <button v-if="!mm.isSearching" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
           {{ selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : "Kérlek válassz játékmódot!" }}
         </button>
 
         <button v-else @click="stopMatchmaking" :disabled="selectedGameMode === 'Solo'" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-red-500 to-error text-white shadow-lg shadow-red-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">Meccskeresés leállítása</button>
 
         <div class="text-center text-2xl md:text-4xl font-semibold text-white min-h-[40px]">
-          <span v-if="isMatchmaking && selectedGameMode === 'Solo'"> Indítás... </span>
+          <span v-if="mm.isSearching && selectedGameMode === 'Solo'"> Indítás... </span>
 
-          <span v-if="isMatchmaking && selectedGameMode === 'Ranked'">
+          <span v-if="mm.isSearching && selectedGameMode === 'Ranked'">
             Meccskeresés
             <span class="text-accentGreen">folyamatban</span>
             <i class="fa-solid fa-clock text-accentGreen ml-2"></i>
-            1:12
+            {{ waitTime.minutes }}:{{ waitTime.seconds }}
           </span>
         </div>
       </div>
 
-      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">● {{ playersInQueue }} játékos meccskeresésben</div>
+      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">● {{ mm.playersInQueue }} játékos meccskeresésben</div>
     </section>
 
     <section class="mt-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
