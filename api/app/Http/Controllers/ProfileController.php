@@ -28,12 +28,14 @@ class ProfileController extends Controller
      */
     public function show(User $user)
     {
-
+        $matches = $user->gameMatches()->orderBy('created_at', 'asc')->get();
+        $matches->makeHidden(['updated_at','deleted_at','match_uuid']);
 
         $levelAttribute = $user->getLevelAttribute();
         $rankAttribute = $user->getRankAttribute();
 
         $user->makeHidden(['id', 'email', 'email_verified_at', 'is_admin', 'updated_at', 'deleted_at']);
+
         $userData = array_merge($user->toArray(), [
             'level' => $levelAttribute,
             'rank' => $rankAttribute,
@@ -41,7 +43,8 @@ class ProfileController extends Controller
             'next_rank' => $user->getNextRankAttribute() ?? $rankAttribute,
             'top_ranking' => $user->getPlayerTopPercentileAttribute(),
             'matches_played' => $user->getPlayedMatchesCountAttribute(),
-            'streak_count' => $user->getStreakAttribute()
+            'streak_count' => $user->getStreakAttribute(),
+            'game_matches' => $matches
         ]);
 
         return response()->json($userData);
