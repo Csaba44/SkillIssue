@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SingleQuestionController;
+use App\Http\Controllers\SocketAuthController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
@@ -37,13 +38,17 @@ Route::middleware("guest")->group(function () {
 
 
 /* INTERNAL SERVICE2SERVICE ROUTES */
+
+// Authentication for websocket
+Route::get('/socket-auth', SocketAuthController::class)->middleware(['web', 'auth:sanctum']);
+
 Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {
     Route::post('/game-matches', [InternalGameMatchController::class, 'store']);
     Route::post('/questions/get-one', InternalSingleQuestionController::class)->middleware(EnsureRankedTokenIsValid::class);
     Route::post('/answers/verify/{answer}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
 });
 
-//Profiles
+// Profiles
 Route::get('/profiles/{user}', [ProfileController::class, 'show']);
 
 

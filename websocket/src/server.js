@@ -1,5 +1,6 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { userAuthMiddleware } from "./middleware/UserAuthMiddleware.js";
 
 export const httpServer = createServer();
 
@@ -14,6 +15,9 @@ export const io = new Server(httpServer, {
     credentials: true
   }
 });
+
+// Middlewares
+io.use(userAuthMiddleware);
 
 httpServer.listen(3000, "0.0.0.0", () => {
   console.log("Socket.IO server running on port 3000");
