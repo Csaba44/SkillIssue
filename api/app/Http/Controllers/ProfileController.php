@@ -2,22 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRequest;
-use App\Models\GameMatch;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class ProfileController extends Controller
 {
     /**
-     * Display current user
+     * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $user = $request->user();
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(User $user)
+    {
+
+
         $levelAttribute = $user->getLevelAttribute();
         $rankAttribute = $user->getRankAttribute();
 
+        $user->makeHidden(['id', 'email', 'email_verified_at', 'is_admin', 'updated_at', 'deleted_at']);
         $userData = array_merge($user->toArray(), [
             'level' => $levelAttribute,
             'rank' => $rankAttribute,
@@ -25,32 +41,25 @@ class UserController extends Controller
             'next_rank' => $user->getNextRankAttribute() ?? $rankAttribute,
             'top_ranking' => $user->getPlayerTopPercentileAttribute(),
             'matches_played' => $user->getPlayedMatchesCountAttribute(),
-            'streak_count'=>$user->getStreakAttribute()
+            'streak_count' => $user->getStreakAttribute()
         ]);
+
         return response()->json($userData);
     }
-
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $request, User $user)
+    public function update(Request $request, string $id)
     {
-        $user->update([
-            "name" => $request["name"],
-            "email" => $request["email"]
-        ]);
-
-        return response()->json(["message" => "Felhasználó sikeresen frissítve.", "user" => $user]);
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserRequest $request, User $user)
+    public function destroy(string $id)
     {
-        $user->delete();
-
-        return response()->json(["message" => "Felhasználó sikeresen törölve."]);
+        //
     }
 }

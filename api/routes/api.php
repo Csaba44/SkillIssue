@@ -7,6 +7,7 @@ use App\Http\Controllers\internal\GameMatchController as InternalGameMatchContro
 use App\Http\Controllers\internal\SingleQuestionController as InternalSingleQuestionController;
 use App\Http\Controllers\internal\VerifyAnswerController as InternalVerifyAnswerController;
 use App\Http\Controllers\PracticeSessionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SingleQuestionController;
@@ -41,6 +42,9 @@ Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(
     Route::post('/questions/get-one', InternalSingleQuestionController::class)->middleware(EnsureRankedTokenIsValid::class);
     Route::post('/answers/verify/{answer}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
 });
+
+//Profiles
+Route::get('/profiles/{user}', [ProfileController::class, 'show']);
 
 
 Route::middleware("auth:sanctum")->group(function () {

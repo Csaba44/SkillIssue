@@ -117,6 +117,33 @@ class User extends Authenticatable
         return $ban ?: false;
     }
 
+    public function getPlayedMatchesCountAttribute()
+    {
+        return $this->gameMatches()->count() + $this->practiceSessions()->count();
+    }
+
+    public function getPlayerTopPercentileAttribute()
+    {
+        $allMatchesCount = $this->played_matches_count;
+        $allUsersCount = self::count();
+
+        if ($allUsersCount === 0) {
+            return 1;
+        }
+
+        $usersCountWithLessMatches = self::withCount(['gameMatches', 'practiceSessions'])
+            ->get()
+            ->filter(function ($u) use ($allMatchesCount) {
+                return ($u->game_matches_count + $u->practice_sessions_count) < $allMatchesCount;
+            })
+            ->count();
+
+        $percentile = ($usersCountWithLessMatches / $allUsersCount) * 100;
+        $topPercent = 100 - $percentile;
+
+        return (int) ceil($topPercent);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
