@@ -5,7 +5,7 @@ import Widget from "../components/Generic/Widget.vue";
 import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
 import Button from "../components/Generic/Button.vue";
-import { computed, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import router from "../config/router";
@@ -16,6 +16,8 @@ const { isAuthenticated, user } = storeToRefs(userStore);
 
 const selectedGameMode = ref(false);
 const isMatchmaking = ref(false);
+
+const playersInQueue = ref();
 
 const startMatchmaking = async () => {
   if (!isAuthenticated.value) return;
@@ -46,8 +48,6 @@ const startMatchmaking = async () => {
 };
 
 const rankedMatchmaking = () => {
-  socket.connect();
-
   socket.emit("matchmaking:join");
 };
 
@@ -69,6 +69,19 @@ const setSelected = (mode) => {
 };
 
 const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
+
+onBeforeMount(() => {
+  socket.connect();
+
+  socket.on("matchmaking:queue-length-updated", (length) => {
+    playersInQueue.value = length;
+  });
+
+  socket.on("matchmaking:error", (error) => {
+    isMatchmaking.value = false;
+    toast.error(error.message);
+  });
+});
 </script>
 
 <template>
@@ -111,7 +124,7 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
         </div>
       </div>
 
-      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">● 1159 játékos online</div>
+      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">● {{ playersInQueue }} játékos meccskeresésben</div>
     </section>
 
     <section class="mt-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">

@@ -1,12 +1,16 @@
+import { io } from "../server.js";
 import { matchmake } from "../services/matchmake.js";
 import { gameState } from "../states/matchmakingState.js";
 
 
 export function joinMatchmaking(socket) {
+  // Duplicated queueing protection
+  if (gameState.matchmakingQueue.has(socket.id)) return;
 
-  if (gameState.matchmakingQueue.has(socket.id)) {
-    return;
-  }
+  const alreadyQueued = Array.from(gameState.matchmakingQueue.values())
+    .some(player => player.userId === socket.user.id);
+
+  if (alreadyQueued) return socket.emit("matchmaking:error", { message: "Egy másik kliens már csatlakozott erről a fiókról." });
 
   gameState.matchmakingQueue.set(socket.id, {
     socketId: socket.id,
@@ -18,6 +22,8 @@ export function joinMatchmaking(socket) {
   });
 
   console.log("matchmaking joined, user:", socket.user.name);
+
+  io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 }
 
 export function leaveMatchmaking(socket) {
@@ -29,6 +35,9 @@ export function leaveMatchmaking(socket) {
   gameState.matchmakingQueue.delete(socket.id);
 
   console.log("matchmaking left, user:", socket.user.name);
+
+  io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
+
 }
 
 
@@ -51,11 +60,14 @@ export function runMatchmaking() {
   pairs.forEach(pair => {
     pair.forEach(player => {
       const socketId = player.socketId;
+      // TODO: send confirmation popup, if accepted, put them to separate room
 
-      gameState.matchmakingQueue.delete(socketId);
-      gameState.inGame.set(socketId, player);
+      //gameState.matchmakingQueue.delete(socketId);
+      //gameState.inGame.set(socketId, player);
     });
   });
+
+  io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 }
 
 export const matchmakingController = {

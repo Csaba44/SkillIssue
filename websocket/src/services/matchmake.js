@@ -6,7 +6,6 @@ const FACTOR = (MAX_ELO_RANGE - BASE_ELO_RANGE) / LONG_WAIT_TIME;
 // ===================================
 
 export function matchmake(queue) {
-  console.log("matchmake")
   queue = queue.sort((a, b) => a.elo - b.elo)
   const pairs = [];
 
