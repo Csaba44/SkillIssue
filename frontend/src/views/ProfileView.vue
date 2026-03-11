@@ -1,11 +1,17 @@
 <script setup>
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useRoute } from "vue-router";
 import api from "../config/api";
+import Navbar from "../components/Dashboard/Navbar.vue";
+import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
+import { useUserStore } from "../stores/UserStore";
+import { storeToRefs } from "pinia";
 
 const route = useRoute();
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
-const profile = ref([]);
+const profile = ref(null);
 
 const getUser = async () => {
     try {
@@ -22,6 +28,17 @@ const getUser = async () => {
 
 onBeforeMount(getUser);
 </script>
-<template>
 
+<template>
+  <ProtectedPageContainer class="relative overflow-hidden">
+    <i class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+    <Navbar minimal />
+
+    
+
+  </ProtectedPageContainer>
 </template>
+
+<style scoped>
+
+</style>

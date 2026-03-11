@@ -86,7 +86,7 @@ const logoutCicked = async () => {
 
                   <transition name="dropdown">
                     <div v-if="isUserDropdownVisible" class="absolute right-0 mt-3 bg-bgAlternate rounded-xl w-44 p-4 flex flex-col gap-2 shadow-2xl">
-                      <RouterLink to="/">
+                      <RouterLink :to="'/profiles/'+userStore.user.id">
                         <button class="text-left hover:text-warning transition">Profilom</button>
                       </RouterLink>
 

@@ -84,7 +84,7 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
 
       <div class="mt-12 flex flex-col items-center gap-6">
         <button v-if="!isMatchmaking" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
-          {{ selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : "Kérlek válassz játékmódot!" }}
+          {{ selectedGameMode ? `Meccskeresés elkezdése` : "Kérlek válassz játékmódot!" }}
         </button>
 
         <button v-else @click="stopMatchmaking" :disabled="selectedGameMode === 'Solo'" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-red-500 to-error text-white shadow-lg shadow-red-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">Meccskeresés leállítása</button>
