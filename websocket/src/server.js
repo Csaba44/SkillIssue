@@ -1,6 +1,9 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { userAuthMiddleware } from "./middleware/UserAuthMiddleware.js";
+import { runMatchmaking } from "./controllers/matchmakingController.js";
+
+const MM_TICKS = 2000; // Run matchmaking every 2 seconds
 
 export const httpServer = createServer();
 
@@ -18,6 +21,10 @@ export const io = new Server(httpServer, {
 
 // Middlewares
 io.use(userAuthMiddleware);
+
+setInterval(() => {
+  runMatchmaking();
+}, MM_TICKS);
 
 httpServer.listen(3000, "0.0.0.0", () => {
   console.log("Socket.IO server running on port 3000");

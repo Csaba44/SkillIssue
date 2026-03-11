@@ -1,12 +1,14 @@
-const matchmakingQueue = new Map();
+import { matchmake } from "../services/matchmake.js";
+import { gameState } from "../states/matchmakingState.js";
+
 
 export function joinMatchmaking(socket) {
 
-  if (matchmakingQueue.has(socket.id)) {
+  if (gameState.matchmakingQueue.has(socket.id)) {
     return;
   }
 
-  matchmakingQueue.set(socket.id, {
+  gameState.matchmakingQueue.set(socket.id, {
     socketId: socket.id,
     userId: socket.user.id,
     userName: socket.user.name,
@@ -16,21 +18,44 @@ export function joinMatchmaking(socket) {
   });
 
   console.log("matchmaking joined, user:", socket.user.name);
-  console.log(matchmakingQueue)
-
 }
 
 export function leaveMatchmaking(socket) {
 
-  if (!matchmakingQueue.has(socket.id)) {
+  if (!gameState.matchmakingQueue.has(socket.id)) {
     return;
   }
 
-  matchmakingQueue.delete(socket.id);
+  gameState.matchmakingQueue.delete(socket.id);
 
   console.log("matchmaking left, user:", socket.user.name);
+}
 
-  console.log(matchmakingQueue)
+
+function getQueuePlayers() {
+  const now = Date.now();
+
+  return Array.from(gameState.matchmakingQueue.values()).map(player => ({
+    ...player,
+    waitTime: Math.floor((now - player.joinedAt) / 1000)
+  }));
+}
+
+
+export function runMatchmaking() {
+  const players = getQueuePlayers();
+  console.log("[QUEUE LENGTH] " + players.length + " players");
+  console.log("[IN GAME LENGTH] " + gameState.inGame.size + " players");
+  const pairs = matchmake(players);
+
+  pairs.forEach(pair => {
+    pair.forEach(player => {
+      const socketId = player.socketId;
+
+      gameState.matchmakingQueue.delete(socketId);
+      gameState.inGame.set(socketId, player);
+    });
+  });
 }
 
 export const matchmakingController = {
