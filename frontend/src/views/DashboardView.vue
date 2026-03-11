@@ -9,6 +9,7 @@ import { computed, ref } from "vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import router from "../config/router";
+import { socket } from "../config/websocket";
 
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
@@ -17,13 +18,11 @@ const selectedGameMode = ref(false);
 const isMatchmaking = ref(false);
 
 const startMatchmaking = async () => {
-  console.log(isAuthenticated.value);
-
   if (!isAuthenticated.value) return;
   if (isMatchmaking.value || !selectedGameMode.value) return;
 
   if (selectedGameMode.value == "Ranked") {
-    // Handle matchmaking logic
+    rankedMatchmaking();
   } else {
     try {
       const response = await api.post("/api/practice-sessions");
@@ -46,9 +45,20 @@ const startMatchmaking = async () => {
   isMatchmaking.value = true;
 };
 
+const rankedMatchmaking = () => {
+  socket.connect();
+
+  socket.emit("matchmaking:join");
+};
+
 const stopMatchmaking = () => {
   if (!isMatchmaking) return;
   if (selectedGameMode.value === "Solo") return;
+
+  if (!socket.connected) socket.connect();
+
+  socket.emit("matchmaking:leave");
+
   isMatchmaking.value = false;
 };
 

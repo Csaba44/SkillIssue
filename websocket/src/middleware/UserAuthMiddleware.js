@@ -3,7 +3,6 @@ import api from "../config/api.js";
 export const userAuthMiddleware = async (socket, next) => {
   try {
     const cookie = socket.handshake.headers.cookie;
-    console.log(cookie)
 
     console.log("[WEBSOCKET] Authenticating user");
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\internal\GameMatchController as InternalGameMatchController;
 use App\Http\Controllers\internal\SingleQuestionController as InternalSingleQuestionController;
+use App\Http\Controllers\internal\SocketAuthController as InternalSocketAuthController;
 use App\Http\Controllers\internal\VerifyAnswerController as InternalVerifyAnswerController;
 use App\Http\Controllers\PracticeSessionController;
 use App\Http\Controllers\ProfileController;
@@ -40,7 +41,7 @@ Route::middleware("guest")->group(function () {
 /* INTERNAL SERVICE2SERVICE ROUTES */
 
 // Authentication for websocket
-Route::get('/socket-auth', SocketAuthController::class)->middleware(['web', 'auth:sanctum']);
+Route::get('/socket-auth', InternalSocketAuthController::class)->middleware(['web', 'auth:sanctum']);
 
 Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {
     Route::post('/game-matches', [InternalGameMatchController::class, 'store']);

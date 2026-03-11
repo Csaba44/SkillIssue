@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
 
 const navItemClass = "font-medium transform ease-out duration-600 motion-safe:hover:scale-108 text-lg";
 
-const logoutCicked = async () => {
+const logoutClicked = async () => {
   toast.promise(userStore.logout(), {
     loading: "Kijelentkezés folyamatban folyamatban...",
     success: (data) => "Sikeres kijelentkezés",
@@ -90,7 +90,7 @@ const logoutCicked = async () => {
                         <button class="text-left hover:text-warning transition">Profilom</button>
                       </RouterLink>
 
-                      <button @click="logoutCicked" class="text-left text-error hover:opacity-80 transition">Kijelentkezés</button>
+                      <button @click="logoutClicked" class="text-left text-error hover:opacity-80 transition">Kijelentkezés</button>
                     </div>
                   </transition>
                 </div>

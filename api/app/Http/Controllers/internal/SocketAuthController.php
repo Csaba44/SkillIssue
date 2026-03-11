@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\internal;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class SocketAuthController extends Controller
@@ -11,6 +12,7 @@ class SocketAuthController extends Controller
      */
     public function __invoke(Request $request)
     {
+
         if (!$request->user()) {
             return response()->json(['authenticated' => false], 401);
         }
