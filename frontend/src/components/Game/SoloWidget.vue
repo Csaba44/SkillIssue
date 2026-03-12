@@ -12,7 +12,7 @@ const props = defineProps({
   question: String,
   answers: Array,
   currRoundNumber: Number,
-  totalRounds: Number,
+  totalRounds: String,
   correctAnswerId: Number,
 });
 

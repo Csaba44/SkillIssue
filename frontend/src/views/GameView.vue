@@ -34,7 +34,6 @@ const getNextQuestion = async (selectedAnswerId) => {
       const res = await api.post(`/api/answers/verify/${selectedAnswerId}`, {
         question_token: questionToken.value,
         game_token: route.params.gameToken,
-        user_guess_time_ms: 1000,
       });
 
       if (res.status !== 200) return;
