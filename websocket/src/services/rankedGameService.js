@@ -50,12 +50,14 @@ export function formatFinalResults(match, data) {
     isDraw: isGameDrawn,
     playerA: {
       userId: playerAId,
+      userName: match.playerA.userName,
       score: data.scores[playerAId],
       won: isGameDrawn ? null : winnerKey == "playerA",
       eloChange: data.elo_changes[playerAId]
     },
     playerB: {
       userId: playerBId,
+      userName: match.playerB.userName,
       score: data.scores[playerBId],
       won: isGameDrawn ? null : winnerKey == "playerB",
       eloChange: data.elo_changes[playerBId]

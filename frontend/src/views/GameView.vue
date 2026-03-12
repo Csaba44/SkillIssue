@@ -8,6 +8,8 @@ import { useRoute } from "vue-router";
 import SoloWidget from "../components/Game/SoloWidget.vue";
 import { useGameStore } from "../stores/GameStore";
 import RankedWidget from "../components/Game/RankedWidget.vue";
+import RankedSummary from "../components/Game/RankedSummary.vue";
+import { storeToRefs } from "pinia";
 
 const route = useRoute();
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
@@ -21,7 +23,8 @@ const questionToken = ref(null);
 const correctAnswerId = ref(null);
 
 const gameStore = useGameStore();
-console.log();
+
+const { matchResults } = storeToRefs(gameStore);
 
 const getNextQuestion = async (selectedAnswerId) => {
   try {
@@ -85,6 +88,7 @@ onBeforeMount(async () => {
       <div v-if="hasEnded" class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
 
       <RankedWidget v-if="gameStore.match && route.params.matchUuid !== undefined" />
+      <RankedSummary v-if="matchResults != null && !gameStore.match" />
     </div>
   </ProtectedPageContainer>
 </template>

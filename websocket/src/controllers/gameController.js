@@ -99,7 +99,12 @@ async function submitAnswer(socket, answerId) {
       leaveUsersFromGame(match);
     }
   } catch (error) {
-    if (error.response?.data?.message) socket.emit("game:error", error.response.data.message);
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "Unknown error";
+
+    socket.emit("game:error", message);
     console.error(error);
   }
 }

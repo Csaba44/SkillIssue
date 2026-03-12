@@ -62,7 +62,6 @@ const submitAnswer = () => {
 </script>
 
 <template>
-  {{ isSubmitting }}
   <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center px-10 py-12 gap-6 text-textWhite">
     <div class="w-full flex justify-between items-center text-sm text-white/60">
       <span class="font-bold text-error"> {{ currentRound ?? 1 }} / {{ TOTAL_ROUNDS }} kör </span>
@@ -89,6 +88,19 @@ const submitAnswer = () => {
       </template>
     </div>
 
+    <div v-if="isSubmitting" class="mt-4 flex flex-col items-center gap-3 text-white/80 text-center">
+      <div class="flex items-center gap-3">
+        <div class="flex gap-1">
+          <span class="w-2 h-2 bg-accentYellow rounded-full animate-bounce"></span>
+          <span class="w-2 h-2 bg-accentYellow rounded-full animate-bounce [animation-delay:0.2s]"></span>
+          <span class="w-2 h-2 bg-accentYellow rounded-full animate-bounce [animation-delay:0.4s]"></span>
+        </div>
+
+        <span class="font-semibold text-sm md:text-base"> {{ opponent.player.userName ?? "Az ellenfél" }} még gondolkodik... </span>
+      </div>
+
+      <div class="text-xs text-white/40">A következő kérdés automatikusan indul.</div>
+    </div>
     <Button title="Beküldés" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300" :disabled="isSubmitting" @click="submitAnswer" />
   </Widget>
 </template>
