@@ -1,4 +1,5 @@
 import { io } from "../server.js";
+import { createRankedGame } from "../services/createRankedGame.js";
 import { matchmake } from "../services/matchmake.js";
 import { gameState } from "../states/matchmakingState.js";
 import crypto from "crypto";
@@ -12,6 +13,8 @@ export function joinMatchmaking(socket) {
     .some(player => player.userId === socket.user.id);
 
   if (alreadyQueued) return socket.emit("matchmaking:error", { message: "Egy másik kliens már csatlakozott erről a fiókról." });
+
+  if (isPlayerAlreadyInGame(socket.user.id)) return socket.emit("matchmaking:error", { message: "Már játékban vagy." });
 
   gameState.matchmakingQueue.set(socket.id, {
     socketId: socket.id,
@@ -51,12 +54,21 @@ function getQueuePlayers() {
   }));
 }
 
+function isPlayerAlreadyInGame(id) {
+  for (const game of gameState.ongoingGames.values()) {
+    if (game.playerA.userId == id || game.playerB.userId == id) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 export function runMatchmaking() {
   const players = getQueuePlayers();
   console.log("[QUEUE COUNT] " + players.length + " players");
-  console.log("[PENDING GAMES CONT] " + gameState.pendingGames.size + " players");
-  console.log("[ONGOING GAMES COUNT] " + gameState.ongoingGames.size + " players");
+  console.log("[PENDING GAMES CONT] " + gameState.pendingGames.size + " games");
+  console.log("[ONGOING GAMES COUNT] " + gameState.ongoingGames.size + " games");
   const pairs = matchmake(players);
 
   pairs.forEach(pair => {
@@ -83,7 +95,7 @@ export function runMatchmaking() {
   io.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 }
 
-function confirmMatchmaking(socket, tmpUuid) {
+async function confirmMatchmaking(socket, tmpUuid) {
   const pendingMatch = gameState.pendingGames.get(tmpUuid);
 
   let confirmingPlayer = null;
@@ -100,8 +112,14 @@ function confirmMatchmaking(socket, tmpUuid) {
 
   console.log("[PLAYER PAIR FOUND] " + (bothConfirmed ? 'ALL PLAYERS' : confirmingPlayer) + " accepted the game");
 
+  // Create ranked game & remove from pending & set to ongoing
   if (bothConfirmed) {
-    // TODO: put game in ongoing, create match via API.
+    const playerA = pendingMatch.playerA;
+    const playerB = pendingMatch.playerB;
+
+    const match = await createRankedGame(playerA, playerB);
+    gameState.pendingGames.delete(pendingMatch.tmpUuid);
+    gameState.ongoingGames.set(match.match_uuid, match);
   }
 }
 
