@@ -24,12 +24,7 @@ class GameMatchController extends Controller
      */
     public function show(GameMatchRequest $request, string $id)
     {
-        $match = GameMatch::with(['user', 'opponent'])->where('id', '=', $id)->get()->first();
-
-        // Admins can view any resource
-        if ($match->user_id !== $request->user()->id && !$request->user()->is_admin) {
-            return response()->json(["message" => "Nincs engedélye megtekinteni az erőforrást."]);
-        }
+        $match = GameMatch::with(['user', 'opponent'])->where('match_uuid', '=', $id)->get();
 
         return response()->json($match);
     }

@@ -17,6 +17,7 @@ class GameMatch extends Model
         "xp_before",
         "elo_after",
         "xp_after",
+        "match_result",
         "match_uuid",
     ];
 

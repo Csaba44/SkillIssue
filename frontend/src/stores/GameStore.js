@@ -66,8 +66,6 @@ export const useGameStore = defineStore("game", {
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
         this.currentAnswers = data.answers;
-
-        console.log("NEW QUESTION");
       });
 
       socket.on("game:finished", (data) => {

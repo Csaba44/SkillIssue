@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\internal;
 
+use App\GameResultEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\GameMatch;
@@ -125,6 +126,7 @@ class VerifyAnswerController extends Controller
             ->count();
     }
 
+
     private function determineMatchResult($matches, User $userA, User $userB): array
     {
         $scores = [];
@@ -147,44 +149,56 @@ class VerifyAnswerController extends Controller
             $scoreResultA = 0.5;
         }
 
-        // elo change
         $eloChangeA = $this->calculateEloChange($userA->elo, $userB->elo, $scoreResultA);
         $eloChangeB = $this->calculateEloChange($userB->elo, $userA->elo, 1 - $scoreResultA);
 
-        // clamp -35..35
         $eloChangeA = max(-35, min(35, $eloChangeA));
         $eloChangeB = max(-35, min(35, $eloChangeB));
 
-        // minimum win gain
         if ($winnerId !== null) {
-
-            if ($eloChangeA > 0) {
-                $eloChangeA = max(10, $eloChangeA);
-            }
-
-            if ($eloChangeB > 0) {
-                $eloChangeB = max(10, $eloChangeB);
-            }
+            if ($eloChangeA > 0) $eloChangeA = max(10, $eloChangeA);
+            if ($eloChangeB > 0) $eloChangeB = max(10, $eloChangeB);
         }
 
-        // update elo
         $userA->elo += $eloChangeA;
         $userB->elo += $eloChangeB;
-
-        // XP (10 per correct answer)
         $userA->xp += $scoreA * 10;
         $userB->xp += $scoreB * 10;
 
         $userA->save();
         $userB->save();
 
+        // GameMatch rekordok frissítése mindkét user szemszögéből
+        foreach ($matches as $match) {
+            $isUserA = $match->user_id === $userA->id;
+
+            $userId     = $isUserA ? $userA->id : $userB->id;
+            $eloChange  = $isUserA ? $eloChangeA : $eloChangeB;
+            $newElo     = $isUserA ? $userA->elo : $userB->elo;
+            $newXp      = $isUserA ? $userA->xp  : $userB->xp;
+
+            if ($winnerId === null) {
+                $result = GameResultEnum::DRAW;
+            } elseif ($winnerId === $userId) {
+                $result = GameResultEnum::WIN;
+            } else {
+                $result = GameResultEnum::LOSE;
+            }
+
+            $match->update([
+                'match_result' => $result,
+                'elo_after'    => $newElo,
+                'xp_after'     => $newXp,
+            ]);
+        }
+
         return [
-            'scores' => $scores,
-            'winner_id' => $winnerId,
+            'scores'      => $scores,
+            'winner_id'   => $winnerId,
             'elo_changes' => [
                 $userA->id => $eloChangeA,
-                $userB->id => $eloChangeB
-            ]
+                $userB->id => $eloChangeB,
+            ],
         ];
     }
 
