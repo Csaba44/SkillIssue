@@ -13,7 +13,6 @@ export const useGameStore = defineStore("game", {
     currentSubject: null,
     currentAnswers: null,
     currentCorrectAnswerId: null,
-    matchResults: null,
   }),
 
   actions: {
@@ -30,7 +29,6 @@ export const useGameStore = defineStore("game", {
       this.currentSubject = null;
       this.currentAnswers = null;
       this.currentCorrectAnswerId = null;
-      this.matchResults = null;
     },
     submitAnswer(answerId) {
       // Check if answer exists on current question
@@ -42,7 +40,6 @@ export const useGameStore = defineStore("game", {
     initListeners() {
       socket.on("game:started", (match) => {
         this.handleMatch(match);
-        this.matchResults = null;
       });
 
       socket.on("game:active-game", (match) => {
@@ -69,8 +66,8 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:finished", (data) => {
+        router.push(`/summary/ranked/${this.match.match_uuid}`);
         this.handleStopMatch();
-        this.matchResults = data;
         console.log("FINISHED! ", data);
       });
 

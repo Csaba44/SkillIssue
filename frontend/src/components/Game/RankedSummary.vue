@@ -1,58 +1,100 @@
 <script setup>
-import { computed } from "vue";
-import { useGameStore } from "../../stores/GameStore";
+import { computed, onMounted, ref } from "vue";
 import { useUserStore } from "../../stores/UserStore";
+import api from "../../config/api";
 
-const gameStore = useGameStore();
+const props = defineProps({
+  uuid: {
+    type: String,
+    required: true,
+  },
+});
+
 const userStore = useUserStore();
+const matchResults = ref(null);
+
+onMounted(async () => {
+  const response = await api.get(`/api/game-matches/${props.uuid}`);
+  matchResults.value = response.data;
+});
+
+const isSpectator = computed(() => {
+  if (!matchResults.value) return true;
+  const uid = userStore.user.id;
+  return matchResults.value.playerA.userId !== uid && matchResults.value.playerB.userId !== uid;
+});
 
 const userMatchResult = computed(() => {
-  let userKey = null;
-  if (gameStore.matchResults.playerA.userId === userStore.user.id) userKey = "playerA";
-  else if (gameStore.matchResults.playerB.userId === userStore.user.id) userKey = "playerB";
+  if (!matchResults.value) return null;
+
+  if (isSpectator.value) {
+    return {
+      isDraw: matchResults.value.isDraw,
+      userStats: matchResults.value.playerA,
+      opponentStats: matchResults.value.playerB,
+    };
+  }
+
+  const userKey = matchResults.value.playerA.userId === userStore.user.id ? "playerA" : "playerB";
 
   return {
-    isDraw: gameStore.matchResults.isDraw,
-    userStats: gameStore.matchResults[userKey],
-    opponentStats: gameStore.matchResults[userKey == "playerA" ? "playerB" : "playerA"],
+    isDraw: matchResults.value.isDraw,
+    userStats: matchResults.value[userKey],
+    opponentStats: matchResults.value[userKey === "playerA" ? "playerB" : "playerA"],
   };
 });
 
 const resultLabel = computed(() => {
-  if (userMatchResult.value.isDraw) return { text: "Döntetlen", color: "text-accentYellow", border: "border-yellow-400/30", bg: "bg-yellow-400/10", icon: "fa-handshake" };
-  if (userMatchResult.value.userStats.won) return { text: "Győzelem!", color: "text-accentGreen", border: "border-green-400/30", bg: "bg-green-400/10", icon: "fa-trophy" };
+  if (!userMatchResult.value) return null;
+
+  if (userMatchResult.value.isDraw) {
+    return { text: "Döntetlen", color: "text-accentYellow", border: "border-yellow-400/30", bg: "bg-yellow-400/10", icon: "fa-handshake" };
+  }
+
+  if (isSpectator.value) {
+    const winner = matchResults.value.playerA.won ? matchResults.value.playerA.userName : matchResults.value.playerB.userName;
+    return { text: `${winner} nyert`, color: "text-accentGreen", border: "border-green-400/30", bg: "bg-green-400/10", icon: "fa-trophy" };
+  }
+
+  if (userMatchResult.value.userStats.won) {
+    return { text: "Győzelem!", color: "text-accentGreen", border: "border-green-400/30", bg: "bg-green-400/10", icon: "fa-trophy" };
+  }
+
   return { text: "Vereség", color: "text-red-400", border: "border-red-400/30", bg: "bg-red-400/10", icon: "fa-skull" };
 });
 </script>
 
 <template>
-  <div class="relative overflow-hidden min-h-screen flex flex-col items-center justify-center text-textWhite px-4">
-    <i class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
-
-    <div class="relative z-10 flex flex-col items-center w-full max-w-3xl">
+  <div class="min-h-screen flex flex-col items-center justify-center text-textWhite px-4 py-10">
+    <div v-if="userMatchResult && resultLabel" class="flex flex-col items-center w-full max-w-3xl">
       <div :class="[resultLabel.bg, resultLabel.border]" class="border px-8 py-3 rounded-full mb-6 backdrop-blur-lg">
         <span :class="resultLabel.color" class="text-2xl font-bold"> <i :class="`fa-solid ${resultLabel.icon} mr-2`"></i>{{ resultLabel.text }} </span>
       </div>
 
       <h2 class="text-4xl font-bold mb-10">Meccs összesítő</h2>
 
-      <div class="flex items-center justify-center gap-6 w-full mb-10">
-        <div :class="[resultLabel.border, resultLabel.bg]" class="flex-1 p-6 rounded-2xl border backdrop-blur-xl text-center transition-all">
-          <p class="text-white/60 text-sm mb-1">Te</p>
+      <!-- Játékos kártyák: mobilon egymás alá, sm felett egymás mellé -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full mb-10">
+        <!-- Bal oldal -->
+        <div :class="isSpectator ? (userMatchResult.isDraw ? ['border-yellow-400/30', 'bg-yellow-400/10'] : userMatchResult.userStats.won ? ['border-green-400/30', 'bg-green-400/10'] : ['border-red-400/30', 'bg-red-400/10']) : [resultLabel.border, resultLabel.bg]" class="w-full sm:flex-1 p-6 rounded-2xl border backdrop-blur-xl text-center transition-all">
+          <p class="text-white/60 text-sm mb-1">{{ isSpectator ? "" : "Te" }}</p>
           <h3 class="text-xl font-bold mb-4">{{ userMatchResult.userStats.userName }}</h3>
-          <p class="text-7xl font-bold" :class="resultLabel.color">{{ userMatchResult.userStats.score }}</p>
+          <p class="text-7xl font-bold" :class="isSpectator ? (userMatchResult.isDraw ? 'text-accentYellow' : userMatchResult.userStats.won ? 'text-accentGreen' : 'text-red-400') : resultLabel.color">
+            {{ userMatchResult.userStats.score }}
+          </p>
           <p class="text-sm mt-4" :class="userMatchResult.userStats.eloChange >= 0 ? 'text-accentGreen' : 'text-red-400'">
             <i :class="`fa-solid ${userMatchResult.userStats.eloChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'} mr-1`"></i>
             {{ userMatchResult.userStats.eloChange >= 0 ? "+" : "" }}{{ userMatchResult.userStats.eloChange }} ELO
           </p>
         </div>
 
-        <div class="text-3xl font-bold text-white/30">VS</div>
+        <div class="text-3xl font-bold text-white/30 sm:block">VS</div>
 
-        <div class="flex-1 p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl text-center transition-all">
-          <p class="text-white/60 text-sm mb-1">Ellenfél</p>
+        <!-- Jobb oldal -->
+        <div :class="isSpectator ? (userMatchResult.isDraw ? ['border-yellow-400/30', 'bg-yellow-400/10'] : userMatchResult.opponentStats.won ? ['border-green-400/30', 'bg-green-400/10'] : ['border-red-400/30', 'bg-red-400/10']) : ['border-white/10', 'bg-white/5']" class="w-full sm:flex-1 p-6 rounded-2xl border backdrop-blur-xl text-center transition-all">
+          <p class="text-white/60 text-sm mb-1">{{ isSpectator ? "" : "Ellenfél" }}</p>
           <h3 class="text-xl font-bold mb-4">{{ userMatchResult.opponentStats.userName }}</h3>
-          <p class="text-7xl font-bold text-white/80">{{ userMatchResult.opponentStats.score }}</p>
+          <p class="text-7xl font-bold" :class="isSpectator ? (userMatchResult.isDraw ? 'text-accentYellow' : userMatchResult.opponentStats.won ? 'text-accentGreen' : 'text-red-400') : 'text-white/80'">{{ userMatchResult.opponentStats.score }}</p>
           <p class="text-sm mt-4" :class="userMatchResult.opponentStats.eloChange >= 0 ? 'text-accentGreen' : 'text-red-400'">
             <i :class="`fa-solid ${userMatchResult.opponentStats.eloChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'} mr-1`"></i>
             {{ userMatchResult.opponentStats.eloChange >= 0 ? "+" : "" }}{{ userMatchResult.opponentStats.eloChange }} ELO
@@ -60,7 +102,8 @@ const resultLabel = computed(() => {
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-6 w-full mb-10">
+      <!-- Alsó stat kártyák csak játékos nézetben -->
+      <div v-if="!isSpectator" class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-10">
         <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-purple-400/20 hover:shadow-purple-400/20 hover:shadow-lg transition-all text-center">
           <p class="text-white/60">ELO változás</p>
           <h3 class="text-5xl font-bold mt-2" :class="userMatchResult.userStats.eloChange >= 0 ? 'text-accentGreen' : 'text-red-400'">{{ userMatchResult.userStats.eloChange >= 0 ? "+" : "" }}{{ userMatchResult.userStats.eloChange }}</h3>
@@ -77,6 +120,11 @@ const resultLabel = computed(() => {
       <div class="flex flex-col sm:flex-row gap-4">
         <button @click="$router.push('/dashboard')" class="px-10 py-4 text-lg font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300"><i class="fa-solid fa-house mr-2"></i>Vissza a főoldalra</button>
       </div>
+    </div>
+
+    <div v-else class="flex flex-col items-center gap-4 text-white/60">
+      <i class="fa-solid fa-spinner animate-spin text-4xl"></i>
+      <p>Eredmények betöltése...</p>
     </div>
   </div>
 </template>

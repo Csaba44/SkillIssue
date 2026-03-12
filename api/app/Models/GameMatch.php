@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\GameResultEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,6 +20,10 @@ class GameMatch extends Model
         "xp_after",
         "match_result",
         "match_uuid",
+    ];
+
+    protected $casts = [
+        'match_result' => GameResultEnum::class
     ];
 
     public function reports(): HasMany

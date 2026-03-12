@@ -83,12 +83,14 @@ onBeforeMount(async () => {
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden" :gameSelectionDisabled="true">
-    <div class="w-full h-full flex items-center justify-center">
+    <i class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+
+    <div class="relative z-10 w-full h-full flex items-center justify-center">
       <SoloWidget v-if="!hasEnded && route.params.gameToken" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="TOTAL_ROUNDS" />
       <div v-if="hasEnded" class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
 
       <RankedWidget v-if="gameStore.match && route.params.matchUuid !== undefined" />
-      <RankedSummary v-if="matchResults != null && !gameStore.match" />
+      <RankedSummary v-if="matchResults != null && !gameStore.match" :uuid="matchResults.match_uuid" />
     </div>
   </ProtectedPageContainer>
 </template>
