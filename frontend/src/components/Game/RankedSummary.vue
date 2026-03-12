@@ -12,13 +12,14 @@ const props = defineProps({
 
 const userStore = useUserStore();
 const matchResults = ref(null);
+const error = ref(null);
 
 onMounted(async () => {
   try {
     const response = await api.get(`/api/game-matches/${props.uuid}`);
     matchResults.value = response.data;
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    error.value = err.response?.status ?? 500;
   }
 });
 
@@ -70,7 +71,14 @@ const resultLabel = computed(() => {
 
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center text-textWhite px-4 py-10">
-    <div v-if="userMatchResult && resultLabel" class="flex flex-col items-center w-full max-w-3xl">
+    <div v-if="error" class="flex flex-col items-center gap-4 text-white/60">
+      <i class="fa-solid fa-circle-exclamation text-4xl text-red-400"></i>
+      <p v-if="error === 404" class="text-lg">Ez a meccs nem található.</p>
+      <p v-else class="text-lg">Hiba történt a betöltés során.</p>
+      <button @click="$router.push('/dashboard')" class="mt-4 px-8 py-3 text-base font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg hover:scale-105 transition-all duration-300"><i class="fa-solid fa-house mr-2"></i>Vissza a főoldalra</button>
+    </div>
+
+    <div v-else-if="userMatchResult && resultLabel" class="flex flex-col items-center w-full max-w-3xl">
       <div :class="[resultLabel.bg, resultLabel.border]" class="border px-8 py-3 rounded-full mb-6 backdrop-blur-lg">
         <span :class="resultLabel.color" class="text-2xl font-bold"> <i :class="`fa-solid ${resultLabel.icon} mr-2`"></i>{{ resultLabel.text }} </span>
       </div>
