@@ -149,11 +149,14 @@ class VerifyAnswerController extends Controller
             $scoreResultA = 0.5;
         }
 
-        $eloChangeA = $this->calculateEloChange($userA->elo, $userB->elo, $scoreResultA);
-        $eloChangeB = $this->calculateEloChange($userB->elo, $userA->elo, 1 - $scoreResultA);
+        $matchA = $matches->firstWhere('user_id', $userA->id);
+        $matchB = $matches->firstWhere('user_id', $userB->id);
 
-        $eloChangeA = max(-35, min(35, $eloChangeA));
-        $eloChangeB = max(-35, min(35, $eloChangeB));
+        $expectedA = $matchA->expected_winrate;
+        $expectedB = $matchB->expected_winrate;
+
+        $eloChangeA = (int) round(30 * ($scoreResultA - $expectedA));
+        $eloChangeB = (int) round(30 * ((1 - $scoreResultA) - $expectedB));
 
         if ($winnerId !== null) {
             if ($eloChangeA > 0) $eloChangeA = max(10, $eloChangeA);
@@ -168,7 +171,6 @@ class VerifyAnswerController extends Controller
         $userA->save();
         $userB->save();
 
-        // GameMatch rekordok frissítése mindkét user szemszögéből
         foreach ($matches as $match) {
             $isUserA = $match->user_id === $userA->id;
 

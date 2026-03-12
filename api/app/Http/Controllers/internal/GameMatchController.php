@@ -53,20 +53,25 @@ class GameMatchController extends Controller
                 'HS256'
             );
 
+            $expectedA = 1 / (1 + pow(10, ($userB->elo - $userA->elo) / 400));
+            $expectedB = 1 - $expectedA;
+
             GameMatch::create([
-                'user_id'      => $userA->id,
-                'opponent_id'  => $userB->id,
-                'elo_before'   => $userA->elo,
-                'xp_before'    => $userA->xp,
-                'match_uuid'   => $uuid,
+                'user_id'           => $userA->id,
+                'opponent_id'       => $userB->id,
+                'elo_before'        => $userA->elo,
+                'xp_before'         => $userA->xp,
+                'match_uuid'        => $uuid,
+                'expected_winrate'  => $expectedA,
             ]);
 
             GameMatch::create([
-                'user_id'      => $userB->id,
-                'opponent_id'  => $userA->id,
-                'elo_before'   => $userB->elo,
-                'xp_before'    => $userB->xp,
-                'match_uuid'   => $uuid,
+                'user_id'           => $userB->id,
+                'opponent_id'       => $userA->id,
+                'elo_before'        => $userB->elo,
+                'xp_before'         => $userB->xp,
+                'match_uuid'        => $uuid,
+                'expected_winrate'  => $expectedB,
             ]);
 
             return response()->json([
