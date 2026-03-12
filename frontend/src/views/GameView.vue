@@ -1,13 +1,16 @@
 <script setup>
 import { onBeforeMount, onMounted, ref, useTemplateRef } from "vue";
-import RankedWidget from "../components/Game/RankedWidget.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import { sleep } from "../utils/sleep";
 import { useRoute } from "vue-router";
+import SoloWidget from "../components/Game/SoloWidget.vue";
+import { useGameStore } from "../stores/GameStore";
+import RankedWidget from "../components/Game/RankedWidget.vue";
 
 const route = useRoute();
+const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
 const question = ref("Betöltés folyamatban...");
 const subject = ref("Betöltés folyamatban...");
@@ -16,6 +19,9 @@ const answers = ref([]);
 const hasEnded = ref(false);
 const questionToken = ref(null);
 const correctAnswerId = ref(null);
+
+const gameStore = useGameStore();
+console.log();
 
 const getNextQuestion = async (selectedAnswerId) => {
   try {
@@ -65,15 +71,20 @@ const getNextQuestion = async (selectedAnswerId) => {
 };
 
 onBeforeMount(async () => {
-  await getNextQuestion();
+  // If solo game
+  if (route.params.gameToken) {
+    await getNextQuestion();
+  }
 });
 </script>
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden" :gameSelectionDisabled="true">
     <div class="w-full h-full flex items-center justify-center">
-      <RankedWidget v-if="!hasEnded" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="5" />
-      <div v-else class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
+      <SoloWidget v-if="!hasEnded && route.params.gameToken" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="TOTAL_ROUNDS" />
+      <div v-if="hasEnded" class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
+
+      <RankedWidget v-if="gameStore.match && route.params.matchUuid !== undefined" />
     </div>
   </ProtectedPageContainer>
 </template>

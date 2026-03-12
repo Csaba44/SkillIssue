@@ -1,8 +1,9 @@
 import { io } from "../server.js";
-import { createRankedGame } from "../services/createRankedGame.js";
+import { createRankedGame } from "../services/rankedGameService.js";
 import { matchmake } from "../services/matchmake.js";
 import { gameState } from "../states/matchmakingState.js";
 import crypto from "crypto";
+import { joinUserToRoom } from "../services/roomService.js"
 
 
 export function joinMatchmaking(socket) {
@@ -120,6 +121,11 @@ async function confirmMatchmaking(socket, tmpUuid) {
     const match = await createRankedGame(playerA, playerB);
     gameState.pendingGames.delete(pendingMatch.tmpUuid);
     gameState.ongoingGames.set(match.match_uuid, match);
+
+    joinUserToRoom(playerA.socketId, match.roomId);
+    joinUserToRoom(playerB.socketId, match.roomId);
+
+    io.to(match.roomId).emit("game:started", match);
   }
 }
 

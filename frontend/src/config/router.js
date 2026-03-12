@@ -18,6 +18,7 @@ const routes = [
   { path: "/login", name: "login", component: LoginView },
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
   { path: "/game/solo/:gameToken", name: "game", component: GameView, meta: { requiresAuth: true } },
+  { path: "/game/ranked/:matchUuid", name: "gameRanked", component: GameView, meta: { requiresAuth: true } },
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 
   // Test connection with backend services

@@ -55,6 +55,7 @@ export const useMatchmakingStore = defineStore("matchmaking", {
       socket.on("matchmaking:confirmation-needed", (uuid) => {
         this.matchToConfirm = uuid;
       });
+
       socket.on("matchmaking:not-accepted", () => {
         this.isSearching = false;
         this.timer = 0;
@@ -68,6 +69,21 @@ export const useMatchmakingStore = defineStore("matchmaking", {
         }
 
         toast.warning("A játszmát töröltük, mivel az egyik játékos nem fogadta el.");
+      });
+
+      socket.on("game:started", () => {
+        this.isSearching = false;
+        this.timer = 0;
+        this.startedAt = null;
+        this.matchToConfirm = null;
+        this.isConfirmed = false;
+
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+
+        toast.info("A játszma elkezdödött!");
       });
 
       socket.on("matchmaking:error", (err) => {
