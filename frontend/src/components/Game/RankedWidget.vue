@@ -4,7 +4,7 @@ import { useUserStore } from "../../stores/UserStore";
 import { storeToRefs } from "pinia";
 import Timer from "./Timer.vue";
 import AnswerButton from "./AnswerButton.vue";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import Button from "../Generic/Button.vue";
 import { toast } from "vue-sonner";
 import { useGameStore } from "../../stores/GameStore";
@@ -13,11 +13,12 @@ import { determineOpponent } from "../../utils/determineOpponent";
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
+const gameStore = useGameStore();
+const { isOpponentOnline } = storeToRefs(gameStore);
+
 const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
 const isSubmitting = ref(false);
-
-const gameStore = useGameStore();
 
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
@@ -69,7 +70,7 @@ const getNext = () => {
     <div class="flex items-center gap-3 text-lg font-semibold">
       <span class="text-white">{{ user.name }}</span>
       <i class="fa-solid fa-swords text-accentYellow text-xl"></i>
-      <span class="text-error">{{ opponent.player.userName ?? "Ismeretlen ellenfél" }}</span>
+      <span class="text-error">{{ opponent.player.userName ?? "Ismeretlen ellenfél" }} {{ !isOpponentOnline ? "(kilépett)" : "" }}</span>
     </div>
 
     <div class="text-center space-y-4">

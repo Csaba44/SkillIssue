@@ -12,9 +12,7 @@ onBeforeMount(async () => {
   await userStore.verifySession();
 });
 
-onMounted(() => {
-  gameStore.initListeners();
-});
+gameStore.initListeners();
 </script>
 
 <template>

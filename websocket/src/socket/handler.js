@@ -1,13 +1,15 @@
 import { matchmakingController } from "../controllers/matchmakingController.js";
 import { getActiveGame } from "../services/rankedGameService.js";
 import { gameState } from "../states/matchmakingState.js";
-
+import { gameController } from "../controllers/gameController.js";
+import { io } from "../server.js";
 
 export function handleConnection(socket) {
   socket.emit("matchmaking:queue-length-updated", gameState.matchmakingQueue.size);
 
   const userActiveGame = getActiveGame(socket.user.id);
-  if (userActiveGame) socket.emit("game:active-game", userActiveGame);
+
+  if (userActiveGame) gameController.userConnected(socket, userActiveGame);
 
 
   socket.on("test", (data, callback) => {
@@ -28,5 +30,6 @@ export function handleConnection(socket) {
 
   socket.on("disconnect", () => {
     matchmakingController.leaveMatchmaking(socket);
+    gameController.userDisconnected(socket);
   });
 }
