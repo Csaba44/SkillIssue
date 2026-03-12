@@ -18,6 +18,11 @@ export const useGameStore = defineStore("game", {
       router.push("/game/ranked/" + match.match_uuid);
       console.log(match);
     },
+    handleStopMatch() {
+      this.match = null;
+      this.currRoundNumber = null;
+      this.isOpponentOnline = null;
+    },
 
     initListeners() {
       socket.on("game:started", (match) => {
@@ -42,6 +47,18 @@ export const useGameStore = defineStore("game", {
 
       socket.on("game:error", (err) => {
         toast.error(err.message);
+      });
+
+      socket.on("disconnect", (reason) => {
+        console.warn("Socket disconnected: " + reason);
+        if (this.match) {
+          toast.error("Hiba történt - a játszma törölve.");
+          router.push("/dashboard");
+          this.handleStopMatch();
+        }
+        else {
+          toast.error("Hiba történt a kapcsolat kiépítésekor.");
+        }
       });
     }
 

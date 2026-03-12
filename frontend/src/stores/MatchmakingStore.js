@@ -91,6 +91,12 @@ export const useMatchmakingStore = defineStore("matchmaking", {
         toast.error(err.message);
       });
 
+      socket.on("disconnect", (reason) => {
+        console.warn("Socket disconnected: " + reason);
+        toast.error("Hiba történt - a meccskeresés megállítva.");
+        this.stop();
+      });
+
     }
 
   }
