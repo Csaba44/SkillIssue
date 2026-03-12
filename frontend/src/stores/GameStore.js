@@ -7,8 +7,12 @@ import router from "../config/router";
 export const useGameStore = defineStore("game", {
   state: () => ({
     match: null,
-    currRoundNumber: null,
     isOpponentOnline: null,
+    currentRound: null,
+    currentQuestion: null,
+    currentSubject: null,
+    currentAnswers: null,
+    currentCorrectAnswerId: null
   }),
 
   actions: {
@@ -16,14 +20,23 @@ export const useGameStore = defineStore("game", {
       this.match = match;
       this.isOpponentOnline = true;
       router.push("/game/ranked/" + match.match_uuid);
-      console.log(match);
     },
     handleStopMatch() {
       this.match = null;
-      this.currRoundNumber = null;
       this.isOpponentOnline = null;
+      this.currentRound = null;
+      this.currentQuestion = null;
+      this.currentSubject = null;
+      this.currentAnswers = null;
+      this.currentCorrectAnswerId = null;
     },
+    submitAnswer(answerId) {
+      // Check if answer exists on current question
+      if (this.currentAnswers.filter(a => a.id === answerId).length <= 0) return;
 
+      socket.emit("game:submit-answer", answerId);
+      console.log("Submitted.")
+    },
     initListeners() {
       socket.on("game:started", (match) => {
         this.handleMatch(match);
@@ -43,6 +56,19 @@ export const useGameStore = defineStore("game", {
         this.isOpponentOnline = true;
         console.log("RECONNECT")
         toast.success("Az ellenfél visszacsatlakozott.");
+      });
+
+      socket.on("game:new-question", (data) => {
+        this.currentRound = data.currentRound;
+        this.currentSubject = data.subject;
+        this.currentQuestion = data.question;
+        this.currentAnswers = data.answers;
+      });
+
+      socket.on("game:finished", (data) => {
+        this.handleStopMatch();
+
+        console.log("FINISHED! ", data);
       });
 
       socket.on("game:error", (err) => {

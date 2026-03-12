@@ -1,5 +1,7 @@
 import api from "../config/api.js";
 import { gameState } from "../states/matchmakingState.js";
+import { isDraw } from "../utils/gameResultUtil.js";
+import { leaveUserFromRoom } from "./roomService.js";
 
 export async function createRankedGame(playerA, playerB) {
   try {
@@ -34,4 +36,36 @@ export function getActiveGame(id) {
   }
 
   return null;
+}
+
+export function formatFinalResults(match, data) {
+  const playerAId = match.playerA.userId;
+  const playerBId = match.playerB.userId;
+
+  const isGameDrawn = isDraw(data.scores);
+
+  const winnerKey = isGameDrawn ? null : (data.winner_id == playerAId ? "playerA" : "playerB");
+
+  return {
+    isDraw: isGameDrawn,
+    playerA: {
+      userId: playerAId,
+      score: data.scores[playerAId],
+      won: isGameDrawn ? null : winnerKey == "playerA",
+      eloChange: data.elo_changes[playerAId]
+    },
+    playerB: {
+      userId: playerBId,
+      score: data.scores[playerBId],
+      won: isGameDrawn ? null : winnerKey == "playerB",
+      eloChange: data.elo_changes[playerBId]
+    }
+  };
+}
+
+export function leaveUsersFromGame(match) {
+  leaveUserFromRoom(match.playerA.socketId, match.roomId);
+  leaveUserFromRoom(match.playerB.socketId, match.roomId);
+
+  gameState.ongoingGames.delete(match.match_uuid);
 }

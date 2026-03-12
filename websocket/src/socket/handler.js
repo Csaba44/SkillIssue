@@ -11,11 +11,18 @@ export function handleConnection(socket) {
 
   if (userActiveGame) gameController.userConnected(socket, userActiveGame);
 
+  // ============ GENERAL ============
+  socket.on("disconnect", () => {
+    matchmakingController.leaveMatchmaking(socket);
+    gameController.userDisconnected(socket);
+  });
 
   socket.on("test", (data, callback) => {
     callback({ message: "pong", received: data });
   });
+  // =================================
 
+  // ============ MATCHMAKING ============
   socket.on("matchmaking:join", () => {
     matchmakingController.joinMatchmaking(socket);
   });
@@ -27,9 +34,12 @@ export function handleConnection(socket) {
   socket.on("matchmaking:confirm", (tmpUuid) => {
     matchmakingController.confirmMatchmaking(socket, tmpUuid);
   });
+  // ====================================
 
-  socket.on("disconnect", () => {
-    matchmakingController.leaveMatchmaking(socket);
-    gameController.userDisconnected(socket);
+
+  // ============ GAME ============
+  socket.on("game:submit-answer", (answerId) => {
+    gameController.submitAnswer(socket, answerId);
   });
+  // ==============================
 }

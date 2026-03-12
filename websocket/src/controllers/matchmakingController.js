@@ -4,6 +4,7 @@ import { matchmake } from "../services/matchmake.js";
 import { gameState } from "../states/matchmakingState.js";
 import crypto from "crypto";
 import { joinUserToRoom } from "../services/roomService.js"
+import { gameController } from "./gameController.js";
 
 
 export function joinMatchmaking(socket) {
@@ -126,6 +127,7 @@ async function confirmMatchmaking(socket, tmpUuid) {
     joinUserToRoom(playerB.socketId, match.roomId);
 
     io.to(match.roomId).emit("game:started", match);
+    gameController.nextQuestion(match);
   }
 }
 
