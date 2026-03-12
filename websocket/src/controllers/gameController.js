@@ -1,6 +1,7 @@
 import api from "../config/api.js";
 import { io } from "../server.js";
 import { formatFinalResults, getActiveGame, leaveUsersFromGame } from "../services/rankedGameService.js";
+import { joinUserToRoom } from "../services/roomService.js";
 import { gameState } from "../states/matchmakingState.js";
 import { determineOpponent } from "../utils/determineOpponent.js";
 import { formatQuestionData } from "../utils/formatQuestionData.js";
@@ -16,6 +17,7 @@ function userConnected(socket, userActiveGame) {
     const whichPlayer = opponent.playerKey == "playerA" ? "playerB" : "playerA";
 
     gameState.ongoingGames.get(userActiveGame.match_uuid)[whichPlayer].socketId = socket.id;
+    joinUserToRoom(socket.id, userActiveGame.roomId);
 
     // Send current question to reconnecting player
     const questions = gameState.ongoingGames.get(userActiveGame.match_uuid).questions;
