@@ -10,6 +10,7 @@ import { useGameStore } from "../stores/GameStore";
 import RankedWidget from "../components/Game/RankedWidget.vue";
 import RankedSummary from "../components/Game/RankedSummary.vue";
 import { storeToRefs } from "pinia";
+import router from "../config/router";
 
 const route = useRoute();
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
@@ -43,7 +44,8 @@ const getNextQuestion = async (selectedAnswerId) => {
 
       if (res.data.game_ended) {
         hasEnded.value = true;
-        return toast.info("A játszma véget ért.");
+        console.log(res.data);
+        router.push(`/summary/solo/${res.data.practice_session_id}`);
       }
     }
 
@@ -87,7 +89,6 @@ onBeforeMount(async () => {
 
     <div class="relative z-10 w-full h-full flex items-center justify-center">
       <SoloWidget v-if="!hasEnded && route.params.gameToken" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="TOTAL_ROUNDS" />
-      <div v-if="hasEnded" class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
 
       <RankedWidget v-if="gameStore.match && route.params.matchUuid !== undefined" />
       <RankedSummary v-if="matchResults != null && !gameStore.match" :uuid="matchResults.match_uuid" />

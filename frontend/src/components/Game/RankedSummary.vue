@@ -14,8 +14,12 @@ const userStore = useUserStore();
 const matchResults = ref(null);
 
 onMounted(async () => {
-  const response = await api.get(`/api/game-matches/${props.uuid}`);
-  matchResults.value = response.data;
+  try {
+    const response = await api.get(`/api/game-matches/${props.uuid}`);
+    matchResults.value = response.data;
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 const isSpectator = computed(() => {
@@ -73,9 +77,7 @@ const resultLabel = computed(() => {
 
       <h2 class="text-4xl font-bold mb-10">Meccs összesítő</h2>
 
-      <!-- Játékos kártyák: mobilon egymás alá, sm felett egymás mellé -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full mb-10">
-        <!-- Bal oldal -->
         <div :class="isSpectator ? (userMatchResult.isDraw ? ['border-yellow-400/30', 'bg-yellow-400/10'] : userMatchResult.userStats.won ? ['border-green-400/30', 'bg-green-400/10'] : ['border-red-400/30', 'bg-red-400/10']) : [resultLabel.border, resultLabel.bg]" class="w-full sm:flex-1 p-6 rounded-2xl border backdrop-blur-xl text-center transition-all">
           <p class="text-white/60 text-sm mb-1">{{ isSpectator ? "" : "Te" }}</p>
           <h3 class="text-xl font-bold mb-4">{{ userMatchResult.userStats.userName }}</h3>
@@ -90,7 +92,6 @@ const resultLabel = computed(() => {
 
         <div class="text-3xl font-bold text-white/30 sm:block">VS</div>
 
-        <!-- Jobb oldal -->
         <div :class="isSpectator ? (userMatchResult.isDraw ? ['border-yellow-400/30', 'bg-yellow-400/10'] : userMatchResult.opponentStats.won ? ['border-green-400/30', 'bg-green-400/10'] : ['border-red-400/30', 'bg-red-400/10']) : ['border-white/10', 'bg-white/5']" class="w-full sm:flex-1 p-6 rounded-2xl border backdrop-blur-xl text-center transition-all">
           <p class="text-white/60 text-sm mb-1">{{ isSpectator ? "" : "Ellenfél" }}</p>
           <h3 class="text-xl font-bold mb-4">{{ userMatchResult.opponentStats.userName }}</h3>
@@ -102,7 +103,6 @@ const resultLabel = computed(() => {
         </div>
       </div>
 
-      <!-- Alsó stat kártyák csak játékos nézetben -->
       <div v-if="!isSpectator" class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full mb-10">
         <div class="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-purple-400/20 hover:shadow-purple-400/20 hover:shadow-lg transition-all text-center">
           <p class="text-white/60">ELO változás</p>

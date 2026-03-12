@@ -57,9 +57,29 @@ class PracticeSessionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
+        $session = PracticeSession::with('sessionQuestions')
+            ->where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->whereNotNull('xp_after')
+            ->firstOrFail();
+
+        $score = $session->sessionQuestions
+            ->filter(fn($sq) => $sq->user_answer_id === $sq->correct_answer_id)
+            ->count();
+
+        $xpChange = $session->xp_after - $session->xp_before;
+
+        return response()->json([
+            'score'      => $score,
+            'maxRounds'  => $session->rounds,
+            'xpChange'   => $xpChange,
+            'xpBefore'   => $session->xp_before,
+            'xpAfter'    => $session->xp_after,
+            'finished'   => true,
+            'createdAt'  => $session->created_at,
+        ]);
     }
 
     /**

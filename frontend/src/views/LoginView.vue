@@ -60,10 +60,4 @@ const currFormToShow = ref(route.query.register == 1 ? "register" : "login");
       <RegisterForm v-if="currFormToShow == 'register' && !userStore.isAuthenticated" @switch-form="currFormToShow = 'login'"></RegisterForm>
     </div>
   </ProtectedPageContainer>
-
-  <!-- <form v-if="!userStore.isAuthenticated" @submit.prevent="loginSubmit">
-    <input type="email" name="email" v-model="formData.email" />
-    <input type="password" name="password" v-model="formData.password" />
-    <button type="submit">Login</button>
-  </form>-->
 </template>

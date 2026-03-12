@@ -23,6 +23,7 @@ const routes = [
   { path: "/game/ranked/:matchUuid", name: "gameRanked", component: GameView, meta: { requiresAuth: true } },
 
   { path: "/summary/ranked/:matchUuid", name: "summaryRanked", component: SummaryView, meta: { requiresAuth: true } },
+  { path: "/summary/solo/:id", name: "summaryPractice", component: SummaryView, meta: { requiresAuth: true } },
 
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 

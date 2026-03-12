@@ -73,6 +73,7 @@ class VerifyAnswerController extends Controller
 
         return response()->json([
             'success' => true,
+            'practice_session_id' => $pracSessQuestion->practiceSession->id,
             'is_correct' => $answer->is_correct,
             'correct_answer_id' => $pracSessQuestion->correct_answer_id,
             'game_ended' => $awardedXp != -1,
