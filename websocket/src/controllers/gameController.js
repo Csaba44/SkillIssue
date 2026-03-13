@@ -19,6 +19,7 @@ function userConnected(socket, userActiveGame) {
     const whichPlayer = opponent.playerKey == "playerA" ? "playerB" : "playerA";
 
     gameState.ongoingGames.get(userActiveGame.match_uuid)[whichPlayer].socketId = socket.id;
+    gameState.ongoingGames.get(userActiveGame.match_uuid)[whichPlayer].connected = true;
     joinUserToRoom(socket.id, userActiveGame.roomId);
 
     // Send current question to reconnecting player
@@ -39,6 +40,9 @@ function userDisconnected(socket) {
 
   if (activeGame) {
     const opponent = determineOpponent(socket.user.id, activeGame);
+    const whichPlayer = opponent.playerKey == "playerA" ? "playerB" : "playerA";
+
+    gameState.ongoingGames.get(activeGame.match_uuid)[whichPlayer].connected = false;
 
     // Advise opponent of player disconnection
     io.to(opponent.player.socketId).emit("game:opponent-disconnected");

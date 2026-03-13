@@ -15,8 +15,8 @@ export async function createRankedGame(playerA, playerB) {
       roomId: `game:${res.data.match_uuid}`,
       match_uuid: res.data.match_uuid,
       ranked_token: res.data.ranked_token,
-      playerA,
-      playerB,
+      playerA: { ...playerA, connected: true },
+      playerB: { ...playerB, connected: true },
       questions: [],
       createdAt: Date.now(),
     }
