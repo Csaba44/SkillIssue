@@ -71,21 +71,25 @@ async function nextQuestion(match) {
   }
 }
 
-async function submitAnswer(socket, answerId) {
-  const match = getActiveGame(socket.user.id);
-  if (!match) return socket.emit("game:error", { message: "Nincs ilyen játszma." });
+export async function submitAnswer(socket, answerId, isForced = false, forcedUserId = null) {
+  const userId = isForced && forcedUserId ? forcedUserId : socket.user.id;
+  const match = getActiveGame(userId);
+
+  if (!match) {
+    if (!isForced) socket.emit("game:error", { message: "Nincs ilyen játszma." });
+    return;
+  }
 
   try {
     const question = match.questions.at(-1);
 
     const res = await api.post(`/api/internal/answers/verify/${answerId}`, {
-      answering_user_id: socket.user.id,
+      answering_user_id: userId,
       ranked_token: match.ranked_token,
       question_token: question.question_token,
-    })
+    });
 
-
-    const opponent = determineOpponent(socket.user.id, match);
+    const opponent = determineOpponent(userId, match);
     const opponentKey = opponent.playerKey;
     const playerKey = opponentKey == "playerA" ? "playerB" : "playerA";
 
@@ -94,7 +98,7 @@ async function submitAnswer(socket, answerId) {
     const bothFinishedForRound = question.playerAnswers[opponentKey].answerId !== null && question.playerAnswers[playerKey].answerId !== null;
 
     const gameFinished = res.data.game_finished ?? false;
-    console.log("GAME FINISHED? ", gameFinished)
+    console.log("GAME FINISHED? ", gameFinished);
 
     // WHEN ROUND IS OVER
     if (bothFinishedForRound) {
@@ -123,7 +127,7 @@ async function submitAnswer(socket, answerId) {
       error.message ||
       "Unknown error";
 
-    socket.emit("game:error", message);
+    if (!isForced) socket.emit("game:error", message);
     console.error(error);
   }
 }

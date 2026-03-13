@@ -1,4 +1,5 @@
 import api from "../config/api.js";
+import { submitAnswer } from "../controllers/gameController.js";
 import { io } from "../server.js";
 import { gameState } from "../states/matchmakingState.js";
 import { isDraw } from "../utils/gameResultUtil.js";
@@ -76,13 +77,22 @@ export function leaveUsersFromGame(match) {
 export function checkQuestionTimes() {
   for (const game of gameState.ongoingGames.values()) {
     const lastQuestion = game.questions.at(-1);
+    if (!lastQuestion) continue;
     if (lastQuestion.timeLeft <= 0) continue;
-    lastQuestion.timeLeft--;
+
+    lastQuestion.timeLeft -= 1;
+    console.log("TIMELEFT", lastQuestion.timeLeft)
 
     if (lastQuestion.timeLeft <= 0) {
       console.log("TIME EXPIRED!");
 
       io.to(game.roomId).emit("game:time-expired", lastQuestion.current_round);
+
+      ["playerA", "playerB"].forEach(playerKey => {
+        if (!game[playerKey].connected) {
+          submitAnswer(null, null, true, game[playerKey].userId);
+        }
+      });
     }
   }
 }
