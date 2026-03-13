@@ -48,7 +48,6 @@ export const useMatchmakingStore = defineStore("matchmaking", {
     },
 
     initListeners() {
-
       socket.on("matchmaking:queue-length-updated", (length) => {
         this.playersInQueue = length;
       });

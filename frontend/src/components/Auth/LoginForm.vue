@@ -6,6 +6,7 @@ import api from "../../config/api";
 import { useUserStore } from "../../stores/UserStore";
 import router from "../../config/router";
 import { toast } from "vue-sonner";
+import { socket } from "../../config/websocket";
 
 const userStore = useUserStore();
 
@@ -26,6 +27,7 @@ const loginSubmit = async () => {
     await userStore.verifySession();
 
     if (userStore.isAuthenticated) {
+      socket.disconnect().connect();
       return "Sikeres bejelentkezés";
     }
 

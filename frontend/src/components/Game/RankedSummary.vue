@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useUserStore } from "../../stores/UserStore";
 import api from "../../config/api";
+import Loading from "../Generic/Loading.vue";
 
 const props = defineProps({
   uuid: {
@@ -130,9 +131,6 @@ const resultLabel = computed(() => {
       </div>
     </div>
 
-    <div v-else class="flex flex-col items-center gap-4 text-white/60">
-      <i class="fa-solid fa-spinner animate-spin text-4xl"></i>
-      <p>Eredmények betöltése...</p>
-    </div>
+    <Loading v-else message="Eredmények betöltése..." />
   </div>
 </template>
