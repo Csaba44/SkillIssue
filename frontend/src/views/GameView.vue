@@ -29,8 +29,8 @@ const { matchResults } = storeToRefs(gameStore);
 
 const getNextQuestion = async (selectedAnswerId) => {
   try {
-    // Submit previous if there was a selected answer
-    if (selectedAnswerId) {
+    // Submit previous if there was a prev question
+    if (questionToken.value) {
       const res = await api.post(`/api/answers/verify/${selectedAnswerId}`, {
         question_token: questionToken.value,
         game_token: route.params.gameToken,
