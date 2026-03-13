@@ -1,7 +1,8 @@
 import api from "../config/api.js";
+import { io } from "../server.js";
 import { gameState } from "../states/matchmakingState.js";
 import { isDraw } from "../utils/gameResultUtil.js";
-import { leaveUserFromRoom } from "./roomService.js";
+import { joinUserToRoom, leaveUserFromRoom } from "./roomService.js";
 
 export async function createRankedGame(playerA, playerB) {
   try {
@@ -70,4 +71,18 @@ export function leaveUsersFromGame(match) {
   leaveUserFromRoom(match.playerB.socketId, match.roomId);
 
   gameState.ongoingGames.delete(match.match_uuid);
+}
+
+export function checkQuestionTimes() {
+  for (const game of gameState.ongoingGames.values()) {
+    const lastQuestion = game.questions.at(-1);
+    if (lastQuestion.timeLeft <= 0) continue;
+    lastQuestion.timeLeft--;
+
+    if (lastQuestion.timeLeft <= 0) {
+      console.log("TIME EXPIRED!");
+
+      io.to(game.roomId).emit("game:time-expired", lastQuestion.current_round);
+    }
+  }
 }

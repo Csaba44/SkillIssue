@@ -13,6 +13,10 @@ export const useGameStore = defineStore("game", {
     currentSubject: null,
     currentAnswers: null,
 
+    timeExpired: false,
+
+    selectedAnswer: null,
+
     actualAnswers: { correctAnswerId: null, opponentAnswerId: null }
   }),
 
@@ -29,11 +33,13 @@ export const useGameStore = defineStore("game", {
       this.currentQuestion = null;
       this.currentAnswers = null;
       this.currentSubject = null;
+      this.selectedAnswer = null;
+      this.timeExpired = null;
       this.actualAnswers = { correctAnswerId: null, opponentAnswerId: null };
     },
     submitAnswer(answerId) {
       // Check if answer exists on current question
-      if (this.currentAnswers.filter(a => a.id === answerId).length <= 0) return;
+      if (this.currentAnswers.filter(a => a.id === answerId).length <= 0 && answerId !== null) return toast.error("A válasz nem létezik.");
 
       socket.emit("game:submit-answer", answerId);
       console.log("Submitted.")
@@ -64,6 +70,8 @@ export const useGameStore = defineStore("game", {
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
         this.currentAnswers = data.answers;
+        this.selectedAnswer = null;
+        this.timeExpired = null;
       });
 
       socket.on("game:answers", (data) => {
@@ -71,6 +79,11 @@ export const useGameStore = defineStore("game", {
           correctAnswerId: data.correctAnswerId,
           opponentAnswerId: data.opponentAnswerId
         }
+      });
+
+      socket.on("game:time-expired", (roundNumber) => {
+        toast.info(`Lejárt az idő! ${roundNumber}. kör vége.`);
+        this.timeExpired = true;
       });
 
       socket.on("game:finished", (data) => {

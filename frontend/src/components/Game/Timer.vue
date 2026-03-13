@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 const RANKED_MAX_GUESS_TIME = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
-const SOLO_MAX_GUESS_TIME = import.meta.env.VITE_SOLO_MAX_GUESS_TIME ?? 30;
+const SOLO_MAX_GUESS_TIME = import.meta.env.VITE_SOLO_MAX_GUESS_TIME ?? 3;
 
 const props = defineProps({
   ranked: {

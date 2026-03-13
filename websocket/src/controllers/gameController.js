@@ -7,6 +7,7 @@ import { determineOpponent } from "../utils/determineOpponent.js";
 import { formatQuestionData } from "../utils/formatQuestionData.js";
 
 const MAX_ROUNDS = process.env.MAX_ROUNDS ?? 5;
+const MAX_GUESS_TIME = process.env.RANKED_MAX_GUESS_TIME ?? 30;
 const AFTER_QUESTION_TIMEOUT = process.env.AFTER_QUESTION_TIMEOUT ?? 3500; // ms
 
 function userConnected(socket, userActiveGame) {
@@ -52,10 +53,12 @@ async function nextQuestion(match) {
     const data = formatQuestionData(res.data);
 
     gameState.ongoingGames.get(match.match_uuid).questions.push({
-      ...res.data, playerAnswers: {
+      ...res.data,
+      playerAnswers: {
         playerA: { answerId: null },
         playerB: { answerId: null }
-      }
+      },
+      timeLeft: MAX_GUESS_TIME
     });
 
     io.to(match.roomId).emit("game:new-question", data);
@@ -70,26 +73,24 @@ async function submitAnswer(socket, answerId) {
 
   try {
     const question = match.questions.at(-1);
+
     const res = await api.post(`/api/internal/answers/verify/${answerId}`, {
       answering_user_id: socket.user.id,
       ranked_token: match.ranked_token,
       question_token: question.question_token,
-    });
+    })
 
 
     const opponent = determineOpponent(socket.user.id, match);
     const opponentKey = opponent.playerKey;
     const playerKey = opponentKey == "playerA" ? "playerB" : "playerA";
 
-    const isUserFinished = res.data.finished_for_user;
-
-    if (isUserFinished) {
-      question.playerAnswers[playerKey].answerId = answerId;
-    }
+    question.playerAnswers[playerKey].answerId = answerId === null ? false : answerId;
 
     const bothFinishedForRound = question.playerAnswers[opponentKey].answerId !== null && question.playerAnswers[playerKey].answerId !== null;
 
     const gameFinished = res.data.game_finished ?? false;
+    console.log("GAME FINISHED? ", gameFinished)
 
     // WHEN ROUND IS OVER
     if (bothFinishedForRound) {

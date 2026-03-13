@@ -3,6 +3,7 @@
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
+use App\Http\Controllers\internal\CorrectQuestionController;
 use App\Http\Controllers\internal\GameMatchController as InternalGameMatchController;
 use App\Http\Controllers\internal\SingleQuestionController as InternalSingleQuestionController;
 use App\Http\Controllers\internal\SocketAuthController as InternalSocketAuthController;
@@ -46,7 +47,7 @@ Route::get('/socket-auth', InternalSocketAuthController::class)->middleware(['we
 Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {
     Route::post('/game-matches', [InternalGameMatchController::class, 'store']);
     Route::post('/questions/get-one', InternalSingleQuestionController::class)->middleware(EnsureRankedTokenIsValid::class);
-    Route::post('/answers/verify/{answer}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
+    Route::post('/answers/verify/{id}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
 });
 
 // Profiles

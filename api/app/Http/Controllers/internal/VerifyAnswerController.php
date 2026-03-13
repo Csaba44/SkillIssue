@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class VerifyAnswerController extends Controller
 {
-    public function __invoke(Request $request, Answer $answer)
+    public function __invoke(Request $request, string $answer)
     {
         $MAX_ROUNDS = config("app.max_rounds");
 
@@ -29,17 +29,22 @@ class VerifyAnswerController extends Controller
 
         $question = $this->getMatchQuestion($session, $request->question_id);
 
-        $this->validateAnswerBelongsToQuestion($answer, $question);
-        $this->ensureQuestionNotExpired($question);
+        $isNull = $answer === "null";
 
-        if ($question->user_answer_id !== null) {
-            return response()->json(["error" => "Már válaszoltál erre a kérdésre."], 409);
+        if (!$isNull) {
+            $answerModel = Answer::findOrFail($answer);
+            $this->validateAnswerBelongsToQuestion($answerModel, $question);
+            $this->ensureQuestionNotExpired($question);
+
+            if ($question->user_answer_id !== null) {
+                return response()->json(["error" => "Már válaszoltál erre a kérdésre."], 409);
+            }
+
+            $question->update([
+                'user_answer_id' => $answerModel->id,
+                'user_guess_time_ms' => 1,
+            ]);
         }
-
-        $question->update([
-            'user_answer_id' => $answer->id,
-            'user_guess_time_ms' => 1,
-        ]);
 
         $finishedForUser = $this->isUserFinished($session->id);
         $matches = GameMatch::findPairByUuid($request->match_uuid);
@@ -47,7 +52,7 @@ class VerifyAnswerController extends Controller
 
         $response = [
             'success' => true,
-            'is_correct' => $answer->is_correct == 1,
+            'is_correct' => $isNull ? false : $answerModel->is_correct == 1,
             'correct_answer_id' => $question->correct_answer_id,
             'finished_for_user' => $finishedForUser,
         ];
@@ -228,15 +233,6 @@ class VerifyAnswerController extends Controller
                 ->max('round_number');
 
             if ($lastRound < $maxRounds) {
-                return false;
-            }
-
-            $unanswered = MatchQuestion::where('game_match_id', $match->id)
-                ->where('round_number', $maxRounds)
-                ->whereNull('user_answer_id')
-                ->exists();
-
-            if ($unanswered) {
                 return false;
             }
         }

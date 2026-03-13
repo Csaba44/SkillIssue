@@ -14,15 +14,19 @@ const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const gameStore = useGameStore();
-const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, actualAnswers } = storeToRefs(gameStore);
+const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, actualAnswers, selectedAnswer, timeExpired } = storeToRefs(gameStore);
 
-const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
 const isSubmitting = ref(false);
 const showWaiting = ref(false);
 let waitingTimeout = null;
 
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
+
+watch(timeExpired, (expired) => {
+  if (!expired) return;
+  submitAnswer(true);
+});
 
 const opponent = computed(() => determineOpponent(user.value, gameStore.match));
 
@@ -31,7 +35,6 @@ const opponentAnswerId = computed(() => actualAnswers.value?.opponentAnswerId ??
 
 watch(currentQuestion, (newQuestion, prevQuestion) => {
   if (newQuestion != prevQuestion) {
-    selectedAnswer.value = null;
     countdownEnded.value = false;
     isSubmitting.value = false;
     showWaiting.value = false;
@@ -46,26 +49,17 @@ const setSubmitting = () => {
   }, 600);
 };
 
-const onCountdownEnd = () => {
-  if (!isAuthenticated.value) return;
-  if (isSubmitting.value) return;
-
-  countdownEnded.value = true;
-  setSubmitting();
-};
-
 const onAnswerSelect = (id) => {
   if (!isAuthenticated.value) return;
   if (countdownEnded.value) return;
   if (isSubmitting.value) return;
 
-  selectedAnswer.value = id;
+  gameStore.selectedAnswer = id;
 };
 
-const submitAnswer = () => {
+const submitAnswer = (forced = false) => {
   if (isSubmitting.value) return;
-
-  if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott válasz.");
+  if (selectedAnswer.value === null && !forced) return toast.error("Nincs kiválasztott válasz.");
 
   setSubmitting();
   gameStore.submitAnswer(selectedAnswer.value);
@@ -90,7 +84,7 @@ const submitAnswer = () => {
     <div class="text-center space-y-4">
       <h1 class="text-2xl md:text-3xl font-bold leading-snug">{{ currentQuestion ?? "" }}</h1>
       <div class="flex justify-center">
-        <Timer :ranked="true" :key="currentRound ?? 1" @countdown-end="onCountdownEnd" />
+        <Timer :ranked="true" :key="currentRound ?? 1" @countdown-end="() => console.log('Client side timer ended.')" />
       </div>
     </div>
 
