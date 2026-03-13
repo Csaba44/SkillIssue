@@ -23,6 +23,19 @@ let waitingTimeout = null;
 
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
+const subjectConfig = computed(() => {
+  switch (currentSubject.value) {
+    case "Történelem":
+      return { color: "text-accentGreen", border: "border-accentGreen/40", bg: "bg-accentGreen/10", icon: "fa-solid fa-landmark" };
+    case "Irodalom":
+      return { color: "text-accentYellow", border: "border-accentYellow/40", bg: "bg-accentYellow/10", icon: "fa-solid fa-feather-pointed" };
+    case "Magyar nyelv":
+      return { color: "text-accentPurple", border: "border-accentPurple/40", bg: "bg-accentPurple/10", icon: "fa-solid fa-language" };
+    default:
+      return { color: "text-white", border: "border-white/20", bg: "bg-white/10", icon: "fa-solid fa-circle-question" };
+  }
+});
+
 watch(timeExpired, (expired) => {
   if (!expired) return;
   submitAnswer(true);
@@ -70,6 +83,11 @@ const submitAnswer = (forced = false) => {
   <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center px-10 py-12 gap-6 text-textWhite">
     <div class="w-full flex justify-between items-center text-sm text-white/60">
       <span class="font-bold text-error">{{ currentRound ?? 1 }} / {{ TOTAL_ROUNDS }} kör</span>
+
+      <div v-if="currentSubject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
+        <i :class="subjectConfig.icon"></i>
+        <span>{{ currentSubject }}</span>
+      </div>
     </div>
 
     <div class="flex items-center gap-3 text-lg font-semibold">
