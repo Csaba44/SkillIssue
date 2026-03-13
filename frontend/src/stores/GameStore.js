@@ -17,7 +17,11 @@ export const useGameStore = defineStore("game", {
 
     selectedAnswer: null,
 
-    actualAnswers: { correctAnswerId: null, opponentAnswerId: null }
+    startTimerFrom: import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30,
+
+    actualAnswers: { correctAnswerId: null, opponentAnswerId: null },
+
+    rejoining: false,
   }),
 
   actions: {
@@ -36,6 +40,10 @@ export const useGameStore = defineStore("game", {
       this.selectedAnswer = null;
       this.timeExpired = null;
       this.actualAnswers = { correctAnswerId: null, opponentAnswerId: null };
+
+      this.startTimerFrom = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
+
+      this.rejoining = false;
     },
     submitAnswer(answerId) {
       // Check if answer exists on current question
@@ -43,6 +51,8 @@ export const useGameStore = defineStore("game", {
 
       socket.emit("game:submit-answer", answerId);
       console.log("Submitted.")
+
+      this.rejoining = false;
     },
     initListeners() {
       socket.on("game:started", (match) => {
@@ -50,6 +60,13 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:active-game", (match) => {
+        toast.success("Sikeres visszacsatlakozás!");
+        this.startTimerFrom = match.questions.at(-1).timeLeft;
+
+        console.log("Timer starting from", this.startTimerFrom);
+
+        this.rejoining = true;
+
         this.handleMatch(match);
       });
 
@@ -72,6 +89,10 @@ export const useGameStore = defineStore("game", {
         this.currentAnswers = data.answers;
         this.selectedAnswer = null;
         this.timeExpired = null;
+
+        console.log("NEW QUESTION")
+
+        if (!this.rejoining) this.startTimerFrom = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
       });
 
       socket.on("game:answers", (data) => {
