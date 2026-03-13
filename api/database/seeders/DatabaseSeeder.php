@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             SubjectSeeder::class,
-            MagyarIrodalomSeeder::class,
-            MatematikaSeeder::class,
             TortenelemSeeder::class,
+            IrodalomSeeder::class,
+            MagyarNyelvSeeder::class,
             GameSystemSeeder::class,
         ]);
 
