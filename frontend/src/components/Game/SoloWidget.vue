@@ -33,6 +33,7 @@ watch(
     isSubmitting.value = false;
   },
 );
+
 const onCountdownEnd = () => {
   if (!isAuthenticated.value) return;
   if (isSubmitting.value) return;
@@ -45,6 +46,7 @@ const onCountdownEnd = () => {
 const onAnswerSelect = (id) => {
   if (!isAuthenticated.value) return;
   if (countdownEnded.value) return;
+  if (isSubmitting.value) return;
 
   selectedAnswer.value = id;
 };
@@ -79,14 +81,19 @@ const getNext = () => {
       </div>
     </div>
 
-    <div class="w-full flex flex-col gap-4 mt-4">
+    <div class="w-full flex flex-col gap-4 mt-4" :class="isSubmitting ? 'opacity-60 pointer-events-none' : ''">
       <template v-for="answer in answers" :key="answer.id">
-        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId">
+        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded || isSubmitting" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId">
           {{ answer.answer }}
         </AnswerButton>
       </template>
     </div>
 
-    <Button title="Következő" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300" :disabled="isSubmitting" @click="getNext" />
+    <div v-if="isSubmitting && correctAnswerId === null" class="mt-2 flex items-center gap-2 text-white/50 text-sm">
+      <i class="fa-solid fa-check text-accentGreen text-base"></i>
+      <span>Válasz elküldve</span>
+    </div>
+
+    <Button title="Következő" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed disabled:shadow-none" :disabled="isSubmitting" @click="getNext" />
   </Widget>
 </template>

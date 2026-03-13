@@ -19,6 +19,8 @@ const { isOpponentOnline, currentRound, currentSubject, currentQuestion, current
 const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
 const isSubmitting = ref(false);
+const showWaiting = ref(false);
+let waitingTimeout = null;
 
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
@@ -32,20 +34,30 @@ watch(currentQuestion, (newQuestion, prevQuestion) => {
     selectedAnswer.value = null;
     countdownEnded.value = false;
     isSubmitting.value = false;
+    showWaiting.value = false;
+    clearTimeout(waitingTimeout);
   }
 });
+
+const setSubmitting = () => {
+  isSubmitting.value = true;
+  waitingTimeout = setTimeout(() => {
+    showWaiting.value = true;
+  }, 600);
+};
 
 const onCountdownEnd = () => {
   if (!isAuthenticated.value) return;
   if (isSubmitting.value) return;
 
   countdownEnded.value = true;
-  isSubmitting.value = true;
+  setSubmitting();
 };
 
 const onAnswerSelect = (id) => {
   if (!isAuthenticated.value) return;
   if (countdownEnded.value) return;
+  if (isSubmitting.value) return;
 
   selectedAnswer.value = id;
 };
@@ -55,7 +67,7 @@ const submitAnswer = () => {
 
   if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott válasz.");
 
-  isSubmitting.value = true;
+  setSubmitting();
   gameStore.submitAnswer(selectedAnswer.value);
 };
 </script>
@@ -82,15 +94,20 @@ const submitAnswer = () => {
       </div>
     </div>
 
-    <div class="w-full flex flex-col gap-4 mt-4">
+    <div class="w-full flex flex-col gap-4 mt-4" :class="isSubmitting ? 'opacity-60 pointer-events-none' : ''">
       <template v-for="answer in currentAnswers" :key="answer.id">
-        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId" :isOpponentAnswer="opponentAnswerId !== null && answer.id === opponentAnswerId">
+        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded || isSubmitting" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId" :isOpponentAnswer="opponentAnswerId !== null && answer.id === opponentAnswerId">
           {{ answer.answer }}
         </AnswerButton>
       </template>
     </div>
 
-    <div v-if="isSubmitting" class="mt-4 flex flex-col items-center gap-3 text-white/80 text-center">
+    <div v-if="isSubmitting && correctAnswerId === null" class="mt-2 flex items-center gap-2 text-white/50 text-sm">
+      <i class="fa-solid fa-check text-accentGreen text-base"></i>
+      <span>Válasz elküldve</span>
+    </div>
+
+    <div v-if="showWaiting && correctAnswerId === null" class="flex flex-col items-center gap-3 text-white/80 text-center">
       <div class="flex items-center gap-3">
         <div class="flex gap-1">
           <span class="w-2 h-2 bg-accentYellow rounded-full animate-bounce"></span>
@@ -105,6 +122,6 @@ const submitAnswer = () => {
       <div class="text-xs text-white/40">A következő kérdés automatikusan indul.</div>
     </div>
 
-    <Button title="Beküldés" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300" :disabled="isSubmitting" @click="submitAnswer" />
+    <Button title="Beküldés" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed disabled:shadow-none" :disabled="isSubmitting" @click="submitAnswer" />
   </Widget>
 </template>
