@@ -68,12 +68,12 @@ async function submitAnswer(socket, answerId) {
   if (!match) return socket.emit("game:error", { message: "Nincs ilyen játszma." });
 
   try {
+    const question = match.questions.at(-1);
     const res = await api.post(`/api/internal/answers/verify/${answerId}`, {
       answering_user_id: socket.user.id,
       ranked_token: match.ranked_token,
-      question_token: match.questions.at(-1).question_token,
+      question_token: question.question_token,
     });
-    console.log("RES DATA", res.data);
 
 
     const opponent = determineOpponent(socket.user.id, match);
@@ -83,16 +83,21 @@ async function submitAnswer(socket, answerId) {
     const isUserFinished = res.data.finished_for_user;
 
     if (isUserFinished) {
-      match.questions.at(-1).playerAnswers[playerKey].answerId = answerId;
+      question.playerAnswers[playerKey].answerId = answerId;
     }
 
-    const bothFinishedForRound = match.questions.at(-1).playerAnswers[opponentKey].answerId !== null && match.questions.at(-1).playerAnswers[playerKey].answerId !== null;
+    const bothFinishedForRound = question.playerAnswers[opponentKey].answerId !== null && question.playerAnswers[playerKey].answerId !== null;
 
     const gameFinished = res.data.game_finished ?? false;
 
     // WHEN ROUND IS OVER
-    if (bothFinishedForRound && !gameFinished) {
-      nextQuestion(match);
+    if (bothFinishedForRound) {
+      const playerAAnswer = question.playerAnswers.playerA.answerId;
+      const playerBAnswer = question.playerAnswers.playerB.answerId;
+
+      sendCorrectAndOpponentAnswers(match, res.data.correct_answer_id, { playerA: playerAAnswer, playerB: playerBAnswer });
+
+      if (!gameFinished) nextQuestion(match);
     }
 
     if (gameFinished) {
@@ -109,6 +114,13 @@ async function submitAnswer(socket, answerId) {
     socket.emit("game:error", message);
     console.error(error);
   }
+}
+
+function sendCorrectAndOpponentAnswers(match, correctAnswerId, playerAnswers) {
+  console.log(match.roomId, { correctAnswerId, playerAnswers })
+
+  io.to(match.playerA.socketId).emit("game:answers", { opponentAnswerId: playerAnswers.playerB, correctAnswerId: correctAnswerId });
+  io.to(match.playerB.socketId).emit("game:answers", { opponentAnswerId: playerAnswers.playerA, correctAnswerId: correctAnswerId });
 }
 
 export const gameController = {

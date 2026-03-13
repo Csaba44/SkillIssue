@@ -12,7 +12,8 @@ export const useGameStore = defineStore("game", {
     currentQuestion: null,
     currentSubject: null,
     currentAnswers: null,
-    currentCorrectAnswerId: null,
+
+    actualAnswers: { correctAnswerId: null, opponentAnswerId: null }
   }),
 
   actions: {
@@ -26,9 +27,9 @@ export const useGameStore = defineStore("game", {
       this.isOpponentOnline = null;
       this.currentRound = null;
       this.currentQuestion = null;
-      this.currentSubject = null;
       this.currentAnswers = null;
-      this.currentCorrectAnswerId = null;
+      this.currentSubject = null;
+      this.actualAnswers = { correctAnswerId: null, opponentAnswerId: null };
     },
     submitAnswer(answerId) {
       // Check if answer exists on current question
@@ -63,6 +64,13 @@ export const useGameStore = defineStore("game", {
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
         this.currentAnswers = data.answers;
+      });
+
+      socket.on("game:answers", (data) => {
+        this.actualAnswers = {
+          correctAnswerId: data.correctAnswerId,
+          opponentAnswerId: data.opponentAnswerId
+        }
       });
 
       socket.on("game:finished", (data) => {

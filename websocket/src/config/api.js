@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const SERVICE_TOKEN = process.env.SERVICE_TOKEN;
-console.log("SERVICETOKEN", SERVICE_TOKEN)
 
 const api = axios.create({
   baseURL: process.env.APP_ENV == "production"
