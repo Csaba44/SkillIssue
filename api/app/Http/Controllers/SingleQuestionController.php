@@ -58,6 +58,7 @@ class SingleQuestionController extends Controller
                 ->firstWhere('is_correct', 1)
                 ->id;
             $randomQuestion->answers->makeHidden('is_correct');
+            $randomQuestion->setRelation('answers', $randomQuestion->answers->shuffle());
 
 
             // Get the current round's number
