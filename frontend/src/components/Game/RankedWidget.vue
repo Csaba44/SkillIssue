@@ -14,7 +14,7 @@ const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const gameStore = useGameStore();
-const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, correctAnswerId } = storeToRefs(gameStore);
+const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, actualAnswers } = storeToRefs(gameStore);
 
 const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
@@ -24,12 +24,14 @@ const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
 const opponent = computed(() => determineOpponent(user.value, gameStore.match));
 
+const correctAnswerId = computed(() => actualAnswers.value?.correctAnswerId ?? null);
+const opponentAnswerId = computed(() => actualAnswers.value?.opponentAnswerId ?? null);
+
 watch(currentQuestion, (newQuestion, prevQuestion) => {
   if (newQuestion != prevQuestion) {
     selectedAnswer.value = null;
     countdownEnded.value = false;
     isSubmitting.value = false;
-    console.log("new question detected");
   }
 });
 
@@ -39,8 +41,6 @@ const onCountdownEnd = () => {
 
   countdownEnded.value = true;
   isSubmitting.value = true;
-
-  // TODO: submit here
 };
 
 const onAnswerSelect = (id) => {
@@ -56,7 +56,6 @@ const submitAnswer = () => {
   if (selectedAnswer.value === null && !countdownEnded.value) return toast.error("Nincs kiválasztott válasz.");
 
   isSubmitting.value = true;
-
   gameStore.submitAnswer(selectedAnswer.value);
 };
 </script>
@@ -64,13 +63,16 @@ const submitAnswer = () => {
 <template>
   <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center px-10 py-12 gap-6 text-textWhite">
     <div class="w-full flex justify-between items-center text-sm text-white/60">
-      <span class="font-bold text-error"> {{ currentRound ?? 1 }} / {{ TOTAL_ROUNDS }} kör </span>
+      <span class="font-bold text-error">{{ currentRound ?? 1 }} / {{ TOTAL_ROUNDS }} kör</span>
     </div>
 
     <div class="flex items-center gap-3 text-lg font-semibold">
       <span class="text-white">{{ user.name }}</span>
       <i class="fa-solid fa-swords text-accentYellow text-xl"></i>
-      <span class="text-error">{{ opponent.player.userName ?? "Ismeretlen ellenfél" }} {{ !isOpponentOnline ? "(kilépett)" : "" }}</span>
+      <span class="text-accentPurple">
+        {{ opponent.player.userName ?? "Ismeretlen ellenfél" }}
+        {{ !isOpponentOnline ? "(kilépett)" : "" }}
+      </span>
     </div>
 
     <div class="text-center space-y-4">
@@ -82,7 +84,7 @@ const submitAnswer = () => {
 
     <div class="w-full flex flex-col gap-4 mt-4">
       <template v-for="answer in currentAnswers" :key="answer.id">
-        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId">
+        <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId" :isOpponentAnswer="opponentAnswerId !== null && answer.id === opponentAnswerId">
           {{ answer.answer }}
         </AnswerButton>
       </template>
@@ -95,12 +97,14 @@ const submitAnswer = () => {
           <span class="w-2 h-2 bg-accentYellow rounded-full animate-bounce [animation-delay:0.2s]"></span>
           <span class="w-2 h-2 bg-accentYellow rounded-full animate-bounce [animation-delay:0.4s]"></span>
         </div>
-
-        <span class="font-semibold text-sm md:text-base"> {{ opponent.player.userName ?? "Az ellenfél" }} még gondolkodik... </span>
+        <span class="font-semibold text-sm md:text-base">
+          <span class="text-accentPurple">{{ opponent.player.userName ?? "Az ellenfél" }}</span>
+          még gondolkodik...
+        </span>
       </div>
-
       <div class="text-xs text-white/40">A következő kérdés automatikusan indul.</div>
     </div>
+
     <Button title="Beküldés" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300" :disabled="isSubmitting" @click="submitAnswer" />
   </Widget>
 </template>

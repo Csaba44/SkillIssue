@@ -7,6 +7,7 @@ import { determineOpponent } from "../utils/determineOpponent.js";
 import { formatQuestionData } from "../utils/formatQuestionData.js";
 
 const MAX_ROUNDS = process.env.MAX_ROUNDS ?? 5;
+const AFTER_QUESTION_TIMEOUT = process.env.AFTER_QUESTION_TIMEOUT ?? 3500; // ms
 
 function userConnected(socket, userActiveGame) {
   if (userActiveGame) {
@@ -97,13 +98,19 @@ async function submitAnswer(socket, answerId) {
 
       sendCorrectAndOpponentAnswers(match, res.data.correct_answer_id, { playerA: playerAAnswer, playerB: playerBAnswer });
 
-      if (!gameFinished) nextQuestion(match);
+      if (!gameFinished) {
+        setTimeout(() => {
+          nextQuestion(match);
+        }, AFTER_QUESTION_TIMEOUT);
+      }
     }
 
     if (gameFinished) {
-      const results = formatFinalResults(match, res.data);
-      io.to(match.roomId).emit("game:finished", results);
-      leaveUsersFromGame(match);
+      setTimeout(() => {
+        const results = formatFinalResults(match, res.data);
+        io.to(match.roomId).emit("game:finished", results);
+        leaveUsersFromGame(match);
+      }, AFTER_QUESTION_TIMEOUT);
     }
   } catch (error) {
     const message =
