@@ -16,6 +16,14 @@ class GameSystemSeeder extends Seeder
             $xp = 5 * ($level ** 2);
             $xp = ceil($xp / 10) * 10;
 
+            if ($level == 1) {
+                $levels[] = [
+                    "level" => $level,
+                    "min_xp" => -1
+                ];
+                continue;
+            }
+
             $levels[] = [
                 "level" => $level,
                 "min_xp" => $xp
