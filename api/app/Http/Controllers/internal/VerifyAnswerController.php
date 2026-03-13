@@ -131,7 +131,6 @@ class VerifyAnswerController extends Controller
             ->count();
     }
 
-
     private function determineMatchResult($matches, User $userA, User $userB): array
     {
         $scores = [];
@@ -168,10 +167,16 @@ class VerifyAnswerController extends Controller
             if ($eloChangeB > 0) $eloChangeB = max(10, $eloChangeB);
         }
 
-        $userA->elo += $eloChangeA;
-        $userB->elo += $eloChangeB;
+        $originalEloA = $userA->elo;
+        $originalEloB = $userB->elo;
+
+        $userA->elo = max(0, $userA->elo + $eloChangeA);
+        $userB->elo = max(0, $userB->elo + $eloChangeB);
         $userA->xp += $scoreA * 10;
         $userB->xp += $scoreB * 10;
+
+        $actualEloChangeA = $userA->elo - $originalEloA;
+        $actualEloChangeB = $userB->elo - $originalEloB;
 
         $userA->save();
         $userB->save();
@@ -179,10 +184,9 @@ class VerifyAnswerController extends Controller
         foreach ($matches as $match) {
             $isUserA = $match->user_id === $userA->id;
 
-            $userId     = $isUserA ? $userA->id : $userB->id;
-            $eloChange  = $isUserA ? $eloChangeA : $eloChangeB;
-            $newElo     = $isUserA ? $userA->elo : $userB->elo;
-            $newXp      = $isUserA ? $userA->xp  : $userB->xp;
+            $userId  = $isUserA ? $userA->id : $userB->id;
+            $newElo  = $isUserA ? $userA->elo : $userB->elo;
+            $newXp   = $isUserA ? $userA->xp  : $userB->xp;
 
             if ($winnerId === null) {
                 $result = GameResultEnum::DRAW;
@@ -203,8 +207,8 @@ class VerifyAnswerController extends Controller
             'scores'      => $scores,
             'winner_id'   => $winnerId,
             'elo_changes' => [
-                $userA->id => $eloChangeA,
-                $userB->id => $eloChangeB,
+                $userA->id => $actualEloChangeA,
+                $userB->id => $actualEloChangeB,
             ],
         ];
     }
@@ -228,7 +232,6 @@ class VerifyAnswerController extends Controller
     private function isGameFinished($matches, int $maxRounds): bool
     {
         foreach ($matches as $match) {
-
             $lastRound = MatchQuestion::where('game_match_id', $match->id)
                 ->max('round_number');
 
