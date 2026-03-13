@@ -90,7 +90,7 @@ const submitAnswer = () => {
     <div class="text-center space-y-4">
       <h1 class="text-2xl md:text-3xl font-bold leading-snug">{{ currentQuestion ?? "" }}</h1>
       <div class="flex justify-center">
-        <Timer :key="currentRound ?? 1" @countdown-end="onCountdownEnd" />
+        <Timer :ranked="true" :key="currentRound ?? 1" @countdown-end="onCountdownEnd" />
       </div>
     </div>
 

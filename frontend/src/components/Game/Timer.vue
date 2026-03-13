@@ -1,9 +1,18 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-const TOTAL_SECONDS = 15;
+const RANKED_MAX_GUESS_TIME = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
+const SOLO_MAX_GUESS_TIME = import.meta.env.VITE_SOLO_MAX_GUESS_TIME ?? 30;
 
-const secondsLeft = ref(TOTAL_SECONDS);
+const props = defineProps({
+  ranked: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
+});
+
+const secondsLeft = ref(props.ranked ? RANKED_MAX_GUESS_TIME : SOLO_MAX_GUESS_TIME);
 let interval = null;
 
 const emit = defineEmits(["countdown-end"]);
