@@ -38,10 +38,30 @@ const subjectConfig = computed(() => {
   }
 });
 
-watch(timeExpired, (expired) => {
-  if (!expired) return;
-  submitAnswer(true);
-});
+const setSubmitting = () => {
+  isSubmitting.value = true;
+  waitingTimeout = setTimeout(() => {
+    showWaiting.value = true;
+  }, 600);
+};
+
+const submitAnswer = (forced = false) => {
+  if (isSubmitting.value) return;
+  if (selectedAnswer.value === null && !forced) return toast.error("Nincs kiválasztott válasz.");
+
+  setSubmitting();
+  gameStore.submitAnswer(selectedAnswer.value);
+};
+
+watch(
+  timeExpired,
+  (expired) => {
+    console.log("exp", expired);
+    if (!expired) return;
+    submitAnswer(true);
+  },
+  { immediate: true },
+);
 
 const opponent = computed(() => determineOpponent(user.value, gameStore.match));
 
@@ -57,27 +77,12 @@ watch(currentQuestion, (newQuestion, prevQuestion) => {
   }
 });
 
-const setSubmitting = () => {
-  isSubmitting.value = true;
-  waitingTimeout = setTimeout(() => {
-    showWaiting.value = true;
-  }, 600);
-};
-
 const onAnswerSelect = (id) => {
   if (!isAuthenticated.value) return;
   if (countdownEnded.value) return;
   if (isSubmitting.value) return;
 
   gameStore.selectedAnswer = id;
-};
-
-const submitAnswer = (forced = false) => {
-  if (isSubmitting.value) return;
-  if (selectedAnswer.value === null && !forced) return toast.error("Nincs kiválasztott válasz.");
-
-  setSubmitting();
-  gameStore.submitAnswer(selectedAnswer.value);
 };
 </script>
 

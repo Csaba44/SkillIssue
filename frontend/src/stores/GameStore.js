@@ -3,6 +3,7 @@ import { socket } from "../config/websocket";
 import { toast } from "vue-sonner";
 import router from "../config/router";
 import { useUserStore } from "./UserStore";
+import { determineOpponent } from "../utils/determineOpponent";
 
 
 export const useGameStore = defineStore("game", {
@@ -17,6 +18,7 @@ export const useGameStore = defineStore("game", {
     timeExpired: false,
 
     selectedAnswer: null,
+    submittedAnswer: null,
 
     startTimerFrom: import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30,
 
@@ -29,6 +31,7 @@ export const useGameStore = defineStore("game", {
     handleMatch(match) {
       this.match = match;
       this.isOpponentOnline = true;
+      console.log(match)
       router.push("/game/ranked/" + match.match_uuid);
     },
     handleStopMatch() {
@@ -39,6 +42,7 @@ export const useGameStore = defineStore("game", {
       this.currentAnswers = null;
       this.currentSubject = null;
       this.selectedAnswer = null;
+      this.submittedAnswer = null;
       this.timeExpired = null;
       this.actualAnswers = { correctAnswerId: null, opponentAnswerId: null };
 
@@ -65,9 +69,21 @@ export const useGameStore = defineStore("game", {
 
       socket.on("game:active-game", (match) => {
         toast.success("Sikeres visszacsatlakozás!");
-        this.startTimerFrom = match.questions.at(-1).timeLeft;
+
+        const userStore = useUserStore();
+
+        const lastQuestion = match.questions.at(-1);
+        this.startTimerFrom = lastQuestion.timeLeft;
+        this.timeExpired = lastQuestion.timeLeft == 0;
 
         console.log("Timer starting from", this.startTimerFrom);
+
+        const opponentKey = determineOpponent(userStore.user, match);
+        const playerKey = opponentKey == "playerA" ? "playerA" : "playerB";
+
+        const userAnswer = lastQuestion.playerAnswers[playerKey].answerId
+        this.submittedAnswer = userAnswer;
+        this.selectedAnswer = userAnswer;
 
         this.rejoining = true;
 
@@ -91,12 +107,14 @@ export const useGameStore = defineStore("game", {
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
         this.currentAnswers = data.answers;
-        this.selectedAnswer = null;
-        this.timeExpired = null;
 
-        console.log("NEW QUESTION")
+        if (!this.rejoining) {
 
-        if (!this.rejoining) this.startTimerFrom = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
+          this.timeExpired = null;
+          this.startTimerFrom = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
+          this.selectedAnswer = null;
+          this.submittedAnswer = null;
+        }
       });
 
       socket.on("game:answers", (data) => {

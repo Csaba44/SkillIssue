@@ -127,7 +127,7 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
       error.message ||
       "Unknown error";
 
-    if (!isForced) socket.emit("game:error", message);
+    if (!isForced) socket.emit("game:error", { message });
     console.error(error);
   }
 }
