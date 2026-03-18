@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { socket } from "../config/websocket";
 import { toast } from "vue-sonner";
 import router from "../config/router";
+import { useUserStore } from "./UserStore";
 
 
 export const useGameStore = defineStore("game", {
@@ -44,6 +45,9 @@ export const useGameStore = defineStore("game", {
       this.startTimerFrom = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
 
       this.rejoining = false;
+
+      const userStore = useUserStore();
+      userStore.verifySession();
     },
     submitAnswer(answerId) {
       // Check if answer exists on current question

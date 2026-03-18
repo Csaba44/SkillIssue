@@ -48,7 +48,10 @@ class VerifyAnswerController extends Controller
 
         $finishedForUser = $this->isUserFinished($session->id);
         $matches = GameMatch::findPairByUuid($request->match_uuid);
-        $allFinished = $this->isGameFinished($matches, $MAX_ROUNDS);
+
+        $allFinished = $this->isGameFinished($matches, $MAX_ROUNDS)
+            && $this->areAllUsersFinished($matches);
+
 
         $response = [
             'success' => true,

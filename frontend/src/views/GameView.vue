@@ -11,6 +11,7 @@ import RankedWidget from "../components/Game/RankedWidget.vue";
 import RankedSummary from "../components/Game/RankedSummary.vue";
 import { storeToRefs } from "pinia";
 import router from "../config/router";
+import { useUserStore } from "../stores/UserStore";
 
 const route = useRoute();
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
@@ -24,6 +25,7 @@ const questionToken = ref(null);
 const correctAnswerId = ref(null);
 
 const gameStore = useGameStore();
+const userStore = useUserStore();
 
 const { matchResults } = storeToRefs(gameStore);
 
@@ -44,6 +46,8 @@ const getNextQuestion = async (selectedAnswerId) => {
       if (res.data.game_ended) {
         hasEnded.value = true;
         console.log(res.data);
+
+        await userStore.verifySession(); // reload user data
         router.push(`/summary/solo/${res.data.practice_session_id}`);
       }
     }
@@ -68,7 +72,11 @@ const getNextQuestion = async (selectedAnswerId) => {
 
     if (error.response.status === 410) {
       hasEnded.value = true;
-      return toast.info(error.response.data.error);
+
+      toast.info(error.response.data.error);
+
+      await userStore.verifySession(); // reload user data
+      return router.push(`/summary/solo/${error.response.data.game_id}`);
     }
     return toast.error("Ismeretlen hiba történt a kérdés lekérése során.");
   }

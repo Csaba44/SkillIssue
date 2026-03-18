@@ -73,6 +73,7 @@ class SingleQuestionController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => 'A játszma véget ért.',
+                    'game_id' => $tokenSessionId
                 ], 410);
             }
 

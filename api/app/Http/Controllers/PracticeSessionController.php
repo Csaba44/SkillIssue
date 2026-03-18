@@ -59,6 +59,7 @@ class PracticeSessionController extends Controller
      */
     public function show(Request $request, string $id)
     {
+
         $session = PracticeSession::with('sessionQuestions')
             ->where('id', $id)
             ->where('user_id', $request->user()->id)
