@@ -61,7 +61,7 @@ const loginSubmit = async () => {
 <template>
   <form class="row-span-5 lg:row-span-4 py-5 flex flex-col gap-3 items-center justify-center h-full w-full" @submit.prevent="loginSubmit">
     <Input v-model="formData.email" name="email" autocomplete="email" placeholder="gipsz.jakab@gmail.com" icon="fa-solid fa-at" class="w-full! lg:w-[50%]!" />
-    <Input v-model="formData.password" name="password" autocomplete="password" type="password" placeholder="******" icon="fa-solid fa-key-skeleton" class="w-full! lg:w-[50%]!" />
+    <Input v-model="formData.password" name="password" autocomplete="password" type="password" placeholder="******" icon="fa-solid fa-key" class="w-full! lg:w-[50%]!" />
     <Button title="Bejelentkezés" class="mt-3"></Button>
     <a class="text-accentYellow cursor-pointer hover:underline" @click="emit('switch-form')">Nincs még fiókja?</a>
   </form>

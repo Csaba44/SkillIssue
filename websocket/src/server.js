@@ -12,7 +12,7 @@ export const httpServer = createServer();
 export const io = new Server(httpServer, {
   cors: {
     origin: [
-      "http://127.0.0.1:5173",
+      "http://localhost:5173",
       "http://localhost:5173",
       "https://skillissue.hu"
     ],

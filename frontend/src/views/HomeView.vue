@@ -21,7 +21,7 @@ import PricingCard from "../components/HomePage/PricingCard.vue";
 
     <Container class="w-full h-min relative flex items-center justify-center z-10">
       <div class="grid gap-6 grid-cols-1 md:grid-cols-2 sm:grid-cols-2 xl:grid-cols-4">
-        <AboutCard title="Célunk" desc="Újragondolni a tanulást úgy, hogy izgalmas, játékos és motiváló élmény legyen." :icon="'fa-regular fa-bullseye-arrow'"></AboutCard>
+        <AboutCard title="Célunk" desc="Újragondolni a tanulást úgy, hogy izgalmas, játékos és motiváló élmény legyen." :icon="'fa-solid fa-bullseye'"></AboutCard>
         <AboutCard icon="fa-solid fa-users" title="Kik vagyunk" desc=" Egy lelkes fejlesztői és kreatív csapat, akik hisznek a modern, élvezetes tanulásban." :icon="'fa-regular fa-bullseye-arrow'" class="md:mt-50" :type="'green'"></AboutCard>
         <AboutCard icon="fa-solid fa-dumbbell" title="Erősségeink" desc="Pontokkal, streakekkel és kihívásokkal tesszük élvezetesebbé a tanulást." class="md:bottom-30 xl:bottom-0" :type="'orange'"></AboutCard>
         <AboutCard icon="fa-solid fa-hourglass-half" title="Jövőbeli tervek" desc="A legélvezetesebb magyar tanulóplatformot építjük, ahol minden diák hatékonyan tud tanulni." class="md:mt-50 md:bottom-30 xl:bottom-0" :type="'yellow'"></AboutCard>
@@ -61,7 +61,7 @@ import PricingCard from "../components/HomePage/PricingCard.vue";
       </div>
 
       <div class="absolute inset-0 flex items-end justify-end z-0 pointer-events-none">
-        <span class="font-bold text-gray-300 opacity-30 text-4xl sm:text-6xl md:text-8xl xl:text-9xl"> <span class="text-[#F8F8F8]/20" >Skill</span><span class="text-[#F8F8F8]/30">Issue.</span></span>
+        <span class="font-bold text-gray-300 opacity-30 text-4xl sm:text-6xl md:text-8xl xl:text-9xl"> <span class="text-[#F8F8F8]/20">Skill</span><span class="text-[#F8F8F8]/30">Issue.</span></span>
       </div>
     </Container>
   </footer>
