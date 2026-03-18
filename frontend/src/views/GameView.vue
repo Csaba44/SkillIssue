@@ -1,13 +1,19 @@
 <script setup>
 import { onBeforeMount, onMounted, ref, useTemplateRef } from "vue";
-import RankedWidget from "../components/Game/RankedWidget.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import { sleep } from "../utils/sleep";
 import { useRoute } from "vue-router";
+import SoloWidget from "../components/Game/SoloWidget.vue";
+import { useGameStore } from "../stores/GameStore";
+import RankedWidget from "../components/Game/RankedWidget.vue";
+import RankedSummary from "../components/Game/RankedSummary.vue";
+import { storeToRefs } from "pinia";
+import router from "../config/router";
 
 const route = useRoute();
+const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
 const question = ref("Betöltés folyamatban...");
 const subject = ref("Betöltés folyamatban...");
@@ -17,17 +23,18 @@ const hasEnded = ref(false);
 const questionToken = ref(null);
 const correctAnswerId = ref(null);
 
+const gameStore = useGameStore();
+
+const { matchResults } = storeToRefs(gameStore);
+
 const getNextQuestion = async (selectedAnswerId) => {
   try {
-    // Submit previous if there was a selected answer
-    if (selectedAnswerId) {
-      console.log("Kiválaszott: ", selectedAnswerId);
+    // Submit previous if there was a prev question
+    if (questionToken.value) {
       const res = await api.post(`/api/answers/verify/${selectedAnswerId}`, {
         question_token: questionToken.value,
         game_token: route.params.gameToken,
-        user_guess_time_ms: 1000,
       });
-      console.log(res);
 
       if (res.status !== 200) return;
 
@@ -36,13 +43,13 @@ const getNextQuestion = async (selectedAnswerId) => {
 
       if (res.data.game_ended) {
         hasEnded.value = true;
-        return toast.info("A játszma véget ért.");
+        console.log(res.data);
+        router.push(`/summary/solo/${res.data.practice_session_id}`);
       }
     }
 
     // Get next question
     const res = await api.post("/api/questions/get-one", { game_token: route.params.gameToken });
-    console.log(res);
 
     if (res.status !== 200) {
       return toast.error("Ismeretlen hiba történt a kérdés lekérése során.");
@@ -68,15 +75,22 @@ const getNextQuestion = async (selectedAnswerId) => {
 };
 
 onBeforeMount(async () => {
-  await getNextQuestion();
+  // If solo game
+  if (route.params.gameToken) {
+    await getNextQuestion();
+  }
 });
 </script>
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden" :gameSelectionDisabled="true">
-    <div class="w-full h-full flex items-center justify-center">
-      <RankedWidget v-if="!hasEnded" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :totalRounds="5" />
-      <div v-else class="text-center text-3xl font-bold text-accentGreen">A játszma véget ért.</div>
+    <i class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+
+    <div class="relative z-10 w-full h-full flex items-center justify-center">
+      <SoloWidget v-if="!hasEnded && route.params.gameToken" @onGetNextQuestion="getNextQuestion" :correctAnswerId="correctAnswerId" :question="question" :answers="answers" :currRoundNumber="currentRound" :subject="subject" :totalRounds="TOTAL_ROUNDS" />
+
+      <RankedWidget v-if="gameStore.match && route.params.matchUuid !== undefined" />
+      <RankedSummary v-if="matchResults != null && !gameStore.match" :uuid="matchResults.match_uuid" />
     </div>
   </ProtectedPageContainer>
 </template>

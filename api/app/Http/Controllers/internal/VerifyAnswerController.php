@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\internal;
 
+use App\GameResultEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\GameMatch;
@@ -11,7 +12,7 @@ use Illuminate\Http\Request;
 
 class VerifyAnswerController extends Controller
 {
-    public function __invoke(Request $request, Answer $answer)
+    public function __invoke(Request $request, string $answer)
     {
         $MAX_ROUNDS = config("app.max_rounds");
 
@@ -28,17 +29,22 @@ class VerifyAnswerController extends Controller
 
         $question = $this->getMatchQuestion($session, $request->question_id);
 
-        $this->validateAnswerBelongsToQuestion($answer, $question);
-        $this->ensureQuestionNotExpired($question);
+        $isNull = $answer === "null";
 
-        if ($question->user_answer_id !== null) {
-            return response()->json(["error" => "Már válaszoltál erre a kérdésre."], 409);
+        if (!$isNull) {
+            $answerModel = Answer::findOrFail($answer);
+            $this->validateAnswerBelongsToQuestion($answerModel, $question);
+            $this->ensureQuestionNotExpired($question);
+
+            if ($question->user_answer_id !== null) {
+                return response()->json(["error" => "Már válaszoltál erre a kérdésre."], 409);
+            }
+
+            $question->update([
+                'user_answer_id' => $answerModel->id,
+                'user_guess_time_ms' => 1,
+            ]);
         }
-
-        $question->update([
-            'user_answer_id' => $answer->id,
-            'user_guess_time_ms' => 1,
-        ]);
 
         $finishedForUser = $this->isUserFinished($session->id);
         $matches = GameMatch::findPairByUuid($request->match_uuid);
@@ -46,7 +52,7 @@ class VerifyAnswerController extends Controller
 
         $response = [
             'success' => true,
-            'is_correct' => $answer->is_correct == 1,
+            'is_correct' => $isNull ? false : $answerModel->is_correct == 1,
             'correct_answer_id' => $question->correct_answer_id,
             'finished_for_user' => $finishedForUser,
         ];
@@ -147,44 +153,63 @@ class VerifyAnswerController extends Controller
             $scoreResultA = 0.5;
         }
 
-        // elo change
-        $eloChangeA = $this->calculateEloChange($userA->elo, $userB->elo, $scoreResultA);
-        $eloChangeB = $this->calculateEloChange($userB->elo, $userA->elo, 1 - $scoreResultA);
+        $matchA = $matches->firstWhere('user_id', $userA->id);
+        $matchB = $matches->firstWhere('user_id', $userB->id);
 
-        // clamp -35..35
-        $eloChangeA = max(-35, min(35, $eloChangeA));
-        $eloChangeB = max(-35, min(35, $eloChangeB));
+        $expectedA = $matchA->expected_winrate;
+        $expectedB = $matchB->expected_winrate;
 
-        // minimum win gain
+        $eloChangeA = (int) round(30 * ($scoreResultA - $expectedA));
+        $eloChangeB = (int) round(30 * ((1 - $scoreResultA) - $expectedB));
+
         if ($winnerId !== null) {
-
-            if ($eloChangeA > 0) {
-                $eloChangeA = max(10, $eloChangeA);
-            }
-
-            if ($eloChangeB > 0) {
-                $eloChangeB = max(10, $eloChangeB);
-            }
+            if ($eloChangeA > 0) $eloChangeA = max(10, $eloChangeA);
+            if ($eloChangeB > 0) $eloChangeB = max(10, $eloChangeB);
         }
 
-        // update elo
-        $userA->elo += $eloChangeA;
-        $userB->elo += $eloChangeB;
+        $originalEloA = $userA->elo;
+        $originalEloB = $userB->elo;
 
-        // XP (10 per correct answer)
+        $userA->elo = max(0, $userA->elo + $eloChangeA);
+        $userB->elo = max(0, $userB->elo + $eloChangeB);
         $userA->xp += $scoreA * 10;
         $userB->xp += $scoreB * 10;
+
+        $actualEloChangeA = $userA->elo - $originalEloA;
+        $actualEloChangeB = $userB->elo - $originalEloB;
 
         $userA->save();
         $userB->save();
 
+        foreach ($matches as $match) {
+            $isUserA = $match->user_id === $userA->id;
+
+            $userId  = $isUserA ? $userA->id : $userB->id;
+            $newElo  = $isUserA ? $userA->elo : $userB->elo;
+            $newXp   = $isUserA ? $userA->xp  : $userB->xp;
+
+            if ($winnerId === null) {
+                $result = GameResultEnum::DRAW;
+            } elseif ($winnerId === $userId) {
+                $result = GameResultEnum::WIN;
+            } else {
+                $result = GameResultEnum::LOSE;
+            }
+
+            $match->update([
+                'match_result' => $result,
+                'elo_after'    => $newElo,
+                'xp_after'     => $newXp,
+            ]);
+        }
+
         return [
-            'scores' => $scores,
-            'winner_id' => $winnerId,
+            'scores'      => $scores,
+            'winner_id'   => $winnerId,
             'elo_changes' => [
-                $userA->id => $eloChangeA,
-                $userB->id => $eloChangeB
-            ]
+                $userA->id => $actualEloChangeA,
+                $userB->id => $actualEloChangeB,
+            ],
         ];
     }
 
@@ -207,20 +232,10 @@ class VerifyAnswerController extends Controller
     private function isGameFinished($matches, int $maxRounds): bool
     {
         foreach ($matches as $match) {
-
             $lastRound = MatchQuestion::where('game_match_id', $match->id)
                 ->max('round_number');
 
             if ($lastRound < $maxRounds) {
-                return false;
-            }
-
-            $unanswered = MatchQuestion::where('game_match_id', $match->id)
-                ->where('round_number', $maxRounds)
-                ->whereNull('user_answer_id')
-                ->exists();
-
-            if ($unanswered) {
                 return false;
             }
         }

@@ -4,26 +4,38 @@ import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer
 import Widget from "../components/Generic/Widget.vue";
 import { useUserStore } from "../stores/UserStore";
 import { storeToRefs } from "pinia";
-import Button from "../components/Generic/Button.vue";
-import { computed, ref } from "vue";
+import { computed, onBeforeMount, onUnmounted, ref } from "vue";
 import api from "../config/api";
 import { toast } from "vue-sonner";
 import router from "../config/router";
+import { useMatchmakingStore } from "../stores/MatchmakingStore";
+import MatchConfirmPopup from "../components/Dashboard/MatchConfirmPopup.vue";
+
+const mm = useMatchmakingStore();
+//const { matchToConfirm } = storeToRefs(matchToConfirm);
 
 const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const selectedGameMode = ref(false);
-const isMatchmaking = ref(false);
+
+onUnmounted(() => {
+  mm.stop();
+});
+
+const waitTime = computed(() => {
+  return {
+    minutes: Math.floor(mm.timer / 60).toString(),
+    seconds: (mm.timer % 60).toString().padStart(2, "0"),
+  };
+});
 
 const startMatchmaking = async () => {
-  console.log(isAuthenticated.value);
-
   if (!isAuthenticated.value) return;
-  if (isMatchmaking.value || !selectedGameMode.value) return;
+  if (mm.isSearching || !selectedGameMode.value) return;
 
   if (selectedGameMode.value == "Ranked") {
-    // Handle matchmaking logic
+    mm.start();
   } else {
     try {
       const response = await api.post("/api/practice-sessions");
@@ -42,23 +54,26 @@ const startMatchmaking = async () => {
       return toast.error("Ismeretlen hiba történt a játék létrehozása közben!");
     }
   }
-
-  isMatchmaking.value = true;
 };
 
 const stopMatchmaking = () => {
-  if (!isMatchmaking) return;
+  if (!mm.isSearching) return;
   if (selectedGameMode.value === "Solo") return;
-  isMatchmaking.value = false;
+
+  mm.stop();
 };
 
 const setSelected = (mode) => {
-  if (isMatchmaking.value) return;
+  if (mm.isSearching) return;
   if (selectedGameMode.value === mode) return;
   selectedGameMode.value = mode;
 };
 
 const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
+
+onBeforeMount(() => {
+  mm.initListeners();
+});
 </script>
 
 <template>
@@ -83,25 +98,25 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
       </div>
 
       <div class="mt-12 flex flex-col items-center gap-6">
-        <button v-if="!isMatchmaking" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
-          {{ selectedGameMode ? `Meccskeresés elkezdése` : "Kérlek válassz játékmódot!" }}
+        <button v-if="!mm.isSearching" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+          {{ selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : "Kérlek válassz játékmódot!" }}
         </button>
 
         <button v-else @click="stopMatchmaking" :disabled="selectedGameMode === 'Solo'" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-red-500 to-error text-white shadow-lg shadow-red-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">Meccskeresés leállítása</button>
 
         <div class="text-center text-2xl md:text-4xl font-semibold text-white min-h-[40px]">
-          <span v-if="isMatchmaking && selectedGameMode === 'Solo'"> Indítás... </span>
+          <span v-if="mm.isSearching && selectedGameMode === 'Solo'"> Indítás... </span>
 
-          <span v-if="isMatchmaking && selectedGameMode === 'Ranked'">
+          <span v-if="mm.isSearching && selectedGameMode === 'Ranked'">
             Meccskeresés
             <span class="text-accentGreen">folyamatban</span>
             <i class="fa-solid fa-clock text-accentGreen ml-2"></i>
-            1:12
+            {{ waitTime.minutes }}:{{ waitTime.seconds }}
           </span>
         </div>
       </div>
 
-      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">● 1159 játékos online</div>
+      <div class="mt-3 text-accentGreen text-sm bg-accentGreen/10 px-4 py-2 rounded-full">● {{ mm.playersInQueue }} játékos meccskeresésben</div>
     </section>
 
     <section class="mt-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -137,5 +152,7 @@ const xpToNext = computed(() => user.value.next_level.min_xp - user.value.xp);
         <p class="text-sm mt-3 text-white/60">Így tovább! 🔥</p>
       </div>
     </section>
+
+    <MatchConfirmPopup v-if="mm.matchToConfirm" />
   </ProtectedPageContainer>
 </template>

@@ -1,6 +1,6 @@
 #!/bin/sh
 
 echo "Running migrations (dev, seeded)..."
-php artisan migrate --seed
+php artisan migrate --force --seed
 
 exec "$@"

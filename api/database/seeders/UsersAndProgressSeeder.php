@@ -17,6 +17,7 @@ class UsersAndProgressSeeder extends Seeder
                 'password' => Hash::make('password123'),
                 'elo' => 1200,
                 'xp' => 450,
+                'is_admin' => 1
             ],
             [
                 'name' => 'Kovács Anna',

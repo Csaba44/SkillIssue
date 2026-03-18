@@ -3,14 +3,17 @@
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
+use App\Http\Controllers\internal\CorrectQuestionController;
 use App\Http\Controllers\internal\GameMatchController as InternalGameMatchController;
 use App\Http\Controllers\internal\SingleQuestionController as InternalSingleQuestionController;
+use App\Http\Controllers\internal\SocketAuthController as InternalSocketAuthController;
 use App\Http\Controllers\internal\VerifyAnswerController as InternalVerifyAnswerController;
 use App\Http\Controllers\PracticeSessionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionReportController;
 use App\Http\Controllers\SingleQuestionController;
+use App\Http\Controllers\SocketAuthController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
@@ -37,13 +40,17 @@ Route::middleware("guest")->group(function () {
 
 
 /* INTERNAL SERVICE2SERVICE ROUTES */
+
+// Authentication for websocket
+Route::get('/socket-auth', InternalSocketAuthController::class)->middleware(['web', 'auth:sanctum']);
+
 Route::prefix('/internal')->middleware(EnsureServiceTokenIsValid::class)->group(function () {
     Route::post('/game-matches', [InternalGameMatchController::class, 'store']);
     Route::post('/questions/get-one', InternalSingleQuestionController::class)->middleware(EnsureRankedTokenIsValid::class);
-    Route::post('/answers/verify/{answer}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
+    Route::post('/answers/verify/{id}', InternalVerifyAnswerController::class)->middleware([EnsureRankedTokenIsValid::class, EnsureRankedQuestionTokenIsValid::class]);
 });
 
-//Profiles
+// Profiles
 Route::get('/profiles/{user}', [ProfileController::class, 'show']);
 
 

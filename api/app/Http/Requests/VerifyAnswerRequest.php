@@ -21,8 +21,6 @@ class VerifyAnswerRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            "user_guess_time_ms" => "required|integer|min:1",
-        ];
+        return [];
     }
 }

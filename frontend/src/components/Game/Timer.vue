@@ -1,9 +1,24 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useGameStore } from "../../stores/GameStore";
+import { storeToRefs } from "pinia";
 
-const TOTAL_SECONDS = 15;
+const RANKED_MAX_GUESS_TIME = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
+const SOLO_MAX_GUESS_TIME = import.meta.env.VITE_SOLO_MAX_GUESS_TIME ?? 30;
 
-const secondsLeft = ref(TOTAL_SECONDS);
+const gameStore = useGameStore();
+
+const { startTimerFrom } = storeToRefs(gameStore);
+
+const props = defineProps({
+  ranked: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
+});
+
+const secondsLeft = ref(props.ranked ? startTimerFrom : SOLO_MAX_GUESS_TIME);
 let interval = null;
 
 const emit = defineEmits(["countdown-end"]);

@@ -1,5 +1,6 @@
 <?php
 
+use App\GameResultEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,6 +20,8 @@ return new class extends Migration
             $table->integer('xp_before');
             $table->integer('elo_after')->nullable();
             $table->integer('xp_after')->nullable();
+            $table->float("expected_winrate")->nullable();
+            $table->enum('match_result', GameResultEnum::cases())->default(GameResultEnum::PENDING);
             $table->uuid('match_uuid');
             $table->timestamps();
 

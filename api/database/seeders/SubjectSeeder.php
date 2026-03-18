@@ -14,13 +14,9 @@ class SubjectSeeder extends Seeder
     public function run(): void
     {
         $subjects = [
-            'Magyar nyelv és irodalom',
-            'Matematika',
             'Történelem',
-            'Angol nyelv',
-            'Biológia',
-            'Fizika',
-            'Kémia'
+            'Irodalom',
+            'Magyar nyelv'
         ];
 
         foreach ($subjects as $subject) {

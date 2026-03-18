@@ -12,13 +12,20 @@ const RegisterView = () => import("../views/RegisterView.vue");
 const LoginView = () => import("../views/LoginView.vue");
 const AdminView = () => import("../views/AdminView.vue");
 const HealthView = () => import("../views/HealthView.vue");
+const SummaryView = () => import("../views/SummaryView.vue");
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
   { path: "/register", name: "register", component: RegisterView },
   { path: "/login", name: "login", component: LoginView },
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
+
   { path: "/game/solo/:gameToken", name: "game", component: GameView, meta: { requiresAuth: true } },
+  { path: "/game/ranked/:matchUuid", name: "gameRanked", component: GameView, meta: { requiresAuth: true } },
+
+  { path: "/summary/ranked/:matchUuid", name: "summaryRanked", component: SummaryView, meta: { requiresAuth: true } },
+  { path: "/summary/solo/:id", name: "summaryPractice", component: SummaryView, meta: { requiresAuth: true } },
+
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: "/profiles/:id", name: "profile", component: ProfileView },
 

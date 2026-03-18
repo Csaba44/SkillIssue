@@ -17,7 +17,6 @@ onMounted(async () => {
 async function checkAPI() {
   try {
     const res = await api.get("/api/health");
-    console.log(res);
 
     if (res.status === 200) {
       apiStatus.value = "healthy";
@@ -33,12 +32,12 @@ async function checkAPI() {
 function checkWS() {
   try {
     socket.on("connect", () => {
-      socket.emit("test", { message: "ping" });
-    });
-
-    socket.on("test", (data) => {
-      wsStatus.value = "healthy";
-      socket.disconnect();
+      socket.emit("test", { message: "ping" }, (data) => {
+        if (data.message === "pong") {
+          wsStatus.value = "healthy";
+          socket.disconnect();
+        }
+      });
     });
 
     socket.on("connect_error", (err) => {
