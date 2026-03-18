@@ -21,6 +21,8 @@ const isSubmitting = ref(false);
 const showWaiting = ref(false);
 let waitingTimeout = null;
 
+const isDev = import.meta.env.DEV;
+
 const TOTAL_ROUNDS = import.meta.env.VITE_MAX_ROUNDS ?? 5;
 
 const subjectConfig = computed(() => {
@@ -92,7 +94,7 @@ const submitAnswer = (forced = false) => {
 
     <div class="flex items-center gap-3 text-lg font-semibold">
       <span class="text-white">{{ user.name }}</span>
-      <i class="fa-solid fa-swords text-accentYellow text-xl"></i>
+      <i class="fa-solid fa-trophy text-accentYellow text-xl"></i>
       <span class="text-accentPurple">
         {{ opponent.player.userName ?? "Ismeretlen ellenfél" }}
         {{ !isOpponentOnline ? "(kilépett)" : "" }}
@@ -109,7 +111,7 @@ const submitAnswer = (forced = false) => {
     <div class="w-full flex flex-col gap-4 mt-4" :class="isSubmitting ? 'opacity-60 pointer-events-none' : ''">
       <template v-for="answer in currentAnswers" :key="answer.id">
         <AnswerButton @click="onAnswerSelect(answer.id)" :disabled="countdownEnded || isSubmitting" :isSelected="answer.id === selectedAnswer" :isCorrect="correctAnswerId !== null && answer.id === correctAnswerId" :isOpponentAnswer="opponentAnswerId !== null && answer.id === opponentAnswerId">
-          {{ answer.answer }}
+          {{ isDev ? answer.answer : answer.answer.replace("*", "") }}
         </AnswerButton>
       </template>
     </div>
