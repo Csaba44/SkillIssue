@@ -24,8 +24,9 @@ return [
         'http://api.skillissue.hu',
         'https://skillissue.hu',
         'https://api.skillissue.hu',
+        'http://127.0.0.1:5173',
         'http://localhost:5173',
-        'http://localhost:5173',
+        'http://skillissue.local:5173',
     ],
 
     'allowed_origins_patterns' => [],

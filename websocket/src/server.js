@@ -13,7 +13,8 @@ export const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:5173",
-      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "http://skillissue.local:5173",
       "https://skillissue.hu"
     ],
     methods: ["GET", "POST"],

@@ -17,6 +17,7 @@ export default defineConfig({
         secure: false,
         ws: true,
       }
-    }
+    },
+    allowedHosts: ["skillissue.local"],
   },
 });
