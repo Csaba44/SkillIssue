@@ -3,7 +3,7 @@ import { socket } from "../config/websocket";
 import { toast } from "vue-sonner";
 import router from "../config/router";
 import { useUserStore } from "./UserStore";
-import { determineOpponent } from "../utils/determineOpponent";
+import { determineOpponent, determinePlayer } from "../utils/determineOpponent";
 
 
 export const useGameStore = defineStore("game", {
@@ -31,7 +31,6 @@ export const useGameStore = defineStore("game", {
     handleMatch(match) {
       this.match = match;
       this.isOpponentOnline = true;
-      console.log(match)
       router.push("/game/ranked/" + match.match_uuid);
     },
     handleStopMatch() {
@@ -78,8 +77,7 @@ export const useGameStore = defineStore("game", {
 
         console.log("Timer starting from", this.startTimerFrom);
 
-        const opponentKey = determineOpponent(userStore.user, match);
-        const playerKey = opponentKey == "playerA" ? "playerA" : "playerB";
+        const playerKey = determinePlayer(userStore.user, match)?.playerKey;
 
         const userAnswer = lastQuestion.playerAnswers[playerKey].answerId
         this.submittedAnswer = userAnswer;
