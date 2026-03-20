@@ -101,6 +101,10 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:new-question", (data) => {
+        this.actualAnswers = {
+          correctAnswerId: null,
+          opponentAnswerId: null
+        }
         this.currentRound = data.currentRound;
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
@@ -123,7 +127,6 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:time-expired", (roundNumber) => {
-        toast.info(`Lejárt az idő! ${roundNumber}. kör vége.`);
         this.timeExpired = true;
       });
 

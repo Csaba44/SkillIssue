@@ -89,6 +89,8 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
       question_token: question.question_token,
     });
 
+    console.log(res.data);
+
     const opponent = determineOpponent(userId, match);
     const opponentKey = opponent.playerKey;
     const playerKey = opponentKey == "playerA" ? "playerB" : "playerA";
