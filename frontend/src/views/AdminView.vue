@@ -6,7 +6,7 @@ import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer
 <template>
     <ProtectedPageContainer class="relative overflow-hidden">
         
-        <i class="pointer-events-none fa-solid fa-clipboard-question rotate-12 text-accentPurple text-[1500px] absolute z-0 opacity-5 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+        <i class="fa-solid fa-screwdriver-wrench rotate-12 text-accentPurple text-[1200px] absolute z-0 opacity-5 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
         
         <Navbar minimal />
 
