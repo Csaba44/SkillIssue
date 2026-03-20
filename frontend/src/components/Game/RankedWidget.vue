@@ -14,7 +14,7 @@ const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const gameStore = useGameStore();
-const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, actualAnswers, selectedAnswer, timeExpired } = storeToRefs(gameStore);
+const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, actualAnswers, selectedAnswer, timeExpired, submittedAnswer, rejoining } = storeToRefs(gameStore);
 
 const countdownEnded = ref(false);
 const isSubmitting = ref(false);
@@ -56,9 +56,19 @@ const submitAnswer = (forced = false) => {
 watch(
   timeExpired,
   (expired) => {
-    console.log("exp", expired);
     if (!expired) return;
     submitAnswer(true);
+  },
+  { immediate: true },
+);
+
+// Visszajoinolás esetén szinkronizáljuk a lokális állapotot
+watch(
+  [rejoining, submittedAnswer],
+  ([isRejoining, submitted]) => {
+    if (isRejoining && submitted !== null) {
+      setSubmitting();
+    }
   },
   { immediate: true },
 );
