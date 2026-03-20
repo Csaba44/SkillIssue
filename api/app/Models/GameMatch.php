@@ -58,6 +58,15 @@ class GameMatch extends Model
         return $matches;
     }
 
+    public static function findOpponentMatchByUuid(string $uuid, int $userId)
+    {
+        $match = self::where('match_uuid', $uuid)
+            ->where('user_id', '!=', $userId)
+            ->firstOrFail();
+
+        return $match;
+    }
+
     public function scopeByUuid($query, string $uuid)
     {
         return $query->where('match_uuid', $uuid);
