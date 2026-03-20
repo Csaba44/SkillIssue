@@ -33,6 +33,10 @@ body {
   overflow-x: hidden;
 }
 
+*{
+  outline: none !important;
+}
+
 /*Navbar jobboldalról beúszás */
 .slide-enter-active,
 .slide-leave-active {
