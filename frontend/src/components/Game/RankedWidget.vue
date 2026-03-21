@@ -14,7 +14,7 @@ const userStore = useUserStore();
 const { isAuthenticated, user } = storeToRefs(userStore);
 
 const gameStore = useGameStore();
-const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentAnswers, actualAnswers, selectedAnswer, timeExpired, submittedAnswer, rejoining } = storeToRefs(gameStore);
+const { isOpponentOnline, currentRound, currentSubject, currentQuestion, currentQuestionToken, currentAnswers, actualAnswers, selectedAnswer, timeExpired, submittedAnswer, rejoining } = storeToRefs(gameStore);
 
 const countdownEnded = ref(false);
 const isSubmitting = ref(false);
@@ -37,6 +37,8 @@ const subjectConfig = computed(() => {
       return { color: "text-white", border: "border-white/20", bg: "bg-white/10", icon: "fa-solid fa-circle-question" };
   }
 });
+
+const isQuestionReportSubmitted = ref(false);
 
 const setSubmitting = () => {
   isSubmitting.value = true;
@@ -62,7 +64,6 @@ watch(
   { immediate: true },
 );
 
-// Visszajoinolás esetén szinkronizáljuk a lokális állapotot
 watch(
   [rejoining, submittedAnswer],
   ([isRejoining, submitted]) => {
@@ -83,6 +84,7 @@ watch(currentQuestion, (newQuestion, prevQuestion) => {
     countdownEnded.value = false;
     isSubmitting.value = false;
     showWaiting.value = false;
+    isQuestionReportSubmitted.value = false;
     clearTimeout(waitingTimeout);
   }
 });
@@ -94,16 +96,35 @@ const onAnswerSelect = (id) => {
 
   gameStore.selectedAnswer = id;
 };
+
+const createQuestionReportClicked = () => {
+  if (isQuestionReportSubmitted.value) return toast.warning("Ezt a kérdést már bejelentetted. Köszönjük!");
+
+  if (!currentQuestion.value || !currentQuestionToken.value) return;
+
+  isQuestionReportSubmitted.value = true;
+  toast.info("Hamarosan megnyitjuk új lapon a kitöltendő bejelentést. Köszönjük!");
+  setTimeout(() => {
+    window.open(`/report/question?questiontoken=${currentQuestionToken.value}&question=${currentQuestion.value}&answers=${encodeURIComponent(JSON.stringify(currentAnswers.value))}`, "_blank");
+  }, 1000);
+};
 </script>
 
 <template>
   <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center px-10 py-12 gap-6 text-textWhite">
     <div class="w-full flex justify-between items-center text-sm text-white/60">
-      <span class="font-bold text-error">{{ currentRound ?? 1 }} / {{ TOTAL_ROUNDS }} kör</span>
+      <span class="font-bold text-error"> {{ currentRound }} / {{ TOTAL_ROUNDS }} kör </span>
 
-      <div v-if="currentSubject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
-        <i :class="subjectConfig.icon"></i>
-        <span>{{ currentSubject }}</span>
+      <div class="flex items-center gap-3">
+        <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
+          <i class="fa-solid fa-flag text-[11px]"></i>
+          <span>Kérdés bejelentése</span>
+        </button>
+
+        <div v-if="currentSubject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
+          <i :class="subjectConfig.icon"></i>
+          <span>{{ currentSubject }}</span>
+        </div>
       </div>
     </div>
 

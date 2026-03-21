@@ -24,7 +24,6 @@ function userConnected(socket, userActiveGame) {
 
     // Send current question to reconnecting player
     const questions = gameState.ongoingGames.get(userActiveGame.match_uuid).questions;
-
     if (questions.length > 0) {
       socket.emit("game:new-question", formatQuestionData(questions.at(-1)));
     }

@@ -12,6 +12,7 @@ export const useGameStore = defineStore("game", {
     isOpponentOnline: null,
     currentRound: null,
     currentQuestion: null,
+    currentQuestionToken: null,
     currentSubject: null,
     currentAnswers: null,
 
@@ -29,6 +30,9 @@ export const useGameStore = defineStore("game", {
 
   actions: {
     handleMatch(match) {
+      const currentRoute = router.currentRoute.value.name;
+      if (currentRoute === "questionReport" || currentRoute === "userReport") return;
+
       this.match = match;
       this.isOpponentOnline = true;
       router.push("/game/ranked/" + match.match_uuid);
@@ -38,6 +42,7 @@ export const useGameStore = defineStore("game", {
       this.isOpponentOnline = null;
       this.currentRound = null;
       this.currentQuestion = null;
+      this.currentQuestionToken = null;
       this.currentAnswers = null;
       this.currentSubject = null;
       this.selectedAnswer = null;
@@ -105,10 +110,12 @@ export const useGameStore = defineStore("game", {
           correctAnswerId: null,
           opponentAnswerId: null
         }
+
         this.currentRound = data.currentRound;
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
         this.currentAnswers = data.answers;
+        this.currentQuestionToken = data.questionToken;
 
         if (!this.rejoining) {
 

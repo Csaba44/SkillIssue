@@ -2,8 +2,6 @@
 import { ref } from "vue";
 import api from "../../config/api";
 import { toast } from "vue-sonner";
-import Navbar from "../Dashboard/Navbar.vue";
-import ProtectedPageContainer from "../Generic/ProtectedPageContainer.vue";
 import Button from "../Generic/Button.vue";
 
 const props = defineProps({
