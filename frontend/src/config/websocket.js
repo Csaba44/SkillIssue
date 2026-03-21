@@ -1,3 +1,3 @@
 import { io } from "socket.io-client";
 
-export const socket = io({ transports: ["websocket", "polling"], autoConnect: true });
+export const socket = io({ transports: ["websocket", "polling"], autoConnect: false });

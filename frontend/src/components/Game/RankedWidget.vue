@@ -115,7 +115,7 @@ const createUserReportClicked = () => {
 
   if (!currentQuestion.value || !currentQuestionToken.value) return;
 
-  isQuestionReportSubmitted.value = true;
+  isUserReportSubmitted.value = true;
   toast.info("Hamarosan megnyitjuk új lapon a kitöltendő bejelentést. Köszönjük!");
 
   setTimeout(() => {

@@ -72,7 +72,7 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:active-game", (match) => {
-        toast.success("Sikeres visszacsatlakozás!");
+        // toast.success("Sikeres visszacsatlakozás!");
 
         const userStore = useUserStore();
 
@@ -96,13 +96,13 @@ export const useGameStore = defineStore("game", {
       socket.on("game:opponent-disconnected", () => {
         this.isOpponentOnline = false;
         console.log("DISCONNECT")
-        toast.warning("Az ellenfél lecsatlakozott.");
+        // toast.warning("Az ellenfél lecsatlakozott.");
       });
 
       socket.on("game:opponent-reconnected", () => {
         this.isOpponentOnline = true;
         console.log("RECONNECT")
-        toast.success("Az ellenfél visszacsatlakozott.");
+        // toast.success("Az ellenfél visszacsatlakozott.");
       });
 
       socket.on("game:new-question", (data) => {
@@ -130,7 +130,9 @@ export const useGameStore = defineStore("game", {
         this.actualAnswers = {
           correctAnswerId: data.correctAnswerId,
           opponentAnswerId: data.opponentAnswerId
-        }
+        };
+
+        console.log("answers received", this.actualAnswers);
       });
 
       socket.on("game:time-expired", (roundNumber) => {
