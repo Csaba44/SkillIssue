@@ -3,6 +3,7 @@ import { ref } from "vue";
 import api from "../../config/api";
 import { toast } from "vue-sonner";
 import Button from "../Generic/Button.vue";
+import ReportSent from "./ReportSent.vue";
 
 const props = defineProps({
   questionToken: { type: String, required: true },
@@ -54,13 +55,7 @@ const formSubmitted = async () => {
       <p class="text-white/40 text-sm ml-9">Segíts nekünk javítani a kérdések minőségén!</p>
     </div>
 
-    <div v-if="isSubmitted" class="p-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-accentGreen/20 shadow-xl flex flex-col items-center gap-4 text-center">
-      <div class="w-16 h-16 rounded-2xl bg-accentGreen/20 flex items-center justify-center text-accentGreen text-3xl">
-        <i class="fa-solid fa-circle-check"></i>
-      </div>
-      <h3 class="text-2xl font-bold">Bejelentés elküldve!</h3>
-      <p class="text-white/40 text-sm max-w-sm">Köszönjük a hozzájárulását. Csapatunk hamarosan megvizsgálja a bejelentést.</p>
-    </div>
+    <ReportSent v-if="isSubmitted" />
 
     <template v-else>
       <div class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl mb-5">
