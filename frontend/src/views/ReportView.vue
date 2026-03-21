@@ -5,13 +5,18 @@ import router from "../config/router";
 import Navbar from "../components/Dashboard/Navbar.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import QuestionReport from "../components/Report/QuestionReport.vue";
+import UserReport from "../components/Report/UserReport.vue";
 
 const reportType = computed(() => (router.currentRoute.value.name == "questionReport" ? "question" : "user"));
 
 const route = useRoute();
-const questionToken = route.query.questiontoken;
-const question = route.query.question;
-const answers = JSON.parse(decodeURIComponent(route.query.answers));
+const questionToken = route.query.questiontoken ?? null;
+const question = route.query.question ?? null;
+const answers = route.query.answers ? JSON.parse(decodeURIComponent(route.query.answers)) : null;
+
+const rankedToken = route.query.rankedtoken ?? null;
+const opponentName = route.query.opponent ?? "Ismeretlen ellenfél";
+const reportRound = route.query.reportround ?? 5;
 </script>
 
 <template>
@@ -20,5 +25,6 @@ const answers = JSON.parse(decodeURIComponent(route.query.answers));
     <Navbar minimal />
 
     <QuestionReport v-if="reportType === 'question' && questionToken && question" :questionToken="questionToken" :question="question" :answers="answers" />
+    <UserReport v-if="reportType === 'user' && rankedToken" :ranked-token="rankedToken" :opponentName="opponentName" :reportRound="parseInt(reportRound)" />
   </ProtectedPageContainer>
 </template>

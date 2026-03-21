@@ -39,6 +39,7 @@ const subjectConfig = computed(() => {
 });
 
 const isQuestionReportSubmitted = ref(false);
+const isUserReportSubmitted = ref(false);
 
 const setSubmitting = () => {
   isSubmitting.value = true;
@@ -108,6 +109,19 @@ const createQuestionReportClicked = () => {
     window.open(`/report/question?questiontoken=${currentQuestionToken.value}&question=${currentQuestion.value}&answers=${encodeURIComponent(JSON.stringify(currentAnswers.value))}`, "_blank");
   }, 1000);
 };
+
+const createUserReportClicked = () => {
+  if (isUserReportSubmitted.value) return toast.warning("Ezt a felhasználüt már bejelentetted. Köszönjük!");
+
+  if (!currentQuestion.value || !currentQuestionToken.value) return;
+
+  isQuestionReportSubmitted.value = true;
+  toast.info("Hamarosan megnyitjuk új lapon a kitöltendő bejelentést. Köszönjük!");
+
+  setTimeout(() => {
+    window.open(`/report/user?rankedtoken=${gameStore.match.ranked_token}&opponent=${opponent.value.player.userName ?? "Ismeretlen ellenfél"}&reportround=${currentRound.value ?? TOTAL_ROUNDS}`, "_blank");
+  }, 1000);
+};
 </script>
 
 <template>
@@ -116,6 +130,10 @@ const createQuestionReportClicked = () => {
       <span class="font-bold text-error"> {{ currentRound }} / {{ TOTAL_ROUNDS }} kör </span>
 
       <div class="flex items-center gap-3">
+        <button @click="createUserReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
+          <i class="fa-solid fa-user-slash text-[11px]"></i>
+          <span>Ellenfél bejelentése</span>
+        </button>
         <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
           <i class="fa-solid fa-flag text-[11px]"></i>
           <span>Kérdés bejelentése</span>

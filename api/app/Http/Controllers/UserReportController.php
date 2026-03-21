@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserReportRequest;
+use App\Models\GameMatch;
 use App\Models\UserReport;
 use Illuminate\Http\Request;
 
@@ -27,9 +28,11 @@ class UserReportController extends Controller
     {
         $userId = $request->user()->id;
 
+        $gameMatch = GameMatch::where("user_id", $userId)->where("match_uuid", $request->match_uuid)->first();
+
         $report = UserReport::create([
             "user_id" => $userId,
-            "game_match_id" => $request["game_match_id"],
+            "game_match_id" => $gameMatch->id,
             "round_number" => $request["round_number"],
             "comment" => $request["comment"],
         ]);

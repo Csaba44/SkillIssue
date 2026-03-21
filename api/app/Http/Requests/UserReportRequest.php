@@ -18,6 +18,19 @@ class UserReportRequest extends FormRequest
         return $this->user()->is_admin;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->method() === 'POST') {
+            $gameMatch = \App\Models\GameMatch::where("user_id", $this->user()->id)
+                ->where("match_uuid", $this->match_uuid)
+                ->first();
+
+            if ($gameMatch) {
+                $this->merge(['game_match_id' => $gameMatch->id]);
+            }
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,11 +43,22 @@ class UserReportRequest extends FormRequest
             return [];
         }
 
+
         $validations =  [
-            "game_match_id" => "required|integer|exists:game_matches,id",
             "round_number" => "required|integer",
             "comment" => "required|string",
         ];
+
+        if ($this->method() === 'POST') {
+            $validations = array_merge($validations, [
+                'game_match_id' => [
+                    'required',
+                    Rule::unique('user_reports')->where(
+                        fn($query) => $query->where('user_id', $this->user()->id)
+                    ),
+                ],
+            ]);
+        }
 
         if ($this->method() === 'PUT') {
             $validations = array_merge($validations, [
@@ -44,5 +68,12 @@ class UserReportRequest extends FormRequest
         }
 
         return $validations;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'game_match_id.unique' => 'Ezt a felhasználót már bejelentetted. Dolgozunk rajta.',
+        ];
     }
 }

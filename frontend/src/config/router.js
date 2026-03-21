@@ -30,7 +30,7 @@ const routes = [
   { path: "/profiles/:id", name: "profile", component: ProfileView },
 
   { path: "/report/question", name: "questionReport", component: ReportView },
-  { path: "/report/user/:id", name: "userReport", component: ReportView },
+  { path: "/report/user", name: "userReport", component: ReportView },
 
 
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },

@@ -64,7 +64,12 @@ Route::middleware("auth:sanctum")->group(function () {
     // Reports authorization rules:
     //          For non-admin users: POST
     //          For admin users: GET, POST, PUT, DELETE
-    Route::apiResource('/user-reports', UserReportController::class);
+    Route::apiResource('/user-reports', UserReportController::class)->except(['store']);;
+
+    Route::apiResource('/user-reports', UserReportController::class)
+        ->only(['store'])
+        ->middleware(EnsureRankedTokenIsValid::class);
+
     Route::apiResource('/question-reports', QuestionReportController::class)
         ->only(['store'])
         ->middleware(EnsureReportQuestionTokenIsValid::class);
