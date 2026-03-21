@@ -91,7 +91,7 @@ const formSubmitted = async () => {
       </div>
 
       <div class="flex justify-end">
-        <Button title="Bejelentés küldése" class="bg-gradient-to-r from-error to-red-400 text-white font-bold rounded-full px-10 py-3 shadow-lg shadow-red-500/20 hover:scale-105 transition-all duration-300" @click="formSubmitted" />
+        <Button title="Bejelentés küldése" class="bg-linear-to-r from-error to-red-400 text-white font-bold rounded-full px-10 py-3 shadow-lg shadow-red-500/20 hover:scale-105 transition-all duration-300" @click="formSubmitted" />
       </div>
     </template>
   </section>

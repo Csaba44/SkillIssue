@@ -190,6 +190,6 @@ const createUserReportClicked = () => {
       <div class="text-xs text-white/40">A következő kérdés automatikusan indul.</div>
     </div>
 
-    <Button title="Beküldés" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed disabled:shadow-none" :disabled="isSubmitting" @click="submitAnswer" />
+    <Button title="Beküldés" class="mt-6 bg-linear-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed disabled:shadow-none" :disabled="isSubmitting" @click="submitAnswer" />
   </Widget>
 </template>
