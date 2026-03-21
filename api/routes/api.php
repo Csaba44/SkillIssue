@@ -23,6 +23,7 @@ use App\Http\Middleware\EnsurePracticeSessionTokenIsValid;
 use App\Http\Middleware\EnsureQuestionTokenIsValid;
 use App\Http\Middleware\EnsureRankedQuestionTokenIsValid;
 use App\Http\Middleware\EnsureRankedTokenIsValid;
+use App\Http\Middleware\EnsureReportQuestionTokenIsValid;
 use App\Http\Middleware\EnsureServiceTokenIsValid;
 use App\Models\PracticeSession;
 use Illuminate\Support\Facades\Route;
@@ -64,7 +65,12 @@ Route::middleware("auth:sanctum")->group(function () {
     //          For non-admin users: POST
     //          For admin users: GET, POST, PUT, DELETE
     Route::apiResource('/user-reports', UserReportController::class);
-    Route::apiResource('/question-reports', QuestionReportController::class);
+    Route::apiResource('/question-reports', QuestionReportController::class)
+        ->only(['store'])
+        ->middleware(EnsureReportQuestionTokenIsValid::class);
+
+    Route::apiResource('/question-reports', QuestionReportController::class)
+        ->except(['store']);
 
     // Delete -> only for admins
     Route::apiResource('/game-matches', GameMatchController::class)->only(['index', 'show', 'destroy']);

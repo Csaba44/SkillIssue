@@ -31,9 +31,21 @@ class QuestionReportRequest extends FormRequest
         }
 
         $validations =  [
-            "question_id" => "required|integer|exists:questions,id",
             "comment" => "required|string",
         ];
+
+        if ($this->method() === 'POST') {
+            $validations = array_merge($validations, [
+                'question_token' => 'required|string',
+                'question_id' => [
+                    'required',
+                    Rule::unique('question_reports')->where(
+                        fn($query) =>
+                        $query->where('user_id', $this->user()->id)
+                    ),
+                ],
+            ]);
+        }
 
         if ($this->method() === 'PUT') {
             $validations = array_merge($validations, [
@@ -43,5 +55,12 @@ class QuestionReportRequest extends FormRequest
         }
 
         return $validations;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'question_id.unique' => 'Ezt a kérdést már bejelentetted. Köszönjük hozzájárulásodat.',
+        ];
     }
 }

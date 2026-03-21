@@ -10,8 +10,9 @@ const route = useRoute();
 
 const questionToken = route.query.questiontoken;
 const question = route.query.question;
+const answers = JSON.parse(decodeURIComponent(route.query.answers));
 </script>
 
 <template>
-  <QuestionReport v-if="reportType === 'question' && questionToken && question" :questionToken="questionToken" :question="question" />
+  <QuestionReport v-if="reportType === 'question' && questionToken && question" :questionToken="questionToken" :question="question" :answers="answers" />
 </template>

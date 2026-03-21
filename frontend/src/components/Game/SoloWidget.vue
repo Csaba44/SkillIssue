@@ -85,7 +85,7 @@ const createQuestionReportClicked = () => {
   isQuestionReportSubmitted.value = true;
   toast.info("Hamarosan megnyitjuk új lapon a kitöltendő bejelentést. Köszönjük!");
   setTimeout(() => {
-    window.open(`/report/question?questiontoken=${props.questionToken}&question=${props.question}`, "_blank");
+    window.open(`/report/question?questiontoken=${props.questionToken}&question=${props.question}&answers=${encodeURIComponent(JSON.stringify(props.answers))}`, "_blank");
   }, 1000);
 };
 </script>
