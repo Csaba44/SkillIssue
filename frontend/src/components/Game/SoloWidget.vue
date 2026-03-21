@@ -15,6 +15,7 @@ const props = defineProps({
   currRoundNumber: Number,
   totalRounds: String,
   correctAnswerId: Number,
+  questionToken: String,
 });
 
 const emit = defineEmits(["onGetNextQuestion"]);
@@ -25,6 +26,8 @@ const { isAuthenticated, user } = storeToRefs(userStore);
 const selectedAnswer = ref(null);
 const countdownEnded = ref(false);
 const isSubmitting = ref(false);
+
+const isQuestionReportSubmitted = ref(false);
 
 const subjectConfig = computed(() => {
   switch (props.subject) {
@@ -45,6 +48,7 @@ watch(
     selectedAnswer.value = null;
     countdownEnded.value = false;
     isSubmitting.value = false;
+    isQuestionReportSubmitted.value = false;
   },
 );
 
@@ -73,6 +77,17 @@ const getNext = () => {
   isSubmitting.value = true;
   emit("onGetNextQuestion", selectedAnswer.value);
 };
+
+const createQuestionReportClicked = () => {
+  if (isQuestionReportSubmitted.value) return toast.warning("Ezt a kérdést már bejelentetted. Köszönjük!");
+  if (!props.question || !props.questionToken) return;
+
+  isQuestionReportSubmitted.value = true;
+  toast.info("Hamarosan megnyitjuk új lapon a kitöltendő bejelentést. Köszönjük!");
+  setTimeout(() => {
+    window.open(`/report/question?questiontoken=${props.questionToken}&question=${props.question}`, "_blank");
+  }, 1000);
+};
 </script>
 
 <template>
@@ -80,9 +95,16 @@ const getNext = () => {
     <div class="w-full flex justify-between items-center text-sm text-white/60">
       <span class="font-bold text-error"> {{ currRoundNumber }} / {{ totalRounds }} kör </span>
 
-      <div v-if="subject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
-        <i :class="subjectConfig.icon"></i>
-        <span>{{ subject }}</span>
+      <div class="flex items-center gap-3">
+        <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
+          <i class="fa-solid fa-flag text-[11px]"></i>
+          <span>Kérdés bejelentése</span>
+        </button>
+
+        <div v-if="subject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
+          <i :class="subjectConfig.icon"></i>
+          <span>{{ subject }}</span>
+        </div>
       </div>
     </div>
 
