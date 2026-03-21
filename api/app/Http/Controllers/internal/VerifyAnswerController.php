@@ -41,9 +41,13 @@ class VerifyAnswerController extends Controller
             }
         }
 
+        $createdAtTime = $question->created_at;
+        $now = now();
+        $guessTime = abs($now->diffInMilliseconds($createdAtTime));
+
         $question->update([
             'user_answer_id' => !$isNull ? $answerModel->id : null,
-            'user_guess_time_ms' => 1,
+            'user_guess_time_ms' => $guessTime,
         ]);
 
         $finishedForUser = $this->isUserFinished($session->id);
