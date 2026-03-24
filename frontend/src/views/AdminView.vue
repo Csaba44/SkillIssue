@@ -4,38 +4,61 @@ import Navbar from "../components/Dashboard/Navbar.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import QuestionAdministration from "../components/Admin/QuestionAdministration.vue";
 import QuestionReportAdministration from "../components/Admin/QuestionReportAdministration.vue";
+import UserReportAdministration from "../components/Admin/UserReportAdministration.vue"; // Az új komponens
 import { toast } from "vue-sonner";
 import api from "../config/api";
 
 const activeTab = ref('questions');
 const questions = ref([]);
 const subjects = ref([]);
-const reports = ref([]);
+const questionReports = ref([]); // Kérdés jelentések
+const userReports = ref([]);     // Játékos jelentések
 
-const getReports = async () => {
+// --- KÉRDÉS JELENTÉSEK LEKÉRÉSE ---
+const getQuestionReports = async () => {
     try {
         const res = await api.get("/api/question-reports");
-        reports.value = res.data;
+        questionReports.value = res.data;
     } catch (error) {
-        console.error("Hiba a reportok lekérésekor:", error);
+        console.error("Hiba a kérdés reportok lekérésekor:", error);
     }
 }
 
-const deleteReport = async (id) => {
+const deleteQuestionReport = async (id) => {
     try {
         await api.delete(`/api/question-reports/${id}`);
-        toast.success("Report sikeresen eltávolítva!");
-        getReports();
+        toast.success("Kérdés jelentés törölve!");
+        getQuestionReports();
     } catch (error) {
         toast.error("Hiba a törlés során.");
     }
 }
 
+// --- JÁTÉKOS JELENTÉSEK LEKÉRÉSE (ÚJ) ---
+const getUserReports = async () => {
+    try {
+        const res = await api.get("/api/user-reports");
+        userReports.value = res.data;
+    } catch (error) {
+        console.error("Hiba a játékos reportok lekérésekor:", error);
+    }
+}
+
+const deleteUserReport = async (id) => {
+    try {
+        await api.delete(`/api/user-reports/${id}`);
+        toast.success("Játékos jelentés törölve!");
+        getUserReports();
+    } catch (error) {
+        toast.error("Hiba a törlés során.");
+    }
+}
+
+// --- KÉRDÉSEK ÉS TANTÁRGYAK ---
 const getQuestions = async () => {
     try {
         const res = await api.get("/api/questions");
         questions.value = res.data;
-        console.log(res.data)
     } catch (error) {
         console.error("Hiba a kérdések lekérésekor:", error);
     }
@@ -50,14 +73,12 @@ const getSubjects = async () => {
     }
 }
 
-
 const deleteQuestion = async (id) => {
     try {
         await api.delete(`/api/questions/${id}`);
-        toast.success("Kérdés sikeresen törölve!"); S
+        toast.success("Kérdés sikeresen törölve!");
         getQuestions();
     } catch (error) {
-        console.error("Törlési hiba:", error);
         toast.error("Nem sikerült törölni a kérdést.");
     }
 }
@@ -65,7 +86,8 @@ const deleteQuestion = async (id) => {
 onBeforeMount(() => {
     getQuestions();
     getSubjects();
-    getReports();
+    getQuestionReports();
+    getUserReports();
 });
 </script>
 
@@ -76,17 +98,23 @@ onBeforeMount(() => {
         <Navbar minimal />
 
         <section class="relative z-10 mt-24 max-w-6xl mx-auto px-6 text-textWhite">
-            <div class="flex gap-4 mb-12">
+            <div class="flex flex-wrap gap-4 mb-12">
                 <button @click="activeTab = 'questions'"
                     :class="[activeTab == 'questions' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-white/5 text-white/50 hover:bg-white/10']"
-                    class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300">
+                    class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs">
                     <i class="fa-solid fa-circle-question mr-2"></i> Kérdéskezelés
                 </button>
 
-                <button @click="activeTab = 'reports'"
-                    :class="[activeTab == 'reports' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']"
-                    class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Játékos Reportok
+                <button @click="activeTab = 'q-reports'"
+                    :class="[activeTab == 'q-reports' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-textWhite/50 hover:bg-white/10']"
+                    class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Kérdés Reportok
+                </button>
+
+                <button @click="activeTab = 'u-reports'"
+                    :class="[activeTab == 'u-reports' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']"
+                    class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs">
+                    <i class="fa-solid fa-user-shield mr-2"></i> Játékos Reportok
                 </button>
             </div>
 
@@ -95,12 +123,14 @@ onBeforeMount(() => {
                     @refresh="getQuestions" @deleteQuestion="deleteQuestion" />
             </div>
 
-            <div v-else-if="activeTab == 'reports'" class="fade-in">
-                <QuestionReportAdministration :reports="reports" @refresh="getReports" @deleteReport="deleteReport" />
+            <div v-else-if="activeTab == 'q-reports'" class="fade-in">
+                <QuestionReportAdministration :reports="questionReports" @refresh="getQuestionReports"
+                    @deleteReport="deleteQuestionReport" />
             </div>
 
-            <div v-else class="fade-in text-center py-20">
-                <p class="text-white/20 uppercase tracking-widest">Nincs kezelendő report.</p>
+            <div v-else-if="activeTab == 'u-reports'" class="fade-in">
+                <UserReportAdministration :reports="userReports" @refresh="getUserReports"
+                    @deleteReport="deleteUserReport" />
             </div>
         </section>
     </ProtectedPageContainer>
