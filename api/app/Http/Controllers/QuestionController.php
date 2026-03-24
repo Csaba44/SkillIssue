@@ -29,7 +29,7 @@ class QuestionController extends Controller
     {
         try {
             return DB::transaction(function () use ($request) {
-                
+
                 $question = Question::create([
                     'subject_id' => $request->subject_id,
                     'question' => $request->question
@@ -48,11 +48,10 @@ class QuestionController extends Controller
                 $question->load('answers');
 
                 return response()->json([
-                    "message" => "Kérdés és válaszok sikeresen hozzáadva.", 
+                    "message" => "Kérdés és válaszok sikeresen hozzáadva.",
                     "question" => $question->makeVisible('id')
                 ], 201);
             });
-
         } catch (\Exception $e) {
             return response()->json([
                 "message" => "Hiba történt a mentés során.",
@@ -60,7 +59,7 @@ class QuestionController extends Controller
             ], 500);
         }
     }
-    
+
     public function storeAnswers(QuestionRequest $request, string $id)
     {
         $answers = $request->answers;
@@ -97,7 +96,7 @@ class QuestionController extends Controller
     public function show(QuestionRequest $request, Question $question)
     {
         $question->load(['subject', 'answers']);
-        
+
         return response()->json($question, 201);
     }
 
@@ -106,9 +105,31 @@ class QuestionController extends Controller
      */
     public function update(QuestionRequest $request, Question $question)
     {
-        $question->update($request->all());
+        return DB::transaction(function () use ($request, $question) {
+            $question->update($request->all());
 
-        return response()->json(["message" => "Kérdés sikeresen frissítve.", "question" => $question]);
+            if ($request->has('answers')) {
+                foreach ($request->answers as $ansData) {
+                    $answer = \App\Models\Answer::find($ansData['id']);
+                    if ($answer) {
+                        $answer->update([
+                            'answer' => $ansData['answer'] ?? $answer->answer,
+                            'is_correct' => $ansData['is_correct'] ?? $answer->is_correct
+                        ]);
+                    }
+                }
+            }
+
+            $question->refresh()->load('answers');
+
+            $question->makeVisible('id');
+            $question->answers->each->makeVisible('id');
+
+            return response()->json([
+                "message" => "Kérdés sikeresen frissítve.",
+                "question" => $question
+            ]);
+        });
     }
 
     /**

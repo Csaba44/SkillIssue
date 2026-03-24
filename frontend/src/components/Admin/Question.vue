@@ -4,13 +4,7 @@ const props = defineProps({
     index: Number
 });
 
-const emit = defineEmits(['delete']);
-
-const handleDelete = () => {
-    if (confirm("Biztosan törlöd?")) {
-        emit('delete', props.questionData.id);
-    }
-};
+const emit = defineEmits(['delete', 'edit']);
 </script>
 
 <template>
@@ -26,12 +20,12 @@ const handleDelete = () => {
         </div>
 
         <div class="flex gap-2">
-            <button
+            <button @click="emit('edit')"
                 class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all text-white/40 hover:text-white">
                 <i class="fa-solid fa-pen-to-square"></i>
             </button>
 
-            <button @click="handleDelete"
+            <button @click="emit('delete', questionData.id)"
                 class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/20 transition-all text-white/40 hover:text-red-500">
                 <i class="fa-solid fa-trash"></i>
             </button>

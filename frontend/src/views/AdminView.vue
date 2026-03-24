@@ -8,6 +8,7 @@ import api from "../config/api";
 
 const activeTab = ref('questions');
 const questions = ref([]);
+const subjects = ref([]);
 
 const getQuestions = async () => {
     try {
@@ -16,6 +17,15 @@ const getQuestions = async () => {
         console.log(res.data)
     } catch (error) {
         console.error("Hiba a kérdések lekérésekor:", error);
+    }
+}
+
+const getSubjects = async () => {
+    try {
+        const res = await api.get("/api/subjects");
+        subjects.value = res.data;
+    } catch (error) {
+        console.error("Hiba a tantárgyak lekérésekor:", error);
     }
 }
 
@@ -31,7 +41,10 @@ const deleteQuestion = async (id) => {
     }
 }
 
-onBeforeMount(getQuestions);
+onBeforeMount(() => {
+    getQuestions();
+    getSubjects();
+});
 </script>
 
 <template>
@@ -56,8 +69,8 @@ onBeforeMount(getQuestions);
             </div>
 
             <div v-if="activeTab == 'questions'" class="fade-in">
-                <QuestionAdministration :initialQuestions="questions" @refresh="getQuestions"
-                    @deleteQuestion="deleteQuestion" />
+                <QuestionAdministration :initialQuestions="questions" :availableSubjects="subjects"
+                    @refresh="getQuestions" @deleteQuestion="deleteQuestion" />
             </div>
 
             <div v-else class="fade-in text-center py-20">
