@@ -3,12 +3,33 @@ import { onBeforeMount, ref } from 'vue';
 import Navbar from "../components/Dashboard/Navbar.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import QuestionAdministration from "../components/Admin/QuestionAdministration.vue";
+import QuestionReportAdministration from "../components/Admin/QuestionReportAdministration.vue";
 import { toast } from "vue-sonner";
 import api from "../config/api";
 
 const activeTab = ref('questions');
 const questions = ref([]);
 const subjects = ref([]);
+const reports = ref([]);
+
+const getReports = async () => {
+    try {
+        const res = await api.get("/api/question-reports");
+        reports.value = res.data;
+    } catch (error) {
+        console.error("Hiba a reportok lekérésekor:", error);
+    }
+}
+
+const deleteReport = async (id) => {
+    try {
+        await api.delete(`/api/question-reports/${id}`);
+        toast.success("Report sikeresen eltávolítva!");
+        getReports();
+    } catch (error) {
+        toast.error("Hiba a törlés során.");
+    }
+}
 
 const getQuestions = async () => {
     try {
@@ -33,7 +54,7 @@ const getSubjects = async () => {
 const deleteQuestion = async (id) => {
     try {
         await api.delete(`/api/questions/${id}`);
-        toast.success("Kérdés sikeresen törölve!");
+        toast.success("Kérdés sikeresen törölve!"); S
         getQuestions();
     } catch (error) {
         console.error("Törlési hiba:", error);
@@ -44,6 +65,7 @@ const deleteQuestion = async (id) => {
 onBeforeMount(() => {
     getQuestions();
     getSubjects();
+    getReports();
 });
 </script>
 
@@ -71,6 +93,10 @@ onBeforeMount(() => {
             <div v-if="activeTab == 'questions'" class="fade-in">
                 <QuestionAdministration :initialQuestions="questions" :availableSubjects="subjects"
                     @refresh="getQuestions" @deleteQuestion="deleteQuestion" />
+            </div>
+
+            <div v-else-if="activeTab == 'reports'" class="fade-in">
+                <QuestionReportAdministration :reports="reports" @refresh="getReports" @deleteReport="deleteReport" />
             </div>
 
             <div v-else class="fade-in text-center py-20">
