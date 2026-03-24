@@ -12,6 +12,7 @@ const getQuestions = async () => {
     try {
         const res = await api.get("/api/questions");
         questions.value = res.data;
+        console.log(res.data)
     } catch (error) {
         console.error("Hiba a kérdések lekérésekor:", error);
     }
@@ -22,7 +23,8 @@ onBeforeMount(getQuestions);
 
 <template>
     <ProtectedPageContainer class="relative overflow-hidden">
-        <i class="fa-solid fa-layer-group rotate-90 text-accentPurple text-[1500px] absolute z-0 opacity-5 top-200 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+        <i
+            class="fa-solid fa-layer-group rotate-90 text-accentPurple text-[1500px] absolute z-0 opacity-5 top-200 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
         <Navbar minimal />
 
         <section class="relative z-10 mt-24 max-w-6xl mx-auto px-6 text-textWhite">
@@ -41,12 +43,30 @@ onBeforeMount(getQuestions);
             </div>
 
             <div v-if="activeTab == 'questions'" class="fade-in">
-                <QuestionAdministration :initialQuestions="questions" />
+                <QuestionAdministration :initialQuestions="questions" @refresh="getQuestions" />
             </div>
 
             <div v-else class="fade-in text-center py-20">
-                <p class="text-white/20 uppercase tracking-widest">Nincs kezelendő report (Hamarosan...).</p>
+                <p class="text-white/20 uppercase tracking-widest">Nincs kezelendő report.</p>
             </div>
         </section>
     </ProtectedPageContainer>
 </template>
+
+<style scoped>
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>

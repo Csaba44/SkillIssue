@@ -26,7 +26,9 @@ class QuestionController extends Controller
     {
         $question = Question::create($request->all());
 
-        return response()->json(["message" => "Kérdés sikeresen hozzáadva.", "question" => $question], 201);
+        $question->refresh();
+
+        return response()->json(["message" => "Kérdés sikeresen hozzáadva.", "question" => $question->makeVisible('id')], 201);
     }
     
     public function storeAnswers(QuestionRequest $request, string $id)

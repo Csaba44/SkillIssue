@@ -21,7 +21,7 @@ class Question extends Model
     protected $hidden = [
         "created_at",
         "updated_at",
-        'id'
+        "id"
     ];
 
     public function subject(): BelongsTo
