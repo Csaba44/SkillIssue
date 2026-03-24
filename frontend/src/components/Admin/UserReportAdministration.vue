@@ -119,7 +119,7 @@ const saveUpdate = async (statusOverride = null) => {
                 </div>
 
                 <div class="space-y-6 text-left">
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label
                                 class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Bejelentett</label>
@@ -129,6 +129,18 @@ const saveUpdate = async (statusOverride = null) => {
                             <label
                                 class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Forduló</label>
                             <p class="text-white font-medium">{{ selectedReport.round_number }}. kör</p>
+                        </div>
+
+                        <div>
+                            <label
+                                class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Válaszidő</label>
+                            <p v-if="selectedReport.match_details" :class="[
+                                'font-mono font-bold text-sm',
+                                selectedReport.match_details.user_guess_time_ms < 1000 ? 'text-red-500' : 'text-accentGreen'
+                            ]">
+                                {{ (selectedReport.match_details.user_guess_time_ms / 1000).toFixed(2) }}s
+                            </p>
+                            <p v-else class="text-white/20 italic text-[10px]">Nincs adat</p>
                         </div>
                     </div>
 

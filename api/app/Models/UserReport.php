@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UserReport extends Model
 {
     use SoftDeletes;
-    
+
+    protected $appends = ['match_details'];
+
     protected $fillable = [
         "user_id",
         "game_match_id",
@@ -39,5 +41,12 @@ class UserReport extends Model
             'game_match_id',
             'opponent_id'
         );
+    }
+
+    public function getMatchDetailsAttribute()
+    {
+        return MatchQuestion::where('game_match_id', $this->game_match_id)
+            ->where('round_number', $this->round_number)
+            ->first();
     }
 }
