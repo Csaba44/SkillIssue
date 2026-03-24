@@ -284,6 +284,288 @@ class TortenelemSeeder extends Seeder
                     ['answer' => '2002', 'is_correct' => false],
                 ],
             ],
+
+            // ── Új kérdések ──────────────────────────────────────────────
+
+            [
+                'question' => 'Mi volt a királyi kancellária fő feladata?',
+                'answers' => [
+                    ['answer' => 'Oklevelek és levelek kiadása*', 'is_correct' => true],
+                    ['answer' => 'Adók behajtása', 'is_correct' => false],
+                    ['answer' => 'Hadsereg toborzása', 'is_correct' => false],
+                    ['answer' => 'Bírósági ítéletek végrehajtása', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi volt a gróf feladata a Frank Királyságban?',
+                'answers' => [
+                    ['answer' => 'Adószedés, bíráskodás, katonai feladatok*', 'is_correct' => true],
+                    ['answer' => 'Templomok építése és fenntartása', 'is_correct' => false],
+                    ['answer' => 'Kereskedelem felügyelete', 'is_correct' => false],
+                    ['answer' => 'Csak a király személyes védelme', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Melyik évben adták ki a Magna Charta Libertatum-ot?',
+                'answers' => [
+                    ['answer' => '1215*', 'is_correct' => true],
+                    ['answer' => '1066', 'is_correct' => false],
+                    ['answer' => '1265', 'is_correct' => false],
+                    ['answer' => '1189', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mit biztosított a Magna Charta a főnemeseknek?',
+                'answers' => [
+                    ['answer' => 'Beleszólást a hatalomba és az adózásba*', 'is_correct' => true],
+                    ['answer' => 'Teljes adómentességet', 'is_correct' => false],
+                    ['answer' => 'Saját hadsereg tartásának jogát', 'is_correct' => false],
+                    ['answer' => 'A király leváltásának jogát', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a hűbérbirtok?',
+                'answers' => [
+                    ['answer' => 'Feltételekkel adományozott örökletes birtok*', 'is_correct' => true],
+                    ['answer' => 'Az egyház tulajdonában lévő föld', 'is_correct' => false],
+                    ['answer' => 'A király személyes magánbirtoka', 'is_correct' => false],
+                    ['answer' => 'Szabad parasztok által művelt közföld', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mit nevezzük hűbérúrnak (senior)?',
+                'answers' => [
+                    ['answer' => 'Aki hűbérbirtokot adományoz szolgálatért*', 'is_correct' => true],
+                    ['answer' => 'Aki hűbérbirtokot kap és hűséget esküszik', 'is_correct' => false],
+                    ['answer' => 'Az egyházmegye feje', 'is_correct' => false],
+                    ['answer' => 'A király személyes testőre', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mit nevezzük vazallusnak?',
+                'answers' => [
+                    ['answer' => 'Aki hűbérbirtokot kap és hűséget esküszik*', 'is_correct' => true],
+                    ['answer' => 'Aki hűbérbirtokot adományoz', 'is_correct' => false],
+                    ['answer' => 'Szabad földműves', 'is_correct' => false],
+                    ['answer' => 'Városi polgár', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a rendi gyűlés fő feladata?',
+                'answers' => [
+                    ['answer' => 'Törvényhozás és adómegszavazás*', 'is_correct' => true],
+                    ['answer' => 'A pápa megválasztása', 'is_correct' => false],
+                    ['answer' => 'Hadüzenet kihirdetése', 'is_correct' => false],
+                    ['answer' => 'Jobbágyok bírósági ítélkezése', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mikor jött létre a Pápai Állam?',
+                'answers' => [
+                    ['answer' => '751-ben*', 'is_correct' => true],
+                    ['answer' => '800-ban', 'is_correct' => false],
+                    ['answer' => '1054-ben', 'is_correct' => false],
+                    ['answer' => '590-ben', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a feudalizmus lényege?',
+                'answers' => [
+                    ['answer' => 'Hűbérurak, vazallusok és jobbágyok függési rendszere*', 'is_correct' => true],
+                    ['answer' => 'Városi polgárok önkormányzata', 'is_correct' => false],
+                    ['answer' => 'Az egyház és az állam egysége', 'is_correct' => false],
+                    ['answer' => 'Kereskedők céhrendszere', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a robot a feudalizmusban?',
+                'answers' => [
+                    ['answer' => 'A jobbágy kötelező ingyenmunkája a földesúrnak*', 'is_correct' => true],
+                    ['answer' => 'Pénzben fizetett évi adó', 'is_correct' => false],
+                    ['answer' => 'Az egyháznak fizetett terményadó', 'is_correct' => false],
+                    ['answer' => 'Katonai szolgálat a királynak', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a terményjáradék?',
+                'answers' => [
+                    ['answer' => 'A jobbágy által terményben fizetett járadék*', 'is_correct' => true],
+                    ['answer' => 'Az egyháznak fizetett pénzadó', 'is_correct' => false],
+                    ['answer' => 'A király részére végzett fuvarszolgálat', 'is_correct' => false],
+                    ['answer' => 'Kötelező katonai szolgálat', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi az ugar?',
+                'answers' => [
+                    ['answer' => 'Pihentetett, bevetetlen szántóföld*', 'is_correct' => true],
+                    ['answer' => 'Tavasszal bevetett földterület', 'is_correct' => false],
+                    ['answer' => 'A földesúr saját kezelésű birtoka', 'is_correct' => false],
+                    ['answer' => 'Erdőből irtott új szántó', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Hány részre osztja a földet a háromnyomásos gazdálkodás?',
+                'answers' => [
+                    ['answer' => 'Háromra: őszi vetés, tavaszi vetés, ugar*', 'is_correct' => true],
+                    ['answer' => 'Kettőre: vetés és ugar', 'is_correct' => false],
+                    ['answer' => 'Négyre: négy évszak szerint', 'is_correct' => false],
+                    ['answer' => 'Ötre: különböző gabonafajták szerint', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a tized?',
+                'answers' => [
+                    ['answer' => 'Az egyháznak fizetett adó, a termény tizede*', 'is_correct' => true],
+                    ['answer' => 'A királynak fizetett hadiadó', 'is_correct' => false],
+                    ['answer' => 'A jobbágy kötelező munkaszolgálata', 'is_correct' => false],
+                    ['answer' => 'A városi polgárok vámfizetési kötelezettsége', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi az úriszék?',
+                'answers' => [
+                    ['answer' => 'A földesúr bírósága a jobbágyok felett*', 'is_correct' => true],
+                    ['answer' => 'A nemesek gyűlése', 'is_correct' => false],
+                    ['answer' => 'A király tanácsadó testülete', 'is_correct' => false],
+                    ['answer' => 'Egyházi törvényszék', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a majorság?',
+                'answers' => [
+                    ['answer' => 'A földesúr saját kezelésű birtoka*', 'is_correct' => true],
+                    ['answer' => 'A jobbágy által bérelt földterület', 'is_correct' => false],
+                    ['answer' => 'Közösen használt legelő', 'is_correct' => false],
+                    ['answer' => 'A király adományozta nemesi birtok', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Miben segített a szügyhám a középkorban?',
+                'answers' => [
+                    ['answer' => 'Megkönnyítette a ló igavonását*', 'is_correct' => true],
+                    ['answer' => 'Védte a lovat csatában', 'is_correct' => false],
+                    ['answer' => 'Gyorsabbá tette a lovak etetését', 'is_correct' => false],
+                    ['answer' => 'Lehetővé tette a lovak patkolását', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mikor következett be a nagy egyházszakadás (szkizma)?',
+                'answers' => [
+                    ['answer' => '1054-ben*', 'is_correct' => true],
+                    ['answer' => '800-ban', 'is_correct' => false],
+                    ['answer' => '1215-ben', 'is_correct' => false],
+                    ['answer' => '1378-ban', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mire osztódott szét a kereszténység 1054-ben?',
+                'answers' => [
+                    ['answer' => 'Nyugati (latin) és keleti (görög) egyházra*', 'is_correct' => true],
+                    ['answer' => 'Katolikus és protestáns egyházra', 'is_correct' => false],
+                    ['answer' => 'Római és bizánci birodalomra', 'is_correct' => false],
+                    ['answer' => 'Pápai és császári egyházra', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a zsinat?',
+                'answers' => [
+                    ['answer' => 'Az egyház ügyeit megtárgyaló gyűlés*', 'is_correct' => true],
+                    ['answer' => 'A pápa személyes imaterme', 'is_correct' => false],
+                    ['answer' => 'Katonai gyűlés a keresztes háborúk előtt', 'is_correct' => false],
+                    ['answer' => 'Szerzetesi közösség szabályzata', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Ki rendelkezik pápaválasztó joggal?',
+                'answers' => [
+                    ['answer' => 'A bíborosok*', 'is_correct' => true],
+                    ['answer' => 'Az érsekek', 'is_correct' => false],
+                    ['answer' => 'A püspökök', 'is_correct' => false],
+                    ['answer' => 'A szerzetesrendek elöljárói', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a különbség érsek és püspök között?',
+                'answers' => [
+                    ['answer' => 'Az érsek egy egyháztartomány, a püspök egy egyházmegye vezetője*', 'is_correct' => true],
+                    ['answer' => 'A püspök rangban felette áll az érseknek', 'is_correct' => false],
+                    ['answer' => 'Az érsek csak kolostort vezet', 'is_correct' => false],
+                    ['answer' => 'Nincs köztük rangbeli különbség', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Melyik évben alapították a bencés rendet?',
+                'answers' => [
+                    ['answer' => '529-ben*', 'is_correct' => true],
+                    ['answer' => '313-ban', 'is_correct' => false],
+                    ['answer' => '800-ban', 'is_correct' => false],
+                    ['answer' => '1098-ban', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a bencés rend jelmondata?',
+                'answers' => [
+                    ['answer' => '"Ora et labora" (Imádkozz és dolgozz)*', 'is_correct' => true],
+                    ['answer' => '"Pax et bonum" (Béke és jó)', 'is_correct' => false],
+                    ['answer' => '"Deus lo vult" (Isten akarja)', 'is_correct' => false],
+                    ['answer' => '"Omnia vincit amor" (A szeretet mindent legyőz)', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mikor jöttek létre a koldulórendek?',
+                'answers' => [
+                    ['answer' => 'A XIII. században*', 'is_correct' => true],
+                    ['answer' => 'A VI. században', 'is_correct' => false],
+                    ['answer' => 'A X. században', 'is_correct' => false],
+                    ['answer' => 'A XV. században', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Hol éltek és tevékenykedtek a koldulórendek tagjai?',
+                'answers' => [
+                    ['answer' => 'Városokban*', 'is_correct' => true],
+                    ['answer' => 'Elszigetelt hegyvidéki kolostorokban', 'is_correct' => false],
+                    ['answer' => 'A királyi udvarban', 'is_correct' => false],
+                    ['answer' => 'Kizárólag a Szentföldön', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Ki az eretnek?',
+                'answers' => [
+                    ['answer' => 'Az egyház tanításával ellenkező nézeteket valló személy*', 'is_correct' => true],
+                    ['answer' => 'Más vallású hódító katona', 'is_correct' => false],
+                    ['answer' => 'Az egyházi tizedet nem fizető paraszt', 'is_correct' => false],
+                    ['answer' => 'A pápával politikailag szemben álló király', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mire szolgált az inkvizíció?',
+                'answers' => [
+                    ['answer' => 'Eretnekek felkutatására és elítélésére*', 'is_correct' => true],
+                    ['answer' => 'Keresztes háborúk szervezésére', 'is_correct' => false],
+                    ['answer' => 'Szerzetesrendek ellenőrzésére', 'is_correct' => false],
+                    ['answer' => 'Pápai adók behajtására', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi a regula a szerzetességben?',
+                'answers' => [
+                    ['answer' => 'A szerzetesrend életét szabályozó szabályzat*', 'is_correct' => true],
+                    ['answer' => 'A kolostor napi imájának rendje', 'is_correct' => false],
+                    ['answer' => 'Az apát megválasztásának módja', 'is_correct' => false],
+                    ['answer' => 'A pápa által kiadott rendelet', 'is_correct' => false],
+                ],
+            ],
+            [
+                'question' => 'Mi az uradalom?',
+                'answers' => [
+                    ['answer' => 'A nagybirtok egésze: majorság, jobbágytelkek, közös területek*', 'is_correct' => true],
+                    ['answer' => 'Kizárólag a földesúr lakóhelye', 'is_correct' => false],
+                    ['answer' => 'A király által adományozott egyházi birtok', 'is_correct' => false],
+                    ['answer' => 'Szabad parasztok falusi közössége', 'is_correct' => false],
+                ],
+            ],
         ];
 
         foreach ($questions as $qData) {
