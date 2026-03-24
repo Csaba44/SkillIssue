@@ -6,6 +6,7 @@ use App\Http\Requests\QuestionRequest;
 use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
@@ -24,11 +25,38 @@ class QuestionController extends Controller
      */
     public function store(QuestionRequest $request)
     {
-        $question = Question::create($request->all());
+        try {
+            return DB::transaction(function () use ($request) {
+                
+                $question = Question::create([
+                    'subject_id' => $request->subject_id,
+                    'question' => $request->question
+                ]);
 
-        $question->refresh();
+                if ($request->has('answers')) {
+                    foreach ($request->answers as $v) {
+                        $question->answers()->create([
+                            "answer" => $v['answer'],
+                            "is_correct" => $v['is_correct']
+                        ]);
+                    }
+                }
 
-        return response()->json(["message" => "Kérdés sikeresen hozzáadva.", "question" => $question->makeVisible('id')], 201);
+                $question->refresh();
+                $question->load('answers');
+
+                return response()->json([
+                    "message" => "Kérdés és válaszok sikeresen hozzáadva.", 
+                    "question" => $question->makeVisible('id')
+                ], 201);
+            });
+
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Hiba történt a mentés során.",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
     
     public function storeAnswers(QuestionRequest $request, string $id)
