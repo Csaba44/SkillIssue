@@ -46,9 +46,7 @@ const saveUpdate = async (statusOverride = null) => {
     const statusToSave = statusOverride || activeStatus.value;
     if (!statusOverride) isSubmitting.value = true;
 
-    const finalComment = adminNote.value
-        ? `${selectedReport.value.comment} | Admin: ${adminNote.value}`
-        : selectedReport.value.comment;
+    const finalComment = adminNote.value;
 
     try {
         await api.put(`/api/question-reports/${selectedReport.value.id}`, {
@@ -77,11 +75,9 @@ const copyToClipboard = async () => {
     const textToCopy = selectedReport.value.question.question;
 
     try {
-        // Megpróbáljuk a modern API-val
         if (navigator.clipboard && navigator.clipboard.writeText) {
             await navigator.clipboard.writeText(textToCopy);
         } else {
-            // Fallback régebbi böngészőkhöz
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
             document.body.appendChild(textArea);
