@@ -4,7 +4,7 @@ import Question from "./Question.vue";
 import NewQuestionModal from "./NewQuestionModal.vue";
 
 const props = defineProps({ initialQuestions: Array });
-const emit = defineEmits(['refresh']);
+const emit = defineEmits(['refresh','deleteQuestion']);
 
 const selectedSubject = ref('all');
 const subjectsList = ref([]); 
@@ -53,7 +53,7 @@ const filteredQuestions = computed(() => {
         </div>
 
         <div class="flex flex-col gap-3 mt-8">
-            <Question v-for="(q, index) in filteredQuestions" :key="q.id || index" :questionData="q" :index="index" />
+            <Question v-for="(q, index) in filteredQuestions" :key="q.id || index" :questionData="q" :index="index" @delete="(id) => emit('deleteQuestion', id)"/>
             <div v-if="filteredQuestions.length == 0"
                 class="py-20 text-center text-white/10 uppercase tracking-widest text-sm border border-white/5 rounded-xl">
                 Nincs találat.

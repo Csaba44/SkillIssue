@@ -17,6 +17,8 @@ class QuestionController extends Controller
     {
         $questions = Question::with(['subject', 'answers'])->get();
 
+        $questions->each->makeVisible('id');
+
         return response()->json($questions);
     }
 

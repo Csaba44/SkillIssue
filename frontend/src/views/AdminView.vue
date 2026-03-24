@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from 'vue';
 import Navbar from "../components/Dashboard/Navbar.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import QuestionAdministration from "../components/Admin/QuestionAdministration.vue";
+import { toast } from "vue-sonner";
 import api from "../config/api";
 
 const activeTab = ref('questions');
@@ -15,6 +16,18 @@ const getQuestions = async () => {
         console.log(res.data)
     } catch (error) {
         console.error("Hiba a kérdések lekérésekor:", error);
+    }
+}
+
+
+const deleteQuestion = async (id) => {
+    try {
+        await api.delete(`/api/questions/${id}`);
+        toast.success("Kérdés sikeresen törölve!");
+        getQuestions();
+    } catch (error) {
+        console.error("Törlési hiba:", error);
+        toast.error("Nem sikerült törölni a kérdést.");
     }
 }
 
@@ -43,7 +56,8 @@ onBeforeMount(getQuestions);
             </div>
 
             <div v-if="activeTab == 'questions'" class="fade-in">
-                <QuestionAdministration :initialQuestions="questions" @refresh="getQuestions" />
+                <QuestionAdministration :initialQuestions="questions" @refresh="getQuestions"
+                    @deleteQuestion="deleteQuestion" />
             </div>
 
             <div v-else class="fade-in text-center py-20">
