@@ -12,10 +12,8 @@ const emit = defineEmits(['refresh', 'deleteQuestion']);
 const isModalOpen = ref(false);
 const selectedQuestion = ref(null);
 const searchQuery = ref("");
-const selectedSubjectFilter = ref(null); // Itt null az "Összes"
+const selectedSubjectFilter = ref(null);
 
-// 1. Dinamikus tantárgy lista kinyerése a kérdésekből
-// Csak azokat a tantárgyakat mutatjuk, amikhez VAN kérdés
 const activeSubjects = computed(() => {
     const subjectsInUse = props.initialQuestions
         .filter(q => q.subject)
@@ -23,7 +21,6 @@ const activeSubjects = computed(() => {
     return Array.from(new Map(subjectsInUse.map(s => [s.id, s])).values());
 });
 
-// 2. Szűrési logika (Kereső + Gomb)
 const filteredQuestions = computed(() => {
     return props.initialQuestions.filter(q => {
         const matchesSearch = !searchQuery.value ||
