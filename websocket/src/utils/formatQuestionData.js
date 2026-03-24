@@ -3,6 +3,7 @@ export function formatQuestionData(data) {
     currentRound: data.current_round,
     subject: data.question.subject.name,
     question: data.question.question,
-    answers: data.question.answers
+    answers: data.question.answers,
+    questionToken: data.question_token
   };
 }

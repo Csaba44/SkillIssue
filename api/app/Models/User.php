@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\GameResultEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -150,13 +152,13 @@ class User extends Authenticatable
         $streak = 0;
 
         foreach ($matches as $match) {
-            if ($match->elo_after > $match->elo_before) {
+            if ($match->match_result == GameResultEnum::WIN) {
                 $streak++;
             } else {
                 break;
             }
         }
-        return 5;
+        return $streak;
     }
 
     /**

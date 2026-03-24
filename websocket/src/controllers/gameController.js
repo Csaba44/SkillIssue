@@ -24,7 +24,6 @@ function userConnected(socket, userActiveGame) {
 
     // Send current question to reconnecting player
     const questions = gameState.ongoingGames.get(userActiveGame.match_uuid).questions;
-
     if (questions.length > 0) {
       socket.emit("game:new-question", formatQuestionData(questions.at(-1)));
     }
@@ -88,6 +87,8 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
       ranked_token: match.ranked_token,
       question_token: question.question_token,
     });
+
+    console.log(res.data);
 
     const opponent = determineOpponent(userId, match);
     const opponentKey = opponent.playerKey;

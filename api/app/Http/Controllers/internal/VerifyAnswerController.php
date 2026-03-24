@@ -17,7 +17,7 @@ class VerifyAnswerController extends Controller
         $MAX_ROUNDS = config("app.max_rounds");
 
         $validated = $request->validate([
-            "answering_user_id" => "required|integer|exists:users,id"
+            "answering_user_id" => "required|integer|exists:users,id",
         ]);
 
         $userA = User::findOrFail($request->user_a_id);
@@ -39,18 +39,24 @@ class VerifyAnswerController extends Controller
             if ($question->user_answer_id !== null) {
                 return response()->json(["error" => "Már válaszoltál erre a kérdésre."], 409);
             }
-
-            $question->update([
-                'user_answer_id' => $answerModel->id,
-                'user_guess_time_ms' => 1,
-            ]);
         }
+
+        $createdAtTime = $question->created_at;
+        $now = now();
+        $guessTime = abs($now->diffInMilliseconds($createdAtTime));
+
+        $question->update([
+            'user_answer_id' => !$isNull ? $answerModel->id : null,
+            'user_guess_time_ms' => $guessTime,
+        ]);
 
         $finishedForUser = $this->isUserFinished($session->id);
         $matches = GameMatch::findPairByUuid($request->match_uuid);
 
+        $oppMatch = GameMatch::findOpponentMatchByUuid($request->match_uuid, $validated["answering_user_id"]);
+
         $allFinished = $this->isGameFinished($matches, $MAX_ROUNDS)
-            && $this->areAllUsersFinished($matches);
+            && $this->isUserFinished($oppMatch->id);
 
 
         $response = [
@@ -113,19 +119,11 @@ class VerifyAnswerController extends Controller
     private function isUserFinished(int $gameMatchId): bool
     {
         return MatchQuestion::where('game_match_id', $gameMatchId)
-            ->where(function ($q) {
-                $q->whereNull('user_answer_id')
-                    ->where('round_expires_at', '>', now());
-            })
+            ->whereNull('user_answer_id')
+            ->whereNull('user_guess_time_ms')
             ->doesntExist();
     }
 
-    private function areAllUsersFinished($matches): bool
-    {
-        return $matches->every(function ($match) {
-            return $this->isUserFinished($match->id);
-        });
-    }
 
     private function calculateScore(int $gameMatchId): int
     {

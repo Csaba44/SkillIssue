@@ -3,7 +3,7 @@ import { socket } from "../config/websocket";
 import { toast } from "vue-sonner";
 import router from "../config/router";
 import { useUserStore } from "./UserStore";
-import { determineOpponent } from "../utils/determineOpponent";
+import { determineOpponent, determinePlayer } from "../utils/determineOpponent";
 
 
 export const useGameStore = defineStore("game", {
@@ -12,6 +12,7 @@ export const useGameStore = defineStore("game", {
     isOpponentOnline: null,
     currentRound: null,
     currentQuestion: null,
+    currentQuestionToken: null,
     currentSubject: null,
     currentAnswers: null,
 
@@ -29,9 +30,11 @@ export const useGameStore = defineStore("game", {
 
   actions: {
     handleMatch(match) {
+      const currentRoute = router.currentRoute.value.name;
+      if (currentRoute === "questionReport" || currentRoute === "userReport") return;
+
       this.match = match;
       this.isOpponentOnline = true;
-      console.log(match)
       router.push("/game/ranked/" + match.match_uuid);
     },
     handleStopMatch() {
@@ -39,6 +42,7 @@ export const useGameStore = defineStore("game", {
       this.isOpponentOnline = null;
       this.currentRound = null;
       this.currentQuestion = null;
+      this.currentQuestionToken = null;
       this.currentAnswers = null;
       this.currentSubject = null;
       this.selectedAnswer = null;
@@ -68,7 +72,7 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:active-game", (match) => {
-        toast.success("Sikeres visszacsatlakozás!");
+        // toast.success("Sikeres visszacsatlakozás!");
 
         const userStore = useUserStore();
 
@@ -78,8 +82,7 @@ export const useGameStore = defineStore("game", {
 
         console.log("Timer starting from", this.startTimerFrom);
 
-        const opponentKey = determineOpponent(userStore.user, match);
-        const playerKey = opponentKey == "playerA" ? "playerA" : "playerB";
+        const playerKey = determinePlayer(userStore.user, match)?.playerKey;
 
         const userAnswer = lastQuestion.playerAnswers[playerKey].answerId
         this.submittedAnswer = userAnswer;
@@ -93,20 +96,26 @@ export const useGameStore = defineStore("game", {
       socket.on("game:opponent-disconnected", () => {
         this.isOpponentOnline = false;
         console.log("DISCONNECT")
-        toast.warning("Az ellenfél lecsatlakozott.");
+        // toast.warning("Az ellenfél lecsatlakozott.");
       });
 
       socket.on("game:opponent-reconnected", () => {
         this.isOpponentOnline = true;
         console.log("RECONNECT")
-        toast.success("Az ellenfél visszacsatlakozott.");
+        // toast.success("Az ellenfél visszacsatlakozott.");
       });
 
       socket.on("game:new-question", (data) => {
+        this.actualAnswers = {
+          correctAnswerId: null,
+          opponentAnswerId: null
+        }
+
         this.currentRound = data.currentRound;
         this.currentSubject = data.subject;
         this.currentQuestion = data.question;
         this.currentAnswers = data.answers;
+        this.currentQuestionToken = data.questionToken;
 
         if (!this.rejoining) {
 
@@ -121,11 +130,12 @@ export const useGameStore = defineStore("game", {
         this.actualAnswers = {
           correctAnswerId: data.correctAnswerId,
           opponentAnswerId: data.opponentAnswerId
-        }
+        };
+
+        console.log("answers received", this.actualAnswers);
       });
 
       socket.on("game:time-expired", (roundNumber) => {
-        toast.info(`Lejárt az idő! ${roundNumber}. kör vége.`);
         this.timeExpired = true;
       });
 

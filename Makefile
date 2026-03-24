@@ -27,6 +27,12 @@ help:
 	@echo "  make dev-down       Stop dev stack"
 	@echo "  make dev-down-v     Stop dev stack and REMOVE volumes (DB reset)"
 	@echo ""
+	@echo "MIGRATE (DEV):"
+	@echo "  make migrate             Run migrations"
+	@echo "  make migrate-seed        Run migrations + seed"
+	@echo "  make migrate-fresh       Drop all tables and re-run migrations"
+	@echo "  make migrate-fresh-seed  Drop all tables, re-run migrations + seed"
+	@echo ""
 	@echo "BUILD:"
 	@echo "  make build                  Build prod images (:latest)"
 	@echo "  make build VERSION=x.y.z    Build and tag images with version"
@@ -71,6 +77,25 @@ dev-down:
 .PHONY: dev-down-v
 dev-down-v:
 	docker compose -f $(COMPOSE_DEV) down -v
+
+# -------------------------
+# MIGRATE (DEV)
+# -------------------------
+.PHONY: migrate
+migrate:
+	./artisan migrate
+
+.PHONY: migrate-seed
+migrate-seed:
+	./artisan migrate --seed
+
+.PHONY: migrate-fresh
+migrate-fresh:
+	./artisan migrate:fresh
+
+.PHONY: migrate-fresh-seed
+migrate-fresh-seed:
+	./artisan migrate:fresh --seed
 
 # -------------------------
 # BUILD (PROD IMAGES)

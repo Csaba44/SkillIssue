@@ -13,6 +13,7 @@ const LoginView = () => import("../views/LoginView.vue");
 const AdminView = () => import("../views/AdminView.vue");
 const HealthView = () => import("../views/HealthView.vue");
 const SummaryView = () => import("../views/SummaryView.vue");
+const ReportView = () => import("../views/ReportView.vue");
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -26,8 +27,13 @@ const routes = [
   { path: "/summary/ranked/:matchUuid", name: "summaryRanked", component: SummaryView, meta: { requiresAuth: true } },
   { path: "/summary/solo/:id", name: "summaryPractice", component: SummaryView, meta: { requiresAuth: true } },
 
-  { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: "/profiles/:id", name: "profile", component: ProfileView },
+
+  { path: "/report/question", name: "questionReport", component: ReportView },
+  { path: "/report/user", name: "userReport", component: ReportView },
+
+
+  { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 
   // Test connection with backend services
   { path: "/health", name: "health", component: HealthView, meta: { requiresAuth: true, requiresAdmin: true } },
