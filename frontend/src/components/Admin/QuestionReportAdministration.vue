@@ -101,7 +101,7 @@ const copyToClipboard = async () => {
                     class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white outline-none focus:border-red-500/50 transition-all" />
             </div>
             <div class="text-white/40 text-sm font-medium">
-                Összesen: <span class="text-white">{{ reports.length }}</span> bejelentés
+                Összesen: <span class="text-white">{{ reports.length }}</span> kérdés bejelentés
             </div>
         </div>
 
