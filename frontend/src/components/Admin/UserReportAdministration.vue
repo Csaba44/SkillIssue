@@ -73,15 +73,6 @@ const saveUpdate = async (statusOverride = null) => {
     }
 };
 
-const copyMatchId = async () => {
-    if (!selectedReport.value?.game_match) return;
-    try {
-        await navigator.clipboard.writeText(selectedReport.value.game_match.match_uuid);
-        toast.success("Match UUID kimásolva!");
-    } catch (err) {
-        toast.error("Másolás sikertelen.");
-    }
-};
 </script>
 
 <template>
@@ -125,10 +116,6 @@ const copyMatchId = async () => {
                             </span>
                         </div>
                     </div>
-                    <button @click="copyMatchId" title="Match UUID másolása"
-                        class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
-                        <i class="fa-solid fa-gamepad"></i>
-                    </button>
                 </div>
 
                 <div class="space-y-6 text-left">
