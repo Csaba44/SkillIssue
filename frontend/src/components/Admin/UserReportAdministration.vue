@@ -17,6 +17,12 @@ const isSubmitting = ref(false);
 const adminNote = ref("");
 const activeStatus = ref("");
 
+const statusTranslations = {
+    Open: 'Nyitott',
+    Investigating: 'Vizsgálat',
+    Closed: 'Lezárva'
+};
+
 const filteredReports = computed(() => {
     const order = { 'Investigating': 1, 'Open': 2, 'Closed': 3 };
 
@@ -112,7 +118,7 @@ const saveUpdate = async (statusOverride = null) => {
                         <div class="mt-2">
                             <span
                                 class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest">
-                                Állapot: {{ selectedReport.status }}
+                                Állapot: {{ statusTranslations[selectedReport.status] }}
                             </span>
                         </div>
                     </div>
