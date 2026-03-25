@@ -186,12 +186,16 @@ const saveUpdate = async (statusOverride = null) => {
 
                 <div class="flex justify-between items-center mt-10 pt-6 border-t border-white/5">
                     <button @click="emit('deleteReport', selectedReport.id); isModalOpen = false"
-                        class="text-red-500/30 hover:text-red-500 text-[10px] font-bold uppercase transition-colors">
-                        <i class="fa-solid fa-trash mr-1"></i> Törlés
+                        class="group flex items-center gap-2 px-4 py-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/5 rounded-xl cursor-pointer transition-all duration-300 ease-out active:scale-95 text-[10px] font-bold uppercase">
+                        <i
+                            class="fa-solid fa-trash transition-transform group-hover:rotate-12 group-hover:scale-110"></i>
+                        Törlés
                     </button>
                     <div class="flex gap-4">
                         <button @click="isModalOpen = false"
-                            class="px-6 py-2 text-white/40 font-bold uppercase text-xs">Bezárás</button>
+                            class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center gap-2">
+                            Bezárás
+                        </button>
                         <button @click="saveUpdate()" :disabled="isSubmitting"
                             class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-accentGreen/20">
                             {{ isSubmitting ? 'Mentés...' : 'Rögzítés' }}
