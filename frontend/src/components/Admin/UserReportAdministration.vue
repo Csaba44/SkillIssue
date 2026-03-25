@@ -187,7 +187,7 @@ const saveUpdate = async (statusOverride = null) => {
                 <div class="flex justify-between items-center mt-10 pt-6 border-t border-white/5">
                     <button @click="emit('deleteReport', selectedReport.id); isModalOpen = false"
                         class="text-red-500/30 hover:text-red-500 text-[10px] font-bold uppercase transition-colors">
-                        <i class="fa-solid fa-trash mr-1"></i> Elvetés
+                        <i class="fa-solid fa-trash mr-1"></i> Törlés
                     </button>
                     <div class="flex gap-4">
                         <button @click="isModalOpen = false"
