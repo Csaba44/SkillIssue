@@ -11,10 +11,9 @@ import api from "../config/api";
 const activeTab = ref('questions');
 const questions = ref([]);
 const subjects = ref([]);
-const questionReports = ref([]); // Kérdés jelentések
-const userReports = ref([]);     // Játékos jelentések
+const questionReports = ref([]);
+const userReports = ref([]);     
 
-// --- KÉRDÉS JELENTÉSEK LEKÉRÉSE ---
 const getQuestionReports = async () => {
     try {
         const res = await api.get("/api/question-reports");
@@ -34,7 +33,6 @@ const deleteQuestionReport = async (id) => {
     }
 }
 
-// --- JÁTÉKOS JELENTÉSEK LEKÉRÉSE (ÚJ) ---
 const getUserReports = async () => {
     try {
         const res = await api.get("/api/user-reports");
@@ -54,7 +52,6 @@ const deleteUserReport = async (id) => {
     }
 }
 
-// --- KÉRDÉSEK ÉS TANTÁRGYAK ---
 const getQuestions = async () => {
     try {
         const res = await api.get("/api/questions");

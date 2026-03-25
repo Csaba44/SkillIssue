@@ -1,13 +1,19 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import api from "../../config/api";
 import { toast } from "vue-sonner";
 import Button from "../Generic/Button.vue";
+import Select from "../Generic/Select.vue";
 
 const props = defineProps({
     availableSubjects: Array,
     editData: Object
 });
+
+const subjectsArray = computed(() => {
+    return props.availableSubjects.map((subject) => ({ label: subject.name, value: subject.id }))
+})
+
 const emit = defineEmits(['close', 'refresh']);
 
 const isEdit = !!props.editData;
@@ -82,12 +88,10 @@ const submitForm = async () => {
                 <div v-if="!isEdit">
                     <label
                         class="text-white/40 text-[10px] uppercase font-bold tracking-widest block mb-2">Tantárgy</label>
-                    <select v-model="formData.subject_id"
-                        class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-accentGreen transition-all">
-                        <option value="" disabled>Válassz tantárgyat...</option>
-                        <option v-for="s in availableSubjects" :key="s.id" :value="s.id" class="bg-bgDark">{{ s.name }}
-                        </option>
-                    </select>
+
+                    <Select :options="subjectsArray"
+                        class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-accentGreen transition-all"
+                        v-model="formData.subject_id"></Select>
                 </div>
 
                 <div>
