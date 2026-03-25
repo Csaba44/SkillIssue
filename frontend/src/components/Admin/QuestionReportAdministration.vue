@@ -114,7 +114,7 @@ const copyToClipboard = async () => {
         <div class="grid gap-4">
             <div v-if="filteredReports.length > 0" class="grid gap-3">
                 <QuestionReportItem v-for="report in filteredReports" :key="report.id" :report="report"
-                    :class="{ 'opacity-50 grayscale': report.status == 'Closed' }" @view="openDetails" />
+                    :class="{ 'opacity-50 grayscale': report.status == 'Closed' }" @delete="emit('deleteReport', report.id)" @view="openDetails" />
             </div>
 
             <div v-else class="py-20 text-center border border-dashed border-white/5 rounded-3xl bg-white/[0.01]">
