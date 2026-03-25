@@ -52,7 +52,9 @@ const saveUpdate = async (statusOverride = null) => {
     const statusToSave = statusOverride || activeStatus.value;
     if (!statusOverride) isSubmitting.value = true;
 
-    const finalComment = adminNote.value;
+    const finalComment = adminNote.value
+        ? `${selectedReport.value.comment} | Admin: ${adminNote.value}`
+        : selectedReport.value.comment;
 
     try {
         await api.put(`/api/question-reports/${selectedReport.value.id}`, {
@@ -114,7 +116,8 @@ const copyToClipboard = async () => {
         <div class="grid gap-4">
             <div v-if="filteredReports.length > 0" class="grid gap-3">
                 <QuestionReportItem v-for="report in filteredReports" :key="report.id" :report="report"
-                    :class="{ 'opacity-50 grayscale': report.status == 'Closed' }" @delete="emit('deleteReport', report.id)" @view="openDetails" />
+                    :class="{ 'opacity-50 grayscale': report.status == 'Closed' }"
+                    @delete="emit('deleteReport', report.id)" @view="openDetails" />
             </div>
 
             <div v-else class="py-20 text-center border border-dashed border-white/5 rounded-3xl bg-white/[0.01]">
@@ -136,7 +139,7 @@ const copyToClipboard = async () => {
                         <div class="mt-2 flex gap-2">
                             <span
                                 class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest">
-                                Aktuális státusz: {{ statusTranslations[selectedReport.status]}}
+                                Aktuális státusz: {{ statusTranslations[selectedReport.status] }}
                             </span>
                         </div>
                     </div>
