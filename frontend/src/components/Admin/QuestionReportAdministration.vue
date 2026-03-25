@@ -30,6 +30,12 @@ const filteredReports = computed(() => {
         .sort((a, b) => (order[a.status] || 99) - (order[b.status] || 99));
 });
 
+const statusTranslations = {
+    Open: 'Nyitott',
+    Investigating: 'Vizsgálat',
+    Closed: 'Lezárva'
+};
+
 const openDetails = async (report) => {
     selectedReport.value = report;
     adminNote.value = "";
@@ -130,7 +136,7 @@ const copyToClipboard = async () => {
                         <div class="mt-2 flex gap-2">
                             <span
                                 class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest">
-                                Aktuális státusz: {{ selectedReport.status }}
+                                Aktuális státusz: {{ statusTranslations[selectedReport.status]}}
                             </span>
                         </div>
                     </div>
