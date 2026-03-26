@@ -3,14 +3,38 @@ const props = defineProps({
     report: Object
 });
 const emit = defineEmits(['view', 'delete']);
+
+const statusTranslations = {
+    Open: 'Nyitott',
+    Investigating: 'Vizsgálat',
+    Closed: 'Lezárva'
+};
+
+const statusConfig = {
+    Open: {
+        icon: 'fa-solid fa-triangle-exclamation',
+        colorClass: 'bg-red-500/10 text-red-500'
+    },
+    Investigating: {
+        icon: 'fa-solid fa-magnifying-glass',
+        colorClass: 'bg-yellow-500/10 text-yellow-500'
+    },
+    Closed: {
+        icon: 'fa-solid fa-envelope',
+        colorClass: 'bg-green-500/10 text-green-500'
+    }
+};
 </script>
 
 <template>
     <div
         class="bg-white/[0.03] border border-white/5 p-5 rounded-xl flex justify-between items-center group hover:bg-white/5 transition-all">
         <div class="flex items-center gap-6 text-left">
-            <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
-                <i class="fa-solid fa-triangle-exclamation"></i>
+            <div :class="[
+                'w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300',
+                statusConfig[report.status]?.colorClass || 'bg-white/10 text-white'
+            ]">
+                <i :class="statusConfig[report.status]?.icon || 'fa-solid fa-question'"></i>
             </div>
 
             <div class="flex flex-col">
