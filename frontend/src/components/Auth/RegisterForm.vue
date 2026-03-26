@@ -27,6 +27,7 @@ const registerSubmit = async () => {
     await api.get("/api/csrf-cookie");
     const res = await api.post("/api/register", { name: formData.value.name, email: formData.value.email, password: formData.value.password });
 
+    emit('switch-form');
     if (res.status === 201) return "Sikeres regisztráció";
 
     throw new Error("Sikertelen regisztráció");
