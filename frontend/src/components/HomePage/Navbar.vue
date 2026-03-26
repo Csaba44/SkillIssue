@@ -107,8 +107,12 @@ const logoutClicked = async () => {
                   </transition>
                 </div>
 
-                <RouterLink v-else to="/login"><button
-                    class="text-warning font-bold hover:textGray">Bejelentkezés</button></RouterLink>
+                <RouterLink v-else to="/login" :class="navItemClass">
+                  <button
+                    class="text-warning font-bold hover:text-warning/80 transition-all duration-300 cursor-pointer">
+                    Bejelentkezés
+                  </button>
+                </RouterLink>
               </li>
             </ul>
 
@@ -160,9 +164,12 @@ const logoutClicked = async () => {
                       </div>
                     </transition>
                   </div>
-
-                  <RouterLink v-else to="/login"><button
-                      class="text-warning font-bold hover:textGray">Bejelentkezés</button></RouterLink>
+                  <RouterLink v-else to="/login" :class="navItemClass" @click="toggleMenu">
+                    <button
+                      class="text-warning font-bold hover:text-warning/80 transition-all duration-300 cursor-pointer">
+                      Bejelentkezés
+                    </button>
+                  </RouterLink>
                 </li>
               </ul>
             </transition>
