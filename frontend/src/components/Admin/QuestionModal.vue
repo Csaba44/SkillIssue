@@ -113,8 +113,12 @@ const submitForm = async () => {
                 </div>
 
                 <div class="flex justify-end gap-4 pt-6">
-                    <button @click="emit('close')"
-                        class="px-6 py-3 text-white/40 font-bold uppercase text-xs">Mégse</button>
+                    <button @click="emit('close')" class="px-6 py-3 text-white/40 font-bold uppercase text-xs 
+               transition-all duration-200 ease-in-out
+               hover:text-white hover:scale-105 
+               active:scale-95 active:opacity-70 cursor-pointer">
+                        Mégse
+                    </button>
                     <Button @click="submitForm"
                         :title="isSubmitting ? 'Folyamatban...' : (isEdit ? 'Változtatások mentése' : 'Kérdés rögzítése')"
                         class="bg-accentGreen text-black font-extrabold px-10 py-3 rounded-full" />
