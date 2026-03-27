@@ -79,7 +79,7 @@ const openCreateModal = () => {
                     @delete="(id) => emit('deleteQuestion', id)" @edit="openEditModal(q)" />
             </div>
 
-            <div v-else class="py-20 text-center border border-dashed border-white/5 rounded-3xl bg-white/[0.01]">
+            <div v-else class="py-20 text-center border border-dashed border-white/5 rounded-3xl bg-white/1">
                 <i class="fa-solid fa-ghost text-4xl text-white/10 mb-4 block"></i>
                 <p class="text-white/20 font-medium">Nincs ilyen kérdésünk...</p>
             </div>

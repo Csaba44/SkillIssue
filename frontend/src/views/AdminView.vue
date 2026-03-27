@@ -56,6 +56,7 @@ const getQuestions = async () => {
     try {
         const res = await api.get("/api/questions");
         questions.value = res.data;
+        getSubjects();
     } catch (error) {
         console.error("Hiba a kérdések lekérésekor:", error);
     }

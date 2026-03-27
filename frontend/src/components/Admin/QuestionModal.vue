@@ -10,6 +10,9 @@ const props = defineProps({
     editData: Object
 });
 
+const isAddingNewSubject = ref(false);
+const newSubjectName = ref("");
+
 const subjectsArray = computed(() => {
     return props.availableSubjects.map((subject) => ({ label: subject.name, value: subject.id }))
 })
@@ -37,20 +40,25 @@ const formData = ref({
 });
 
 const submitForm = async () => {
+    const isSubjectValid = isAddingNewSubject.value ? !!newSubjectName.value : !!formData.value.subject_id;
+
+    if (!formData.value.question || !isSubjectValid) {
+        return toast.error("Minden mező kitöltése kötelező!");
+    }
+
     formData.value.answers.forEach((ans, index) => {
         ans.is_correct = (index == 0);
     });
 
-    if (!formData.value.question || !formData.value.subject_id) {
-        return toast.error("Minden mező kitöltése kötelező!");
-    }
-
-    if (!formData.value.question || !formData.value.subject_id) {
-        return toast.error("Minden mező kitöltése kötelező!");
-    }
-
     isSubmitting.value = true;
+
     try {
+        if (isAddingNewSubject.value && !isEdit) {
+            const subjectRes = await api.post("/api/subjects", {
+                name: newSubjectName.value
+            });
+            formData.value.subject_id = subjectRes.data.subject.id;
+        }
         if (isEdit) {
             await api.put(`/api/questions/${props.editData.id}`, formData.value);
             toast.success("Kérdés sikeresen frissítve!");
@@ -63,7 +71,8 @@ const submitForm = async () => {
         emit('close');
     } catch (error) {
         console.error("Hiba:", error);
-        toast.error("Hiba történt a mentés során.");
+        const errorMsg = error.response?.data?.message || "Hiba történt a mentés során.";
+        toast.error(errorMsg);
     } finally {
         isSubmitting.value = false;
     }
@@ -86,12 +95,22 @@ const submitForm = async () => {
 
             <div class="space-y-6 text-left">
                 <div v-if="!isEdit">
-                    <label
-                        class="text-white/40 text-[10px] uppercase font-bold tracking-widest block mb-2">Tantárgy</label>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-white/40 text-[10px] uppercase font-bold tracking-widest">Tantárgy</label>
 
-                    <Select :options="subjectsArray"
+                        <button @click="isAddingNewSubject = !isAddingNewSubject" type="button"
+                            class="text-[10px] uppercase font-bold text-accentGreen hover:underline cursor-pointer">
+                            {{ isAddingNewSubject ? 'Inkább választok a listából' : '+ Új tantárgy létrehozása' }}
+                        </button>
+                    </div>
+
+                    <Select v-if="!isAddingNewSubject" :options="subjectsArray"
                         class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-accentGreen transition-all"
-                        v-model="formData.subject_id"></Select>
+                        v-model="formData.subject_id">
+                    </Select>
+
+                    <input v-else v-model="newSubjectName" type="text" placeholder="Új tantárgy neve (pl. Matek)"
+                        class="w-full bg-white/5 border border-accentGreen/50 rounded-xl p-4 text-white outline-none focus:border-accentGreen transition-all shadow-[0_0_15px_rgba(34,197,94,0.1)]" />
                 </div>
 
                 <div>
