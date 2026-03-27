@@ -22,7 +22,7 @@ const statusConfig = {
 
 <template>
     <div
-        class="bg-white/[0.03] border border-white/5 p-5 rounded-xl flex justify-between items-center group hover:bg-white/5 transition-all">
+        class="bg-white/3 border border-white/5 p-5 rounded-xl flex justify-between items-center group hover:bg-white/5 transition-all">
         <div class="flex items-center gap-6 text-left">
             <div :class="[
                 'w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300',
