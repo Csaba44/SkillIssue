@@ -9,7 +9,7 @@ const emit = defineEmits(['delete', 'edit']);
 
 <template>
     <div
-        class="bg-white/[0.03] border border-white/5 p-5 rounded-xl flex justify-between items-center group hover:bg-white/5 transition-all">
+        class="bg-white/3 border border-white/5 p-5 rounded-xl flex justify-between items-center group hover:bg-white/5 transition-all">
         <div class="flex items-center gap-4 text-left">
             <span class="text-white/10 font-mono text-xs">#{{ index + 1 }}</span>
             <div class="flex flex-col">

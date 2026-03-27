@@ -190,7 +190,7 @@ onBeforeMount(getData);
     <ProtectedPageContainer class="relative overflow-hidden">
         <i
             class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
-        <Navbar minimal />
+        <Navbar minimal class="relative z-50" />
 
         <section v-if="profile" class="relative z-10 mt-20 max-w-6xl mx-auto px-4 text-textWhite">
             <div class="mb-8">
@@ -239,7 +239,7 @@ onBeforeMount(getData);
                 </div>
 
                 <div class="w-full h-5 bg-white/10 rounded-full overflow-hidden p-[3px]">
-                    <div class="h-full rounded-full bg-gradient-to-r from-accentYellow via-accentGreen to-emerald-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                    <div class="h-full rounded-full bg-linear-to-r from-accentYellow via-accentGreen to-emerald-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(234,179,8,0.2)]"
                         :style="{ width: `${xpProgress}%` }"></div>
                 </div>
 

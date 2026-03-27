@@ -69,7 +69,7 @@ const eloToNextRank = computed(() => {
 
           <div class="w-full h-2 bg-white/10 rounded-full mt-2 overflow-hidden">
             <div
-              class="h-full bg-gradient-to-r from-accentPurple via-accentGreen to-accentGreen transition-all duration-500"
+              class="h-full bg-linear-to-r from-accentPurple via-accentGreen to-accentGreen transition-all duration-500"
               :style="{
                 width: ((user.elo - user.rank.min_elo) / (user.next_rank.min_elo - user.rank.min_elo)) * 100 + '%',
               }"></div>
@@ -98,7 +98,7 @@ const eloToNextRank = computed(() => {
 
           <transition name="dropdown">
             <div v-if="isUserDropdownVisible"
-              class="absolute right-0 mt-4 bg-bgAlternate rounded-xl w-44 p-4 flex flex-col gap-2 shadow-2xl border border-white/5 z-[100]">
+              class="absolute right-0 mt-4 bg-bgAlternate rounded-xl w-44 p-4 flex flex-col gap-2 shadow-2xl border border-white/5 z-100">
               <RouterLink :to="'/profiles/' + user.id">
                 <button class="text-left hover:text-warning transition w-full cursor-pointer"
                   @click="isUserDropdownVisible = false">Profilom</button>
