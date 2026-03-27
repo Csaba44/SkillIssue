@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, computed } from "vue";
 import { RouterLink } from "vue-router";
 import Container from "../Generic/Container.vue";
 import { useUserStore } from "../../stores/UserStore";
@@ -8,6 +8,8 @@ import { toast } from "vue-sonner";
 
 const userStore = useUserStore();
 const { isAuthenticated } = storeToRefs(userStore);
+
+const dashboardRoute = computed(() => isAuthenticated.value ? '/dashboard' : '/login');
 
 const isOpen = ref(false);
 
@@ -94,6 +96,11 @@ const logoutClicked = async () => {
                           @click="isUserDropdownVisible = false">Profilom</button>
                       </RouterLink>
 
+                      <RouterLink :to="isAuthenticated ? '/dashboard' : '/login'"
+                        class="hover:text-primary transition-colors duration-300">
+                        Kezelőfelület
+                      </RouterLink>
+
                       <RouterLink v-if="userStore.user.is_admin" to="/admin">
                         <button class="text-left hover:text-primary transition w-full cursor-pointer"
                           @click="isUserDropdownVisible = false">
@@ -146,21 +153,36 @@ const logoutClicked = async () => {
 
                     <transition name="dropdown">
                       <div v-if="isUserDropdownVisible"
-                        class="top-5 mt-3 bg-bgAlternate rounded-xl w-full p-4 flex flex-col gap-2 shadow-2xl">
-                        <RouterLink :to="'/profiles/' + userStore.user.id">
-                          <button class="text-left hover:text-warning transition w-full cursor-pointer"
-                            @click="isUserDropdownVisible = false; toggleMenu()">Profilom</button>
+                        class="top-5 mt-3 bg-bgAlternate rounded-xl w-full p-5 flex flex-col gap-4 shadow-2xl border border-white/5">
+
+                        <RouterLink :to="'/profiles/' + userStore.user.id" class="w-full">
+                          <button
+                            class="text-left text-sm font-medium hover:text-warning transition w-full cursor-pointer"
+                            @click="isUserDropdownVisible = false; toggleMenu()">
+                            Profilom
+                          </button>
                         </RouterLink>
 
-                        <RouterLink v-if="userStore.user.is_admin" to="/admin">
-                          <button class="text-left hover:text-primary transition w-full cursor-pointer"
+                        <RouterLink :to="isAuthenticated ? '/dashboard' : '/login'"
+                          class="text-left text-sm font-medium hover:text-primary transition w-full cursor-pointer"
+                          @click="isUserDropdownVisible = false; toggleMenu()">
+                          Kezelőfelület
+                        </RouterLink>
+
+                        <RouterLink v-if="userStore.user.is_admin" to="/admin" class="w-full">
+                          <button
+                            class="text-left text-sm font-medium hover:text-primary transition w-full cursor-pointer"
                             @click="isUserDropdownVisible = false; toggleMenu()">
                             Admin panel
                           </button>
                         </RouterLink>
 
+                        <div class="h-px bg-white/10 my-1"></div>
+
                         <button @click="logoutClicked"
-                          class="text-left text-error hover:opacity-80 transition w-full cursor-pointer">Kijelentkezés</button>
+                          class="text-left text-sm font-medium text-error hover:opacity-80 transition w-full cursor-pointer">
+                          Kijelentkezés
+                        </button>
                       </div>
                     </transition>
                   </div>
