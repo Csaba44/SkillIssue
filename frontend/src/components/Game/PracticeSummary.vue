@@ -65,7 +65,7 @@ const formattedDate = computed(() => {
 
       <div class="p-8 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 backdrop-blur-xl text-center w-full mb-8">
         <p class="text-white/60 mb-2">Pontszám</p>
-        <h3 class="text-7xl font-bold text-accentYellow">{{ session.score }} / {{ session.maxRounds }}</h3>
+        <h3 class="text-5xl md:text-7xl font-bold text-accentYellow">{{ session.score }} / {{ session.maxRounds }}</h3>
         <p class="text-white/60 mt-2">{{ accuracy }}% helyes válasz</p>
       </div>
 

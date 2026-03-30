@@ -91,21 +91,23 @@ const createQuestionReportClicked = () => {
 </script>
 
 <template>
-  <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center px-10 py-12 gap-6 text-textWhite">
+  <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center md:px-10 py-12 gap-6 text-textWhite">
     <div class="w-full flex justify-between items-center text-sm text-white/60">
       <span class="font-bold text-error"> {{ currRoundNumber }} / {{ totalRounds }} kör </span>
 
       <div class="flex items-center gap-3">
-        <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
-          <i class="fa-solid fa-flag text-[11px]"></i>
-          <span>Kérdés bejelentése</span>
-        </button>
-
         <div v-if="subject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
           <i :class="subjectConfig.icon"></i>
           <span>{{ subject }}</span>
         </div>
       </div>
+    </div>
+
+    <div class="flex items-end">
+      <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
+        <i class="fa-solid fa-flag text-[11px]"></i>
+        <span>Kérdés bejelentése</span>
+      </button>
     </div>
 
     <div class="flex items-center gap-3 text-lg font-semibold">
@@ -135,6 +137,6 @@ const createQuestionReportClicked = () => {
       <span>Válasz elküldve</span>
     </div>
 
-    <Button title="Következő" class="mt-6 bg-gradient-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed disabled:shadow-none" :disabled="isSubmitting" @click="getNext" />
+    <Button title="Következő" class="mt-6 bg-linear-to-r from-accentGreen to-success text-black font-bold rounded-full px-10 py-3 shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed disabled:shadow-none" :disabled="isSubmitting" @click="getNext" />
   </Widget>
 </template>

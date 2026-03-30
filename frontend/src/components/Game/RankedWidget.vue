@@ -125,20 +125,11 @@ const createUserReportClicked = () => {
 </script>
 
 <template>
-  <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center px-10 py-12 gap-6 text-textWhite">
+  <Widget v-if="isAuthenticated" class="relative w-[95%] md:w-[75%] lg:w-[55%] xl:w-[40%] backdrop-blur-2xl bg-white/5 border border-white/10 shadow-2xl shadow-black/40 rounded-3xl flex flex-col items-center md:px-10 py-12 gap-6 text-textWhite">
     <div class="w-full flex justify-between items-center text-sm text-white/60">
       <span class="font-bold text-error"> {{ currentRound }} / {{ TOTAL_ROUNDS }} kör </span>
 
       <div class="flex items-center gap-3">
-        <button @click="createUserReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
-          <i class="fa-solid fa-user-slash text-[11px]"></i>
-          <span>Ellenfél bejelentése</span>
-        </button>
-        <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
-          <i class="fa-solid fa-flag text-[11px]"></i>
-          <span>Kérdés bejelentése</span>
-        </button>
-
         <div v-if="currentSubject" class="flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold" :class="[subjectConfig.color, subjectConfig.border, subjectConfig.bg]">
           <i :class="subjectConfig.icon"></i>
           <span>{{ currentSubject }}</span>
@@ -153,6 +144,17 @@ const createUserReportClicked = () => {
         {{ opponent.player.userName ?? "Ismeretlen ellenfél" }}
         {{ !isOpponentOnline ? "(kilépett)" : "" }}
       </span>
+    </div>
+
+    <div class="flex gap-5 flex-col sm:flex-row">
+      <button @click="createUserReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
+        <i class="fa-solid fa-user-slash text-[11px]"></i>
+        <span>Ellenfél bejelentése</span>
+      </button>
+      <button @click="createQuestionReportClicked" class="flex cursor-pointer items-center gap-1.5 text-xs text-white/30 hover:text-white/60 transition-colors duration-200">
+        <i class="fa-solid fa-flag text-[11px]"></i>
+        <span>Kérdés bejelentése</span>
+      </button>
     </div>
 
     <div class="text-center space-y-4">
