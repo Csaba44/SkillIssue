@@ -10,7 +10,7 @@
   --color-accentGreen: #02cb74;
   --color-accentPurple: #a06bf9;
   --color-accentYellow: #fbd22f;
-  --color-accentOrange: #FE4C01;
+  --color-accentOrange: #fe4c01;
 
   --color-textBlack: #1f2937;
   --color-textGray: #6b7280;
@@ -24,7 +24,7 @@
   --color-bgDark: #030f39;
   --color-bgLight: #f8f8f8;
   --color-bgAlternate: #0d1945;
-  --color-bgFooter: #01071C;
+  --color-bgFooter: #01071c;
 
   --color-buttonOrange: #fe4c01;
 }
@@ -33,11 +33,10 @@ body {
   overflow-x: hidden;
 }
 
-*{
+* {
   outline: none !important;
 }
 
-/*Navbar jobboldalról beúszás */
 .slide-enter-active,
 .slide-leave-active {
   transition: transform 0.3s ease;
@@ -70,7 +69,6 @@ body {
   -webkit-text-stroke: 5px #993418;
   paint-order: stroke fill;
 }
-
 
 @layer utilities {
   @keyframes scroll-x {
