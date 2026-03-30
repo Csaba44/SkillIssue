@@ -21,6 +21,12 @@ class PracticeSessionController extends Controller
      */
     public function store(Request $request)
     {
+        $banStatus = $request->user()->getIsBannedAttribute();
+
+        if ($banStatus) {
+            return response()->json(["is_banned" => true, "message" => "Ki lettél tiltva a SkillIssue alkalmazásból. Indok: $banStatus->reason"], 403);
+        }
+
         $userId = $request->user()->id;
         $userXp = $request->user()->xp;
 

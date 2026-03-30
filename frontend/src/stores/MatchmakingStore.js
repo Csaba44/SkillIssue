@@ -87,7 +87,7 @@ export const useMatchmakingStore = defineStore("matchmaking", {
 
       socket.on("matchmaking:error", (err) => {
         this.stop();
-        toast.error(err.message);
+        toast.error(err.message ?? "Ismeretlen hiba.");
       });
 
       socket.on("disconnect", (reason) => {
