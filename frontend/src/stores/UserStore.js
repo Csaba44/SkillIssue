@@ -12,7 +12,6 @@ export const useUserStore = defineStore("counter", {
     async verifySession() {
       try {
         const response = await api.get("/api/users");
-        console.log(response.data);
         this.user = response.data;
         this.isAuthenticated = true;
       } catch (error) {
