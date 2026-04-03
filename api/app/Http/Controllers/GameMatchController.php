@@ -15,11 +15,17 @@ class GameMatchController extends Controller
     public function index(GameMatchRequest $request)
     {
         $userId = $request->user()->id;
-        $usersMatches = GameMatch::with(['user', 'opponent'])->where('user_id', '=', $userId)->get();
+
+        $usersMatches = GameMatch::with(['user', 'opponent'])
+            ->where('user_id', $userId)
+            ->whereNotIn('match_result', [
+                GameResultEnum::PENDING->value,
+                GameResultEnum::CANCELLED->value
+            ])
+            ->get();
 
         return response()->json($usersMatches);
     }
-
     /**
      * Display the specified resource.
      */
@@ -27,6 +33,10 @@ class GameMatchController extends Controller
     {
         $matches = GameMatch::with(['user', 'opponent'])
             ->where('match_uuid', $id)
+            ->whereNotIn('match_result', [
+                GameResultEnum::PENDING->value,
+                GameResultEnum::CANCELLED->value
+            ])
             ->get();
 
         if ($matches->count() !== 2) {

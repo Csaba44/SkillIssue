@@ -85,8 +85,19 @@ class User extends Authenticatable
 
     public function getStreakAttribute()
     {
-        $dates = $this->gameMatches->pluck('created_at')
-            ->concat($this->practiceSessions->pluck('created_at'))
+        $validMatches = $this->gameMatches->filter(function ($match) {
+            return !in_array($match->match_result, [
+                GameResultEnum::CANCELLED,
+                GameResultEnum::PENDING,
+            ]);
+        });
+
+        $validPractice = $this->practiceSessions->filter(function ($session) {
+            return $session->xp_after !== null;
+        });
+
+        $dates = $validMatches->pluck('created_at')
+            ->concat($validPractice->pluck('created_at'))
             ->map->format('Y-m-d')
             ->unique();
 
@@ -121,7 +132,17 @@ class User extends Authenticatable
 
     public function getPlayedMatchesCountAttribute()
     {
-        return $this->gameMatches()->count() + $this->practiceSessions()->count();
+        $validMatches = $this->gameMatches()
+            ->whereNotIn('match_result', [
+                GameResultEnum::CANCELLED->value,
+                GameResultEnum::PENDING->value,
+            ])->count();
+
+        $validPractice = $this->practiceSessions()
+            ->whereNotNull('xp_after')
+            ->count();
+
+        return $validMatches + $validPractice;
     }
 
     public function getPlayerTopPercentileAttribute()
@@ -132,11 +153,21 @@ class User extends Authenticatable
         if ($allUsersCount === 0) {
             return 1;
         }
-
-        $usersCountWithLessMatches = self::withCount(['gameMatches', 'practiceSessions'])
+        $usersCountWithLessMatches = self::with(['gameMatches', 'practiceSessions'])
             ->get()
             ->filter(function ($u) use ($allMatchesCount) {
-                return ($u->game_matches_count + $u->practice_sessions_count) < $allMatchesCount;
+                $validMatches = $u->gameMatches->filter(function ($match) {
+                    return !in_array($match->match_result, [
+                        GameResultEnum::CANCELLED,
+                        GameResultEnum::PENDING,
+                    ]);
+                })->count();
+
+                $validPractice = $u->practiceSessions->filter(function ($session) {
+                    return $session->xp_after !== null;
+                })->count();
+
+                return ($validMatches + $validPractice) < $allMatchesCount;
             })
             ->count();
 
@@ -148,7 +179,13 @@ class User extends Authenticatable
 
     public function getWinStreakAttribute()
     {
-        $matches = $this->gameMatches()->orderBy('created_at', 'desc')->get();
+        $matches = $this->gameMatches()
+            ->whereNotIn('match_result', [
+                GameResultEnum::CANCELLED->value,
+                GameResultEnum::PENDING->value,
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
         $streak = 0;
 
         foreach ($matches as $match) {
