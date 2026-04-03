@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\BanController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\internal\CorrectQuestionController;
@@ -103,4 +104,6 @@ Route::middleware("auth:sanctum")->group(function () {
 
     // Answers
     Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware([EnsureQuestionTokenIsValid::class, EnsurePracticeSessionTokenIsValid::class]);
+
+    Route::apiResource('/ban', BanController::class); // Admin only
 });

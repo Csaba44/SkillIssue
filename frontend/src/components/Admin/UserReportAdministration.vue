@@ -17,6 +17,13 @@ const isSubmitting = ref(false);
 const adminNote = ref("");
 const activeStatus = ref("");
 
+const showBanForm = ref(false);
+const isBanning = ref(false);
+const banForm = ref({
+  reason: "",
+  release_date: "",
+});
+
 const statusTranslations = {
   Open: "Nyitott",
   Investigating: "Vizsgálat",
@@ -39,6 +46,8 @@ const openDetails = async (report) => {
   adminNote.value = "";
   activeStatus.value = report.status;
   isModalOpen.value = true;
+  showBanForm.value = false;
+  banForm.value = { reason: "", release_date: "" };
 
   if (report.status == "Open") {
     activeStatus.value = "Investigating";
@@ -73,6 +82,37 @@ const saveUpdate = async (statusOverride = null) => {
     isSubmitting.value = false;
   }
 };
+
+const banUser = async () => {
+  if (!banForm.value.reason || !banForm.value.release_date) {
+    return toast.error("Kérjük add meg a ban okát és lejárati dátumát.");
+  }
+
+  isBanning.value = true;
+
+  const formattedDate = banForm.value.release_date.replace("T", " ") + ":00";
+
+  try {
+    await api.post("/api/ban", {
+      user_id: selectedReport.value.user_reported?.id,
+      release_date: formattedDate,
+      reason: banForm.value.reason,
+    });
+
+    activeStatus.value = "Closed";
+    adminNote.value = adminNote.value ? adminNote.value + ` | Kitiltva: ${banForm.value.reason}` : `Kitiltva: ${banForm.value.reason}`;
+
+    await saveUpdate("Closed");
+
+    toast.success(`${selectedReport.value.user_reported?.name} sikeresen kitiltva.`);
+    isModalOpen.value = false;
+  } catch (error) {
+    console.error("Ban hiba:", error.response?.data);
+    toast.error("Hiba történt a tiltás során.");
+  } finally {
+    isBanning.value = false;
+  }
+};
 </script>
 
 <template>
@@ -91,7 +131,7 @@ const saveUpdate = async (statusOverride = null) => {
       <div v-if="filteredReports.length > 0" class="grid gap-3">
         <UserReportItem v-for="report in filteredReports" :key="report.id" :report="report" :class="{ 'opacity-50 grayscale': report.status == 'Closed' }" @view="openDetails" @delete="(id) => emit('deleteReport', id)" />
       </div>
-      <div v-else class="py-20 text-center border border-dashed border-white/5 rounded-3xl bg-white/[0.01]">
+      <div v-else class="py-20 text-center border border-dashed border-white/5 rounded-3xl bg-white/1">
         <p class="text-white/20 font-medium">Nincs aktív játékos jelentés.</p>
       </div>
     </div>
@@ -117,7 +157,6 @@ const saveUpdate = async (statusOverride = null) => {
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Forduló</label>
               <p class="text-white font-medium">{{ selectedReport.round_number }}. kör</p>
             </div>
-
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Válaszidő</label>
               <p v-if="selectedReport.match_details" :class="['font-mono font-bold text-sm', selectedReport.match_details.user_guess_time_ms < 1000 ? 'text-red-500' : 'text-accentGreen']">{{ (selectedReport.match_details.user_guess_time_ms / 1000).toFixed(2) }}s</p>
@@ -141,6 +180,28 @@ const saveUpdate = async (statusOverride = null) => {
               <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all">Nyitott</button>
               <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all">Vizsgálat</button>
               <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all">Lezárva</button>
+            </div>
+          </div>
+
+          <div class="border-t border-white/5 pt-5">
+            <button @click="showBanForm = !showBanForm" class="flex items-center gap-2 text-red-400/70 hover:text-red-400 text-[11px] font-bold uppercase tracking-widest transition-all">
+              <i :class="showBanForm ? 'fa-solid fa-chevron-up' : 'fa-solid fa-ban'"></i>
+              {{ showBanForm ? "Ban visszavonása" : "Játékos kitiltása" }}
+            </button>
+
+            <div v-if="showBanForm" class="mt-4 bg-red-500/5 border border-red-500/15 rounded-2xl p-5 flex flex-col gap-4">
+              <div>
+                <label class="text-red-300/50 text-[10px] uppercase font-bold tracking-widest block mb-2">Ban oka</label>
+                <input v-model="banForm.reason" type="text" placeholder="pl. Csalás, toxic viselkedés..." class="w-full bg-white/5 border border-red-500/20 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/50 transition-all" />
+              </div>
+              <div>
+                <label class="text-red-300/50 text-[10px] uppercase font-bold tracking-widest block mb-2">Lejárat dátuma</label>
+                <input v-model="banForm.release_date" type="datetime-local" class="w-full bg-white/5 border border-red-500/20 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/50 transition-all" />
+              </div>
+              <button @click="banUser" :disabled="isBanning" class="w-full bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-ban"></i>
+                {{ isBanning ? "Tiltás folyamatban..." : `${selectedReport.user_reported?.name} kitiltása` }}
+              </button>
             </div>
           </div>
         </div>
