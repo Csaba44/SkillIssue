@@ -136,8 +136,16 @@ const copyToClipboard = async () => {
         <div class="space-y-6 text-left">
           <div>
             <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Érintett kérdés</label>
-            <div class="text-white bg-white/5 p-4 rounded-xl border border-white/5 text-sm leading-relaxed">
+            <div class="text-white bg-white/5 p-4 rounded-xl border border-white/5 text-sm leading-relaxed mb-3">
               {{ selectedReport.question?.question }}
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div v-for="answer in selectedReport.question?.answers" :key="answer.id" class="flex items-center gap-3 px-4 py-3 rounded-xl border text-sm transition-all" :class="answer.answer.endsWith('*') ? 'bg-accentGreen/10 border-accentGreen/30 text-accentGreen' : 'bg-white/3 border-white/5 text-white/50'">
+                <i class="fa-solid text-xs shrink-0" :class="answer.answer.endsWith('*') ? 'fa-circle-check text-accentGreen' : 'fa-circle text-white/20'"></i>
+                <span>{{ answer.answer.endsWith("*") ? answer.answer.slice(0, -1) : answer.answer }}</span>
+                <span v-if="answer.answer.endsWith('*')" class="ml-auto text-[10px] uppercase font-bold tracking-widest text-accentGreen/70">Helyes</span>
+              </div>
             </div>
           </div>
 

@@ -169,7 +169,7 @@ onMounted(() => {
       <template v-else-if="filteredBans.length > 0">
         <div v-for="ban in filteredBans" :key="ban.id" @click="openDetails(ban)" class="flex items-center justify-between gap-4 bg-white/5 hover:bg-white/8 border border-white/10 rounded-2xl px-5 py-4 cursor-pointer transition-all group" :class="{ 'opacity-40 grayscale': isExpired(ban.release_date) }">
           <div class="flex items-center gap-4">
-            <div class="w-9 h-9 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+            <div class="w-9 h-9 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
               <i class="fa-solid fa-ban text-red-400 text-sm"></i>
             </div>
             <div>
@@ -178,7 +178,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="flex items-center gap-4 flex-shrink-0">
+          <div class="flex items-center gap-4 shrink-0">
             <div class="text-right hidden sm:block">
               <p class="text-[10px] uppercase tracking-widest font-bold" :class="isExpired(ban.release_date) ? 'text-white/20' : 'text-red-400/70'">
                 {{ isExpired(ban.release_date) ? "Lejárt" : "Aktív" }}
