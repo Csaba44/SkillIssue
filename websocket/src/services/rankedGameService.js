@@ -27,6 +27,7 @@ export async function createRankedGame(playerA, playerB) {
 
   } catch (error) {
     console.error(error);
+    return { errorMessage: error.response?.data.message ?? false };
   }
 }
 

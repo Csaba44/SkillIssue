@@ -120,7 +120,15 @@ async function confirmMatchmaking(socket, tmpUuid) {
     const playerB = pendingMatch.playerB;
 
     const match = await createRankedGame(playerA, playerB);
-    gameState.pendingGames.delete(pendingMatch.tmpUuid);
+
+    if (match.errorMessage) {
+      gameState.pendingGames.delete(pendingMatch.tmpUuid);
+      console.log(match);
+      io.to(playerA.socketId).emit("matchmaking:error", { message: match.errorMessage });
+      io.to(playerB.socketId).emit("matchmaking:error", { message: match.errorMessage });
+      return match.errorMessage;
+    }
+
     gameState.ongoingGames.set(match.match_uuid, match);
 
     joinUserToRoom(playerA.socketId, match.roomId);

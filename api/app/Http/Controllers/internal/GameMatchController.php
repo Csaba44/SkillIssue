@@ -30,10 +30,20 @@ class GameMatchController extends Controller
             'user_b_id' => 'required|integer|exists:users,id',
         ]);
 
+
+
         return DB::transaction(function () use ($validated) {
 
             $userA = User::lockForUpdate()->findOrFail($validated['user_a_id']);
             $userB = User::lockForUpdate()->findOrFail($validated['user_b_id']);
+
+            $banStatusA = $userA->getIsBannedAttribute();
+            $banStatusB = $userB->getIsBannedAttribute();
+
+            if ($banStatusA || $banStatusB) {
+                return response()->json(["is_banned" => true, "message" => "Az egyik résztvevő játékos ki lett tiltva a SkillIssue alkalmazásból."], 403);
+            }
+
 
             $uuid = (string) Str::uuid();
 

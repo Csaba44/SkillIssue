@@ -51,6 +51,9 @@ const startMatchmaking = async () => {
         return toast.error("Ellenőrizd az internetkapcsolatod!");
       }
 
+      if (error.response.data.is_banned) {
+        return toast.error(error.response.data.message);
+      }
       return toast.error("Ismeretlen hiba történt a játék létrehozása közben!");
     }
   }
