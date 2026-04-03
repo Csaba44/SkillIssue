@@ -59,6 +59,10 @@ const openCreateModal = () => {
       </button>
     </div>
 
+    <div class="text-white/40 text-sm font-medium">
+      Összesen: <span class="text-white">{{ filteredQuestions.length }}</span> megjelenített kérdés
+    </div>
+
     <div class="grid gap-4">
       <div v-if="filteredQuestions.length > 0" class="grid gap-3">
         <Question v-for="(q, index) in filteredQuestions" :key="q.id" :questionData="q" :id="q.id" @delete="(id) => emit('deleteQuestion', id)" @edit="openEditModal(q)" />

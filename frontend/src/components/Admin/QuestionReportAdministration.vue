@@ -120,7 +120,7 @@ const copyToClipboard = async () => {
     </div>
 
     <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[95vh]">
+      <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
         <div class="flex justify-between items-start mb-8">
           <div>
             <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> Bejelentés kezelése</h2>
@@ -163,19 +163,19 @@ const copyToClipboard = async () => {
           </div>
         </div>
 
-        <div class="flex justify-between items-center mt-10 pt-6 border-t border-white/5">
+        <div class="flex justify-between items-center mt-10 pt-6 border-t border-white/5 sm:flex-row flex-col">
           <button
             @click="
               emit('deleteReport', selectedReport.id);
               isModalOpen = false;
             "
-            class="group flex items-center gap-2 px-4 py-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/5 rounded-xl cursor-pointer transition-all duration-300 ease-out active:scale-95 text-[10px] font-bold uppercase"
+            class="group flex items-center gap-2 px-4 py-2 text-red-500/70 hover:text-red-500 hover:bg-red-500/5 rounded-xl cursor-pointer transition-all duration-300 ease-out active:scale-95 text-[10px] font-bold uppercase"
           >
             <i class="fa-solid fa-trash transition-transform group-hover:rotate-12 group-hover:scale-110"></i>
             Törlés
           </button>
 
-          <div class="flex gap-4">
+          <div class="flex gap-4 sm:mt-0 mt-2">
             <button @click="isModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center gap-2">Mégse</button>
 
             <button @click="saveUpdate()" :disabled="isSubmitting" class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-accentGreen/20 disabled:opacity-50 disabled:cursor-not-allowed">
