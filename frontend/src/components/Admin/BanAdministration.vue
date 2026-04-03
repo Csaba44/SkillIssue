@@ -2,15 +2,24 @@
 import { ref, computed, onMounted } from "vue";
 import api from "../../config/api";
 import { toast } from "vue-sonner";
+import Select from "../Generic/Select.vue";
 
 const bans = ref([]);
+const users = ref([]);
 const searchQuery = ref("");
 const isLoading = ref(false);
 const isModalOpen = ref(false);
+const isAddModalOpen = ref(false);
 const isSubmitting = ref(false);
 const selectedBan = ref(null);
 
 const editForm = ref({
+  reason: "",
+  release_date: "",
+});
+
+const addForm = ref({
+  user_id: "",
   reason: "",
   release_date: "",
 });
@@ -27,6 +36,22 @@ const getBans = async () => {
   }
 };
 
+const getUsers = async () => {
+  try {
+    const res = await api.get("/api/users/all");
+    users.value = res.data;
+  } catch (error) {
+    toast.error("Hiba a felhasználók lekérésekor.");
+  }
+};
+
+const userOptions = computed(() =>
+  users.value.map((u) => ({
+    label: `#${u.id} — ${u.name} (${u.email})`,
+    value: u.id,
+  })),
+);
+
 const openDetails = (ban) => {
   selectedBan.value = ban;
   editForm.value = {
@@ -34,6 +59,11 @@ const openDetails = (ban) => {
     release_date: ban.release_date ? ban.release_date.replace(" ", "T").slice(0, 16) : "",
   };
   isModalOpen.value = true;
+};
+
+const openAddModal = () => {
+  addForm.value = { user_id: "", reason: "", release_date: "" };
+  isAddModalOpen.value = true;
 };
 
 const saveUpdate = async () => {
@@ -60,6 +90,30 @@ const saveUpdate = async () => {
   }
 };
 
+const createBan = async () => {
+  if (!addForm.value.user_id || !addForm.value.reason || !addForm.value.release_date) {
+    return toast.error("Kérjük töltsd ki az összes mezőt.");
+  }
+
+  isSubmitting.value = true;
+  const formattedDate = addForm.value.release_date.replace("T", " ") + ":00";
+
+  try {
+    await api.post("/api/ban", {
+      user_id: addForm.value.user_id,
+      reason: addForm.value.reason,
+      release_date: formattedDate,
+    });
+    toast.success("Ban sikeresen létrehozva!");
+    isAddModalOpen.value = false;
+    getBans();
+  } catch (error) {
+    toast.error("Hiba történt a ban létrehozásakor.");
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
 const deleteBan = async (id) => {
   try {
     await api.delete(`/api/ban/${id}`);
@@ -71,9 +125,7 @@ const deleteBan = async (id) => {
   }
 };
 
-const isExpired = (releaseDate) => {
-  return new Date(releaseDate) < new Date();
-};
+const isExpired = (releaseDate) => new Date(releaseDate) < new Date();
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "Ismeretlen";
@@ -87,7 +139,10 @@ const filteredBans = computed(() => {
   });
 });
 
-onMounted(() => getBans());
+onMounted(() => {
+  getBans();
+  getUsers();
+});
 </script>
 
 <template>
@@ -97,8 +152,14 @@ onMounted(() => getBans());
         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/20"></i>
         <input v-model="searchQuery" type="text" placeholder="Felhasználó vagy indok keresése..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white outline-none focus:border-red-500/50 transition-all" />
       </div>
-      <div class="text-white/40 text-sm font-medium">
-        Összesen: <span class="text-white">{{ bans.length }}</span> ban
+      <div class="flex items-center gap-4">
+        <div class="text-white/40 text-sm font-medium">
+          Összesen: <span class="text-white">{{ bans.length }}</span> ban
+        </div>
+        <button @click="openAddModal" class="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold uppercase text-[10px] tracking-widest px-4 py-2.5 rounded-xl transition-all">
+          <i class="fa-solid fa-plus"></i>
+          Új ban
+        </button>
       </div>
     </div>
 
@@ -134,6 +195,7 @@ onMounted(() => getBans());
       </div>
     </div>
 
+    <!-- Edit ban -->
     <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
       <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
         <div class="flex justify-between items-start mb-8">
@@ -152,6 +214,7 @@ onMounted(() => getBans());
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Kitiltott felhasználó</label>
               <p class="text-white font-medium">{{ selectedBan.user?.name ?? "Ismeretlen" }}</p>
+              <p class="text-white/30 text-xs mt-0.5">{{ selectedBan.user?.email }}</p>
             </div>
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Ban létrehozva</label>
@@ -181,6 +244,43 @@ onMounted(() => getBans());
               {{ isSubmitting ? "Mentés..." : "Rögzítés" }}
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New ban -->
+    <div v-if="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+      <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
+        <div class="flex justify-between items-start mb-8">
+          <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-user-slash text-red-500"></i> Új ban létrehozása</h2>
+          <button @click="isAddModalOpen = false" class="text-white/20 hover:text-white transition-colors">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+
+        <div class="space-y-6 text-left">
+          <div>
+            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Felhasználó</label>
+            <Select :options="userOptions" v-model="addForm.user_id" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-red-500/40 transition-all" />
+          </div>
+
+          <div>
+            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Ban oka</label>
+            <input v-model="addForm.reason" type="text" placeholder="pl. Csalás, toxic viselkedés..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/40 transition-all" />
+          </div>
+
+          <div>
+            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Lejárat dátuma</label>
+            <input v-model="addForm.release_date" type="datetime-local" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/40 transition-all" />
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-4 mt-10 pt-6 border-t border-white/5">
+          <button @click="isAddModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out">Mégse</button>
+          <button @click="createBan()" :disabled="isSubmitting" class="bg-red-500 hover:bg-red-600 text-white font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center gap-2">
+            <i class="fa-solid fa-ban"></i>
+            {{ isSubmitting ? "Létrehozás..." : "Ban létrehozása" }}
+          </button>
         </div>
       </div>
     </div>
