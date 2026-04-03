@@ -19,13 +19,14 @@ class UserController extends Controller
         $rankAttribute = $user->getRankAttribute();
 
         $userData = array_merge($user->toArray(), [
+            'ban_status' => $user->getIsBannedAttribute(),
             'level' => $levelAttribute,
             'rank' => $rankAttribute,
             'next_level' => $user->getNextLevelAttribute() ?? $levelAttribute,
             'next_rank' => $user->getNextRankAttribute() ?? $rankAttribute,
             'top_ranking' => $user->getPlayerTopPercentileAttribute(),
             'matches_played' => $user->getPlayedMatchesCountAttribute(),
-            'streak_count'=>$user->getStreakAttribute()
+            'streak_count' => $user->getStreakAttribute()
         ]);
         return response()->json($userData);
     }
