@@ -7,6 +7,7 @@ import QuestionReportAdministration from "../components/Admin/QuestionReportAdmi
 import UserReportAdministration from "../components/Admin/UserReportAdministration.vue"; // Az új komponens
 import { toast } from "vue-sonner";
 import api from "../config/api";
+import BanAdministration from "../components/Admin/BanAdministration.vue";
 
 const activeTab = ref("questions");
 const questions = ref([]);
@@ -101,6 +102,8 @@ onBeforeMount(() => {
         <button @click="activeTab = 'q-reports'" :class="[activeTab == 'q-reports' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-textWhite/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Kérdés Reportok</button>
 
         <button @click="activeTab = 'u-reports'" :class="[activeTab == 'u-reports' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-user-shield mr-2"></i> Játékos Reportok</button>
+
+        <button @click="activeTab = 'bans'" :class="[activeTab == 'bans' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-ban mr-2"></i> Banok</button>
       </div>
 
       <div v-if="activeTab == 'questions'" class="fade-in">
@@ -113,6 +116,10 @@ onBeforeMount(() => {
 
       <div v-else-if="activeTab == 'u-reports'" class="fade-in">
         <UserReportAdministration :reports="userReports" @refresh="getUserReports" @deleteReport="deleteUserReport" />
+      </div>
+
+      <div v-else-if="activeTab == 'bans'" class="fade-in">
+        <BanAdministration />
       </div>
     </section>
   </ProtectedPageContainer>

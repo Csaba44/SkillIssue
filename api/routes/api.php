@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AllUsersController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\BanController;
 use App\Http\Controllers\CorrectAnswerController;
@@ -58,6 +59,8 @@ Route::get('/profiles/{user}', [ProfileController::class, 'show']);
 
 Route::middleware("auth:sanctum")->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
+
+    Route::get('/users/all', AllUsersController::class); // admin
 
     Route::apiResource('/badges', BadgeController::class);
     Route::apiResource('/users', UserController::class)->only(['index', 'update', 'destroy']);

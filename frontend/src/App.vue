@@ -7,7 +7,6 @@ import { useGameStore } from "./stores/GameStore";
 import { socket } from "./config/websocket";
 import { useRoute } from "vue-router";
 import router from "./config/router";
-import UserBanned from "./components/Generic/UserBanned.vue";
 const userStore = useUserStore();
 
 const gameStore = useGameStore();
