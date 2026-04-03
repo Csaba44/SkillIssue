@@ -151,7 +151,10 @@ const banUser = async () => {
           <div class="grid grid-cols-3 gap-4">
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Bejelentett</label>
-              <p class="text-white font-medium">{{ selectedReport.user_reported?.name }}</p>
+              <p class="text-white font-medium cursor-pointer hover:text-accentGreen transition-colors" @click="$router.push(`/profiles/${selectedReport.user_reported?.id}`)">
+                {{ selectedReport.user_reported?.name }}
+              </p>
+              <p class="text-white/30 text-xs mt-0.5">{{ selectedReport.user_reported?.email }}</p>
             </div>
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Forduló</label>
@@ -161,6 +164,38 @@ const banUser = async () => {
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Válaszidő</label>
               <p v-if="selectedReport.match_details" :class="['font-mono font-bold text-sm', selectedReport.match_details.user_guess_time_ms < 1000 ? 'text-red-500' : 'text-accentGreen']">{{ (selectedReport.match_details.user_guess_time_ms / 1000).toFixed(2) }}s</p>
               <p v-else class="text-white/20 italic text-[10px]">Nincs adat</p>
+            </div>
+          </div>
+
+          <div class="bg-white/3 border border-white/5 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="text-center">
+              <p class="text-white/30 text-[10px] uppercase font-bold tracking-widest mb-1">ELO</p>
+              <p class="text-white font-bold text-lg">{{ selectedReport.user_reported?.elo ?? "–" }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-white/30 text-[10px] uppercase font-bold tracking-widest mb-1">XP</p>
+              <p class="text-accentYellow font-bold text-lg">{{ selectedReport.user_reported?.xp ?? "–" }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-white/30 text-[10px] uppercase font-bold tracking-widest mb-1">Meccsek</p>
+              <p class="text-white font-bold text-lg">{{ selectedReport.user_reported?.played_matches_count ?? "–" }}</p>
+            </div>
+            <div class="text-center">
+              <p class="text-white/30 text-[10px] uppercase font-bold tracking-widest mb-1">Win rate</p>
+              <p class="font-bold text-lg" :class="(selectedReport.user_reported?.win_rate ?? 0) >= 50 ? 'text-accentGreen' : 'text-red-400'">
+                {{ selectedReport.user_reported?.win_rate != null ? selectedReport.user_reported.win_rate + "%" : "–" }}
+              </p>
+            </div>
+            <div class="text-center col-span-4 border-t border-white/5 pt-3 mt-1">
+              <p class="text-white/30 text-[10px] uppercase font-bold tracking-widest mb-1">Helyes válaszok aránya</p>
+              <div class="flex items-center justify-center gap-3">
+                <div class="flex-1 max-w-xs bg-white/5 rounded-full h-1.5 overflow-hidden">
+                  <div class="h-full rounded-full transition-all" :class="(selectedReport.user_reported?.accuracy ?? 0) >= 60 ? 'bg-accentGreen' : (selectedReport.user_reported?.accuracy ?? 0) >= 35 ? 'bg-accentYellow' : 'bg-red-400'" :style="`width: ${selectedReport.user_reported?.accuracy ?? 0}%`"></div>
+                </div>
+                <p class="font-bold text-sm" :class="(selectedReport.user_reported?.accuracy ?? 0) >= 60 ? 'text-accentGreen' : (selectedReport.user_reported?.accuracy ?? 0) >= 35 ? 'text-accentYellow' : 'text-red-400'">
+                  {{ selectedReport.user_reported?.accuracy != null ? selectedReport.user_reported.accuracy.toFixed(1) + "%" : "–" }}
+                </p>
+              </div>
             </div>
           </div>
 
