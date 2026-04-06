@@ -69,7 +69,7 @@ const logoutClicked = async () => {
   <nav class="bg-bgDark text-white z-50 fixed w-screen">
     <Container>
       <div class="grid grid-rows-1 grid-cols-3 h-16 items-center">
-        <div class="text-2xl md:text-3xl font-bold col-span-1"><span>Skill</span><span class="text-primary">Issue</span></div>
+        <router-link to="/" class="text-2xl md:text-3xl font-bold col-span-1 cursor-pointer"> <span>Skill</span><span class="text-primary">Issue</span> </router-link>
         <div class="flex justify-end col-span-2">
           <div class="text-md">
             <!-- Desktop view -->
@@ -86,7 +86,7 @@ const logoutClicked = async () => {
 
                   <transition name="dropdown">
                     <div v-if="isUserDropdownVisible" class="absolute right-0 mt-3 bg-bgAlternate rounded-xl w-44 p-4 flex flex-col gap-2 shadow-2xl">
-                      <RouterLink :to="'/profiles/'+userStore.user.id">
+                      <RouterLink :to="'/profiles/' + userStore.user.id">
                         <button class="text-left hover:text-warning transition">Profilom</button>
                       </RouterLink>
 

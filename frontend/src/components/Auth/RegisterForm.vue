@@ -67,7 +67,11 @@ const registerSubmit = async () => {
             console.log(isChecked.value);
           }
         "
-        ><span class="text-textWhite text-xs">Kijelentem, hogy az <a class="text-accentYellow cursor-pointer hover:underline">adatkezelési tájékoztatót</a> elolvastam, és elfogadom.</span></Checkbox
+        ><span class="text-textWhite text-xs">
+          Kijelentem, hogy az
+          <router-link to="/privacy-policy" target="_blank" class="text-accentYellow cursor-pointer hover:underline"> adatkezelési tájékoztatót </router-link>
+          elolvastam, és elfogadom.
+        </span></Checkbox
       >
     </div>
     <Button title="Regisztráció" class="mt-3"></Button>
