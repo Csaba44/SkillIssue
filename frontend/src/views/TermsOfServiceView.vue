@@ -64,7 +64,7 @@ const sections = [
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
         <div v-for="(rule, index) in rules" :key="index" class="bg-white rounded-3xl shadow-md p-6 flex items-start gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-          <div class="w-10 h-10 rounded-xl bg-error/10 border border-error/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <div class="w-10 h-10 rounded-xl bg-error/10 border border-error/20 flex items-center justify-center shrink-0 mt-0.5">
             <i class="fa-solid fa-xmark text-error text-sm"></i>
           </div>
           <p class="text-gray-600 text-sm leading-relaxed">{{ rule }}</p>
@@ -85,7 +85,7 @@ const sections = [
     <Container>
       <div class="max-w-3xl mx-auto flex flex-col gap-6">
         <div v-for="section in sections" :key="section.number" class="bg-white/5 border border-white/10 rounded-3xl p-6 flex gap-5 hover:bg-white/8 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-accentGreen/10 border border-accentGreen/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <div class="w-10 h-10 rounded-xl bg-accentGreen/10 border border-accentGreen/20 flex items-center justify-center shrink-0 mt-0.5">
             <i :class="[section.icon, 'text-accentGreen', 'text-sm']"></i>
           </div>
           <div class="flex-1">

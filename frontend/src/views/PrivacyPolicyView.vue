@@ -104,13 +104,13 @@ const dataGroups = [
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div v-for="group in dataGroups" :key="group.title" class="bg-white rounded-3xl shadow-md p-6 flex flex-col gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
           <div class="flex items-center gap-3 mb-2">
-            <div :class="[group.bg, group.border, 'border', 'w-10', 'h-10', 'rounded-xl', 'flex', 'items-center', 'justify-center', 'flex-shrink-0']">
+            <div :class="[group.bg, group.border, 'border', 'w-10', 'h-10', 'rounded-xl', 'flex', 'items-center', 'justify-center', 'shrink-0']">
               <i :class="[group.icon, group.color, 'text-lg']"></i>
             </div>
             <h3 class="font-bold text-bgDark text-lg">{{ group.title }}</h3>
           </div>
           <div v-for="item in group.items" :key="item.label" class="flex items-start gap-2">
-            <i class="fa-solid fa-circle-check text-accentGreen mt-1 flex-shrink-0"></i>
+            <i class="fa-solid fa-circle-check text-accentGreen mt-1 shrink-0"></i>
             <p class="text-gray-600 text-sm">
               <span class="font-semibold text-bgDark">{{ item.label }}:</span> {{ item.desc }}
             </p>
@@ -130,7 +130,7 @@ const dataGroups = [
     <Container>
       <div class="max-w-3xl mx-auto flex flex-col gap-6">
         <div v-for="section in sections" :key="section.number" class="bg-white/5 border border-white/10 rounded-3xl p-6 flex gap-5 hover:bg-white/8 transition-all">
-          <div class="w-10 h-10 rounded-xl bg-accentPurple/10 border border-accentPurple/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <div class="w-10 h-10 rounded-xl bg-accentPurple/10 border border-accentPurple/20 flex items-center justify-center shrink-0 mt-0.5">
             <i :class="[section.icon, 'text-accentPurple', 'text-sm']"></i>
           </div>
           <div class="flex-1">
@@ -138,7 +138,7 @@ const dataGroups = [
             <p class="text-white/60 text-sm leading-relaxed">{{ section.content }}</p>
             <ul v-if="section.bullets" class="mt-3 flex flex-col gap-2">
               <li v-for="bullet in section.bullets" :key="bullet.label" class="flex items-start gap-2 text-sm text-white/50">
-                <i class="fa-solid fa-circle-check text-accentGreen mt-0.5 flex-shrink-0"></i>
+                <i class="fa-solid fa-circle-check text-accentGreen mt-0.5 shrink-0"></i>
                 <span
                   ><span class="font-semibold text-white/80">{{ bullet.label }}:</span> {{ bullet.desc }}</span
                 >
