@@ -52,6 +52,7 @@ help:
 	@echo "UTILS:"
 	@echo "  make logs           Tail prod logs"
 	@echo "  make ps             Show running containers"
+	@echo "  make prettier             Run prettier formatting on frontend and websocket codebase"
 	@echo ""
 
 # -------------------------
@@ -189,3 +190,16 @@ logs:
 .PHONY: ps
 ps:
 	docker compose ps
+
+# -------------------------
+# CODE FORMAT
+# -------------------------
+.PHONY: prettier
+prettier:
+	@echo "Formatting frontend..."
+	cd frontend && npx prettier --write "**/*.{vue,js,ts,json}"
+
+	@echo "Formatting websocket..."
+	cd websocket && npx prettier --write "**/*.{js,ts,json}"
+
+	@echo "Done."
