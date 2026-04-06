@@ -156,7 +156,7 @@ const banUser = async () => {
               <p class="text-white font-medium cursor-pointer hover:text-accentGreen transition-colors" @click="$router.push(`/profiles/${selectedReport.user_reported?.id}`)">
                 {{ selectedReport.user_reported?.name }}
               </p>
-              <p class="text-white/30 text-xs mt-0.5">{{ selectedReport.user_reported?.email }}</p>
+              <p class="text-white/30 text-xs mt-8 sm:mt-0.5">{{ selectedReport.user_reported?.email }}</p>
             </div>
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Bejelentett forduló</label>
@@ -240,7 +240,7 @@ const banUser = async () => {
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div class="flex items-center gap-2 px-3 py-2 rounded-xl border" :class="detail.user_answer_id === detail.correct_answer_id ? 'bg-accentGreen/10 border-accentGreen/20 text-accentGreen' : 'bg-red-500/10 border-red-500/20 text-red-400'">
-                    <i class="fa-solid fa-user text-xs flex-shrink-0"></i>
+                    <i class="fa-solid fa-user text-xs shrink-0"></i>
                     <span>
                       <span class="text-white/30 text-[10px] uppercase font-bold block tracking-widest mb-0.5">Felhasználó válasza</span>
                       <span v-if="detail.user_answer">{{ detail.user_answer.answer.replace("*", "") }}</span>
@@ -249,7 +249,7 @@ const banUser = async () => {
                   </div>
 
                   <div class="flex items-center gap-2 px-3 py-2 rounded-xl border bg-accentGreen/10 border-accentGreen/20 text-accentGreen">
-                    <i class="fa-solid fa-circle-check text-xs flex-shrink-0"></i>
+                    <i class="fa-solid fa-circle-check text-xs shrink-0"></i>
                     <span>
                       <span class="text-white/30 text-[10px] uppercase font-bold block tracking-widest mb-0.5">Helyes válasz</span>
                       {{ detail.correct_answer?.answer.replace("*", "") ?? "–" }}
