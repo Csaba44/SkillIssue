@@ -23,6 +23,7 @@ const banForm = ref({
   reason: "",
   release_date: "",
 });
+const showMatchDetails = ref(false);
 
 const statusTranslations = {
   Open: "Nyitott",
@@ -42,6 +43,7 @@ const filteredReports = computed(() => {
 });
 
 const openDetails = async (report) => {
+  showMatchDetails.value = false;
   selectedReport.value = report;
   adminNote.value = "";
   activeStatus.value = report.status;
@@ -157,12 +159,12 @@ const banUser = async () => {
               <p class="text-white/30 text-xs mt-0.5">{{ selectedReport.user_reported?.email }}</p>
             </div>
             <div>
-              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Forduló</label>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Bejelentett forduló</label>
               <p class="text-white font-medium">{{ selectedReport.round_number }}. kör</p>
             </div>
             <div>
-              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Válaszidő</label>
-              <p v-if="selectedReport.match_details" :class="['font-mono font-bold text-sm', selectedReport.match_details.user_guess_time_ms < 1000 ? 'text-red-500' : 'text-accentGreen']">{{ (selectedReport.match_details.user_guess_time_ms / 1000).toFixed(2) }}s</p>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-1">Átlag válaszidő</label>
+              <p v-if="selectedReport.match_details?.length" :class="['font-mono font-bold text-sm', selectedReport.match_details.reduce((s, d) => s + d.user_guess_time_ms, 0) / selectedReport.match_details.length < 1000 ? 'text-red-500' : 'text-accentGreen']">{{ (selectedReport.match_details.reduce((s, d) => s + d.user_guess_time_ms, 0) / selectedReport.match_details.length / 1000).toFixed(2) }}s</p>
               <p v-else class="text-white/20 italic text-[10px]">Nincs adat</p>
             </div>
           </div>
@@ -212,9 +214,49 @@ const banUser = async () => {
           <div>
             <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-3">Státusz váltás</label>
             <div class="grid grid-cols-3 gap-2">
-              <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all">Nyitott</button>
-              <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all">Vizsgálat</button>
-              <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all">Lezárva</button>
+              <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
+              <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
+              <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
+            </div>
+          </div>
+
+          <div class="border-t border-white/5 pt-5">
+            <button @click="showMatchDetails = !showMatchDetails" class="flex items-center gap-2 text-white/40 hover:text-white/70 text-[11px] font-bold uppercase tracking-widest transition-all">
+              <i :class="showMatchDetails ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"></i>
+              Részletek
+            </button>
+
+            <div v-if="showMatchDetails" class="mt-4 flex flex-col gap-3">
+              <div v-for="detail in selectedReport.match_details" :key="detail.id" class="bg-white/3 border border-white/5 rounded-2xl p-4 flex flex-col gap-3" :class="detail.round_number === selectedReport.round_number ? 'border-amber-500/20 bg-amber-500/5' : ''">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <span class="text-[10px] uppercase font-bold tracking-widest" :class="detail.round_number === selectedReport.round_number ? 'text-amber-400' : 'text-white/30'">
+                    {{ detail.round_number }}. forduló
+                    <span v-if="detail.round_number === selectedReport.round_number" class="ml-1 text-amber-400/60">(bejelentett)</span>
+                  </span>
+                  <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded" :class="detail.user_guess_time_ms < 1000 ? 'text-red-400 bg-red-500/10' : 'text-accentGreen bg-accentGreen/10'"> {{ (detail.user_guess_time_ms / 1000).toFixed(2) }}s </span>
+                </div>
+
+                <p class="text-white/70 text-sm leading-relaxed">{{ detail.question?.question ?? "Ismeretlen kérdés" }}</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div class="flex items-center gap-2 px-3 py-2 rounded-xl border" :class="detail.user_answer_id === detail.correct_answer_id ? 'bg-accentGreen/10 border-accentGreen/20 text-accentGreen' : 'bg-red-500/10 border-red-500/20 text-red-400'">
+                    <i class="fa-solid fa-user text-xs flex-shrink-0"></i>
+                    <span>
+                      <span class="text-white/30 text-[10px] uppercase font-bold block tracking-widest mb-0.5">Felhasználó válasza</span>
+                      <span v-if="detail.user_answer">{{ detail.user_answer.answer.replace("*", "") }}</span>
+                      <span v-else class="italic opacity-60">(nem válaszolt)</span>
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-2 px-3 py-2 rounded-xl border bg-accentGreen/10 border-accentGreen/20 text-accentGreen">
+                    <i class="fa-solid fa-circle-check text-xs flex-shrink-0"></i>
+                    <span>
+                      <span class="text-white/30 text-[10px] uppercase font-bold block tracking-widest mb-0.5">Helyes válasz</span>
+                      {{ detail.correct_answer?.answer.replace("*", "") ?? "–" }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

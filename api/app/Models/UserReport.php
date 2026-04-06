@@ -45,8 +45,14 @@ class UserReport extends Model
 
     public function getMatchDetailsAttribute()
     {
-        return MatchQuestion::where('game_match_id', $this->game_match_id)
-            ->where('round_number', $this->round_number)
+        $opponentMatch = GameMatch::where('match_uuid', $this->gameMatch->match_uuid)
+            ->where('user_id', $this->gameMatch->opponent_id)
             ->first();
+
+        $matchId = $opponentMatch ? $opponentMatch->id : $this->game_match_id;
+
+        return MatchQuestion::where('game_match_id', $matchId)
+            ->with(['question' => fn($q) => $q->withTrashed(), 'userAnswer', 'correctAnswer'])
+            ->get();
     }
 }
