@@ -67,7 +67,7 @@ class SingleQuestionController extends Controller
             'user_a_id'  => $request->user_a_id,
             'user_b_id'  => $request->user_b_id,
             'iat'         => time(),
-            'exp'         => time() + 9999, // 45 seconds
+            'exp'         => time() + 60, // seconds
         ];
 
 

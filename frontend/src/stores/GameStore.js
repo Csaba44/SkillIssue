@@ -72,8 +72,6 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:active-game", (match) => {
-        // toast.success("Sikeres visszacsatlakozás!");
-
         const userStore = useUserStore();
 
         const lastQuestion = match.questions.at(-1);
@@ -96,13 +94,11 @@ export const useGameStore = defineStore("game", {
       socket.on("game:opponent-disconnected", () => {
         this.isOpponentOnline = false;
         console.log("DISCONNECT");
-        // toast.warning("Az ellenfél lecsatlakozott.");
       });
 
       socket.on("game:opponent-reconnected", () => {
         this.isOpponentOnline = true;
         console.log("RECONNECT");
-        // toast.success("Az ellenfél visszacsatlakozott.");
       });
 
       socket.on("game:new-question", (data) => {

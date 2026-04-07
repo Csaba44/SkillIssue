@@ -119,7 +119,6 @@ async function confirmMatchmaking(socket, tmpUuid) {
 
     if (match.errorMessage) {
       gameState.pendingGames.delete(pendingMatch.tmpUuid);
-      console.log(match);
       io.to(playerA.socketId).emit("matchmaking:error", { message: match.errorMessage });
       io.to(playerB.socketId).emit("matchmaking:error", { message: match.errorMessage });
       return match.errorMessage;

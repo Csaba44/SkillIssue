@@ -45,7 +45,6 @@ const getNextQuestion = async (selectedAnswerId) => {
 
       if (res.data.game_ended) {
         hasEnded.value = true;
-        console.log(res.data);
 
         await userStore.verifySession(); // reload user data
         router.push(`/summary/solo/${res.data.practice_session_id}`);

@@ -9,8 +9,6 @@ export function cleanPendingMatches() {
   pending.forEach((match) => {
     const now = Date.now();
 
-    // debug
-    console.log(match);
 
     const pendingSince = Math.floor((now - match.createdAt) / 1000);
 

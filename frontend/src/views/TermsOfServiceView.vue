@@ -54,7 +54,6 @@ const sections = [
 <template>
   <Navbar />
 
-  <!-- Hero -->
   <div class="w-full min-h-[40vh] bg-bgDark flex flex-col items-center justify-center relative overflow-hidden pt-16">
     <i class="fa-solid fa-file-contract text-accentGreen opacity-5 text-[600px] absolute pointer-events-none"></i>
     <div class="relative z-10 text-center px-4 py-20">
@@ -66,7 +65,6 @@ const sections = [
     </div>
   </div>
 
-  <!-- Fair Play szekció -->
   <div class="bg-gray-100 py-16 px-4">
     <Container>
       <div class="text-center mb-12">
@@ -91,7 +89,6 @@ const sections = [
     </Container>
   </div>
 
-  <!-- Hullám -->
   <div class="bg-gray-100 w-full leading-none">
     <svg class="w-full h-auto block" viewBox="0 0 1920 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -101,7 +98,6 @@ const sections = [
     </svg>
   </div>
 
-  <!-- Egyéb szakaszok -->
   <div class="bg-bgDark py-16 px-4 -mt-1">
     <Container>
       <div class="max-w-3xl mx-auto flex flex-col gap-6">
