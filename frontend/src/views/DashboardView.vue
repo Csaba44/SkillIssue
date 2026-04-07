@@ -101,11 +101,11 @@ onBeforeMount(() => {
       </div>
 
       <div class="mt-12 flex flex-col items-center gap-6">
-        <button v-if="!mm.isSearching" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
+        <button v-if="!mm.isSearching" @click="startMatchmaking" :disabled="!selectedGameMode" class="px-14 py-5 text-xl font-bold rounded-full bg-linear-to-r from-accentGreen to-success text-black shadow-lg shadow-green-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">
           {{ selectedGameMode ? `Meccskeresés elkezdése [${selectedGameMode}]` : "Kérlek válassz játékmódot!" }}
         </button>
 
-        <button v-else @click="stopMatchmaking" :disabled="selectedGameMode === 'Solo'" class="px-14 py-5 text-xl font-bold rounded-full bg-gradient-to-r from-red-500 to-error text-white shadow-lg shadow-red-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">Meccskeresés leállítása</button>
+        <button v-else @click="stopMatchmaking" :disabled="selectedGameMode === 'Solo'" class="px-14 py-5 text-xl font-bold rounded-full bg-linear-to-r from-red-500 to-error text-white shadow-lg shadow-red-500/30 hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed">Meccskeresés leállítása</button>
 
         <div class="text-center text-2xl md:text-4xl font-semibold text-white min-h-[40px]">
           <span v-if="mm.isSearching && selectedGameMode === 'Solo'"> Indítás... </span>

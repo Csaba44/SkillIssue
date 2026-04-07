@@ -27,7 +27,6 @@ const loginSubmit = async () => {
     await userStore.verifySession();
 
     if (userStore.isAuthenticated) {
-      socket.disconnect().connect();
       return "Sikeres bejelentkezés";
     }
 

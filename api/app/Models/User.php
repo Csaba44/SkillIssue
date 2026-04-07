@@ -33,6 +33,64 @@ class User extends Authenticatable
         'is_admin',
     ];
 
+    protected $appends = [
+        'win_rate',
+        'played_matches_count',
+        'accuracy',
+    ];
+
+
+    public function getWinRateAttribute()
+    {
+        $validMatches = $this->gameMatches->filter(function ($match) {
+            return !in_array($match->match_result, [
+                \App\GameResultEnum::PENDING,
+                \App\GameResultEnum::CANCELLED
+            ]);
+        });
+
+        $totalValidMatches = $validMatches->count();
+
+        if ($totalValidMatches === 0) {
+            return 0;
+        }
+
+        $wins = $validMatches->filter(function ($match) {
+            return $match->match_result === \App\GameResultEnum::WIN;
+        })->count();
+
+        return round(($wins / $totalValidMatches) * 100, 2);
+    }
+
+    public function getAccuracyAttribute()
+    {
+        $matchAnswers = MatchQuestion::whereIn('game_match_id', $this->gameMatches()->pluck('id'))
+            ->select('user_answer_id', 'correct_answer_id')
+            ->get();
+
+        $practiceAnswers = PracticeSessionQuestion::whereIn('practice_session_id', $this->practiceSessions()->pluck('id'))
+            ->select('user_answer_id', 'correct_answer_id')
+            ->get();
+
+
+        $allAnswers = $matchAnswers->concat($practiceAnswers);
+        $totalQuestions = $allAnswers->count();
+
+
+
+        if ($totalQuestions === 0) {
+            return 0;
+        }
+
+        $correctAnswers = $allAnswers->filter(function ($q) {
+            return !is_null($q->user_answer_id) && $q->user_answer_id == $q->correct_answer_id;
+        })->count();
+
+
+
+        return round(($correctAnswers / $totalQuestions) * 100, 2);
+    }
+
     public function badges(): BelongsToMany
     {
         return $this->belongsToMany(Badge::class, "badge_user");

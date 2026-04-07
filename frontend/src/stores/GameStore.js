@@ -157,7 +157,7 @@ export const useGameStore = defineStore("game", {
           this.handleStopMatch();
         }
         else {
-          toast.error("Hiba történt a kapcsolat kiépítésekor.");
+          if (reason !== "io client disconnect") toast.error("Hiba történt a kapcsolat kiépítésekor");
         }
       });
     }

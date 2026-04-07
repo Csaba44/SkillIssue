@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AllUsersController;
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\BanController;
 use App\Http\Controllers\CorrectAnswerController;
 use App\Http\Controllers\GameMatchController;
 use App\Http\Controllers\internal\CorrectQuestionController;
@@ -58,6 +60,8 @@ Route::get('/profiles/{user}', [ProfileController::class, 'show']);
 Route::middleware("auth:sanctum")->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
 
+    Route::get('/users/all', AllUsersController::class); // admin
+
     Route::apiResource('/badges', BadgeController::class);
     Route::apiResource('/users', UserController::class)->only(['index', 'update', 'destroy']);
 
@@ -103,4 +107,6 @@ Route::middleware("auth:sanctum")->group(function () {
 
     // Answers
     Route::post('/answers/verify/{answer}', VerifyAnswerController::class)->middleware([EnsureQuestionTokenIsValid::class, EnsurePracticeSessionTokenIsValid::class]);
+
+    Route::apiResource('/ban', BanController::class); // Admin only
 });

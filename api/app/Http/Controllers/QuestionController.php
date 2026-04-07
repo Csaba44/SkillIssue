@@ -6,6 +6,7 @@ use App\Http\Requests\QuestionRequest;
 use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
@@ -16,6 +17,8 @@ class QuestionController extends Controller
     {
         $questions = Question::with(['subject', 'answers'])->get();
 
+        $questions->each->makeVisible('id');
+
         return response()->json($questions);
     }
 
@@ -24,11 +27,39 @@ class QuestionController extends Controller
      */
     public function store(QuestionRequest $request)
     {
-        $question = Question::create($request->all());
+        try {
+            return DB::transaction(function () use ($request) {
 
-        return response()->json(["message" => "Kérdés sikeresen hozzáadva.", "question" => $question], 201);
+                $question = Question::create([
+                    'subject_id' => $request->subject_id,
+                    'question' => $request->question
+                ]);
+
+                if ($request->has('answers')) {
+                    foreach ($request->answers as $v) {
+                        $question->answers()->create([
+                            "answer" => $v['answer'],
+                            "is_correct" => $v['is_correct']
+                        ]);
+                    }
+                }
+
+                $question->refresh();
+                $question->load('answers');
+
+                return response()->json([
+                    "message" => "Kérdés és válaszok sikeresen hozzáadva.",
+                    "question" => $question->makeVisible('id')
+                ], 201);
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "Hiba történt a mentés során.",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
-    
+
     public function storeAnswers(QuestionRequest $request, string $id)
     {
         $answers = $request->answers;
@@ -65,7 +96,7 @@ class QuestionController extends Controller
     public function show(QuestionRequest $request, Question $question)
     {
         $question->load(['subject', 'answers']);
-        
+
         return response()->json($question, 201);
     }
 
@@ -74,9 +105,31 @@ class QuestionController extends Controller
      */
     public function update(QuestionRequest $request, Question $question)
     {
-        $question->update($request->all());
+        return DB::transaction(function () use ($request, $question) {
+            $question->update($request->all());
 
-        return response()->json(["message" => "Kérdés sikeresen frissítve.", "question" => $question]);
+            if ($request->has('answers')) {
+                foreach ($request->answers as $ansData) {
+                    $answer = \App\Models\Answer::find($ansData['id']);
+                    if ($answer) {
+                        $answer->update([
+                            'answer' => $ansData['answer'] ?? $answer->answer,
+                            'is_correct' => $ansData['is_correct'] ?? $answer->is_correct
+                        ]);
+                    }
+                }
+            }
+
+            $question->refresh()->load('answers');
+
+            $question->makeVisible('id');
+            $question->answers->each->makeVisible('id');
+
+            return response()->json([
+                "message" => "Kérdés sikeresen frissítve.",
+                "question" => $question
+            ]);
+        });
     }
 
     /**

@@ -11,9 +11,20 @@ class QuestionReportController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(QuestionReportRequest $request)
+    public function index()
     {
-        $reports = QuestionReport::with(["user", "question"])->get();
+        $reports = QuestionReport::with([
+            'user',
+            'question.answers',
+            'question.subject'
+        ])->get();
+
+        $reports->each(function ($report) {
+            if ($report->question) {
+                $report->question->makeVisible(['id']);
+                $report->question->answers->each->makeVisible(['id']);
+            }
+        });
 
         return response()->json($reports);
     }
