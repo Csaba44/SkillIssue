@@ -14,9 +14,13 @@ const AdminView = () => import("../views/AdminView.vue");
 const HealthView = () => import("../views/HealthView.vue");
 const SummaryView = () => import("../views/SummaryView.vue");
 const ReportView = () => import("../views/ReportView.vue");
+const PrivacyPolicyView = () => import("../views/PrivacyPolicyView.vue");
+const TermsOfServiceView = () => import("../views/TermsOfServiceView.vue");
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
+  { path: "/privacy-policy", name: "privacy-policy", component: PrivacyPolicyView },
+  { path: "/terms-of-service", name: "terms-of-service", component: TermsOfServiceView },
   { path: "/register", name: "register", component: RegisterView },
   { path: "/login", name: "login", component: LoginView },
   { path: "/dashboard", name: "dashboard", component: DashboardView, meta: { requiresAuth: true } },
