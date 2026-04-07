@@ -92,26 +92,77 @@ onBeforeMount(() => {
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden">
-    <i class="fa-solid fa-layer-group rotate-90 text-accentPurple text-[1500px] absolute z-0 opacity-5 top-200 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+    <i
+      class="fa-solid fa-layer-group rotate-90 text-accentPurple text-[1500px] absolute z-0 opacity-5 top-200 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    ></i>
     <Navbar minimal />
 
     <section class="relative z-10 mt-24 max-w-6xl mx-auto md:px-6 text-textWhite">
       <div class="flex flex-wrap gap-4 mb-12">
-        <button @click="activeTab = 'questions'" :class="[activeTab == 'questions' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-circle-question mr-2"></i> Kérdéskezelés</button>
+        <button
+          @click="activeTab = 'questions'"
+          :class="[
+            activeTab == 'questions'
+              ? 'bg-primary text-white shadow-lg shadow-primary/20'
+              : 'bg-white/5 text-white/50 hover:bg-white/10',
+          ]"
+          class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"
+        >
+          <i class="fa-solid fa-circle-question mr-2"></i> Kérdéskezelés
+        </button>
 
-        <button @click="activeTab = 'q-reports'" :class="[activeTab == 'q-reports' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-textWhite/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Kérdés Reportok</button>
+        <button
+          @click="activeTab = 'q-reports'"
+          :class="[
+            activeTab == 'q-reports'
+              ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
+              : 'bg-white/5 text-textWhite/50 hover:bg-white/10',
+          ]"
+          class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"
+        >
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i> Kérdés Reportok
+        </button>
 
-        <button @click="activeTab = 'u-reports'" :class="[activeTab == 'u-reports' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-user-shield mr-2"></i> Játékos Reportok</button>
+        <button
+          @click="activeTab = 'u-reports'"
+          :class="[
+            activeTab == 'u-reports'
+              ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
+              : 'bg-white/5 text-white/50 hover:bg-white/10',
+          ]"
+          class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"
+        >
+          <i class="fa-solid fa-user-shield mr-2"></i> Játékos Reportok
+        </button>
 
-        <button @click="activeTab = 'bans'" :class="[activeTab == 'bans' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-ban mr-2"></i> Kitiltások</button>
+        <button
+          @click="activeTab = 'bans'"
+          :class="[
+            activeTab == 'bans'
+              ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
+              : 'bg-white/5 text-white/50 hover:bg-white/10',
+          ]"
+          class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"
+        >
+          <i class="fa-solid fa-ban mr-2"></i> Kitiltások
+        </button>
       </div>
 
       <div v-if="activeTab == 'questions'" class="fade-in">
-        <QuestionAdministration :initialQuestions="questions" :availableSubjects="subjects" @refresh="getQuestions" @deleteQuestion="deleteQuestion" />
+        <QuestionAdministration
+          :initialQuestions="questions"
+          :availableSubjects="subjects"
+          @refresh="getQuestions"
+          @deleteQuestion="deleteQuestion"
+        />
       </div>
 
       <div v-else-if="activeTab == 'q-reports'" class="fade-in">
-        <QuestionReportAdministration :reports="questionReports" @refresh="getQuestionReports" @deleteReport="deleteQuestionReport" />
+        <QuestionReportAdministration
+          :reports="questionReports"
+          @refresh="getQuestionReports"
+          @deleteReport="deleteQuestionReport"
+        />
       </div>
 
       <div v-else-if="activeTab == 'u-reports'" class="fade-in">

@@ -4,6 +4,6 @@ export function formatQuestionData(data) {
     subject: data.question.subject.name,
     question: data.question.question,
     answers: data.question.answers,
-    questionToken: data.question_token
+    questionToken: data.question_token,
   };
 }

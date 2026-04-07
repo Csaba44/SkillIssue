@@ -3,7 +3,6 @@ import { socket } from "../config/websocket";
 import { toast } from "vue-sonner";
 
 export const useMatchmakingStore = defineStore("matchmaking", {
-
   state: () => ({
     isSearching: false,
     playersInQueue: 0,
@@ -15,7 +14,6 @@ export const useMatchmakingStore = defineStore("matchmaking", {
   }),
 
   actions: {
-
     start() {
       socket.emit("matchmaking:join");
 
@@ -95,9 +93,6 @@ export const useMatchmakingStore = defineStore("matchmaking", {
         toast.error("Hiba történt - a meccskeresés megállítva.");
         this.stop();
       });
-
-    }
-
-  }
-
+    },
+  },
 });

@@ -21,10 +21,22 @@ const reportRound = route.query.reportround ?? 5;
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden">
-    <i class="pointer-events-none fa-solid fa-flag text-error text-[1200px] absolute z-0 opacity-5 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-12"></i>
+    <i
+      class="pointer-events-none fa-solid fa-flag text-error text-[1200px] absolute z-0 opacity-5 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-12"
+    ></i>
     <Navbar minimal />
 
-    <QuestionReport v-if="reportType === 'question' && questionToken && question" :questionToken="questionToken" :question="question" :answers="answers" />
-    <UserReport v-if="reportType === 'user' && rankedToken" :ranked-token="rankedToken" :opponentName="opponentName" :reportRound="parseInt(reportRound)" />
+    <QuestionReport
+      v-if="reportType === 'question' && questionToken && question"
+      :questionToken="questionToken"
+      :question="question"
+      :answers="answers"
+    />
+    <UserReport
+      v-if="reportType === 'user' && rankedToken"
+      :ranked-token="rankedToken"
+      :opponentName="opponentName"
+      :reportRound="parseInt(reportRound)"
+    />
   </ProtectedPageContainer>
 </template>

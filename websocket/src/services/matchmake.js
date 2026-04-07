@@ -6,7 +6,7 @@ const FACTOR = (MAX_ELO_RANGE - BASE_ELO_RANGE) / LONG_WAIT_TIME;
 // ===================================
 
 export function matchmake(queue) {
-  queue = queue.sort((a, b) => a.elo - b.elo)
+  queue = queue.sort((a, b) => a.elo - b.elo);
   const pairs = [];
 
   for (let i = 0; i < queue.length; i++) {
@@ -14,8 +14,8 @@ export function matchmake(queue) {
     const nextPlayer = queue[i + 1] ?? false;
     if (!nextPlayer) break;
 
-    const maxWait = Math.max(currPlayer.waitTime, nextPlayer.waitTime)
-    const eloRange = BASE_ELO_RANGE + (maxWait * FACTOR);
+    const maxWait = Math.max(currPlayer.waitTime, nextPlayer.waitTime);
+    const eloRange = BASE_ELO_RANGE + maxWait * FACTOR;
 
     const eloDiff = Math.abs(currPlayer.userElo - nextPlayer.userElo);
 
@@ -24,8 +24,6 @@ export function matchmake(queue) {
 
       i++; // skip next player
     }
-
   }
   return pairs;
-};
-
+}

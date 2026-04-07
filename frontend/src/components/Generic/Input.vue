@@ -28,6 +28,13 @@ const props = defineProps({
       <i :class="`${props.icon} text-${props.accentColor}`" class="text-xl"></i>
       <span :class="`bg-${props.accentColor}`" class="ml-2 h-6 w-0.5"></span>
     </div>
-    <input v-model="model" :autocomplete="props.autocomplete" :name="props.name" class="text-textWhite w-full outline-none" :type="props.type" :placeholder="props.placeholder" />
+    <input
+      v-model="model"
+      :autocomplete="props.autocomplete"
+      :name="props.name"
+      class="text-textWhite w-full outline-none"
+      :type="props.type"
+      :placeholder="props.placeholder"
+    />
   </div>
 </template>

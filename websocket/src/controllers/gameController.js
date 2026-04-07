@@ -32,7 +32,7 @@ function userConnected(socket, userActiveGame) {
     io.to(opponent.player.socketId).emit("game:opponent-reconnected");
     console.log("RECONNECTED");
   }
-};
+}
 
 function userDisconnected(socket) {
   const activeGame = getActiveGame(socket.user.id);
@@ -59,9 +59,9 @@ async function nextQuestion(match) {
       ...res.data,
       playerAnswers: {
         playerA: { answerId: null },
-        playerB: { answerId: null }
+        playerB: { answerId: null },
       },
-      timeLeft: MAX_GUESS_TIME
+      timeLeft: MAX_GUESS_TIME,
     });
 
     io.to(match.roomId).emit("game:new-question", data);
@@ -96,7 +96,8 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
 
     question.playerAnswers[playerKey].answerId = answerId === null ? false : answerId;
 
-    const bothFinishedForRound = question.playerAnswers[opponentKey].answerId !== null && question.playerAnswers[playerKey].answerId !== null;
+    const bothFinishedForRound =
+      question.playerAnswers[opponentKey].answerId !== null && question.playerAnswers[playerKey].answerId !== null;
 
     const gameFinished = res.data.game_finished ?? false;
     console.log("GAME FINISHED? ", gameFinished);
@@ -106,7 +107,10 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
       const playerAAnswer = question.playerAnswers.playerA.answerId;
       const playerBAnswer = question.playerAnswers.playerB.answerId;
 
-      sendCorrectAndOpponentAnswers(match, res.data.correct_answer_id, { playerA: playerAAnswer, playerB: playerBAnswer });
+      sendCorrectAndOpponentAnswers(match, res.data.correct_answer_id, {
+        playerA: playerAAnswer,
+        playerB: playerBAnswer,
+      });
 
       if (!gameFinished) {
         setTimeout(() => {
@@ -123,10 +127,7 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
       }, AFTER_QUESTION_TIMEOUT);
     }
   } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Unknown error";
+    const message = error.response?.data?.message || error.message || "Unknown error";
 
     if (!isForced) socket.emit("game:error", { message });
     console.error(error);
@@ -134,10 +135,16 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
 }
 
 function sendCorrectAndOpponentAnswers(match, correctAnswerId, playerAnswers) {
-  console.log(match.roomId, { correctAnswerId, playerAnswers })
+  console.log(match.roomId, { correctAnswerId, playerAnswers });
 
-  io.to(match.playerA.socketId).emit("game:answers", { opponentAnswerId: playerAnswers.playerB, correctAnswerId: correctAnswerId });
-  io.to(match.playerB.socketId).emit("game:answers", { opponentAnswerId: playerAnswers.playerA, correctAnswerId: correctAnswerId });
+  io.to(match.playerA.socketId).emit("game:answers", {
+    opponentAnswerId: playerAnswers.playerB,
+    correctAnswerId: correctAnswerId,
+  });
+  io.to(match.playerB.socketId).emit("game:answers", {
+    opponentAnswerId: playerAnswers.playerA,
+    correctAnswerId: correctAnswerId,
+  });
 }
 
 export const gameController = {
@@ -145,4 +152,4 @@ export const gameController = {
   userDisconnected,
   nextQuestion,
   submitAnswer,
-}
+};

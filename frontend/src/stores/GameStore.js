@@ -5,7 +5,6 @@ import router from "../config/router";
 import { useUserStore } from "./UserStore";
 import { determineOpponent, determinePlayer } from "../utils/determineOpponent";
 
-
 export const useGameStore = defineStore("game", {
   state: () => ({
     match: null,
@@ -59,10 +58,11 @@ export const useGameStore = defineStore("game", {
     },
     submitAnswer(answerId) {
       // Check if answer exists on current question
-      if (this.currentAnswers.filter(a => a.id === answerId).length <= 0 && answerId !== null) return toast.error("A válasz nem létezik.");
+      if (this.currentAnswers.filter((a) => a.id === answerId).length <= 0 && answerId !== null)
+        return toast.error("A válasz nem létezik.");
 
       socket.emit("game:submit-answer", answerId);
-      console.log("Submitted.")
+      console.log("Submitted.");
 
       this.rejoining = false;
     },
@@ -84,7 +84,7 @@ export const useGameStore = defineStore("game", {
 
         const playerKey = determinePlayer(userStore.user, match)?.playerKey;
 
-        const userAnswer = lastQuestion.playerAnswers[playerKey].answerId
+        const userAnswer = lastQuestion.playerAnswers[playerKey].answerId;
         this.submittedAnswer = userAnswer;
         this.selectedAnswer = userAnswer;
 
@@ -95,21 +95,21 @@ export const useGameStore = defineStore("game", {
 
       socket.on("game:opponent-disconnected", () => {
         this.isOpponentOnline = false;
-        console.log("DISCONNECT")
+        console.log("DISCONNECT");
         // toast.warning("Az ellenfél lecsatlakozott.");
       });
 
       socket.on("game:opponent-reconnected", () => {
         this.isOpponentOnline = true;
-        console.log("RECONNECT")
+        console.log("RECONNECT");
         // toast.success("Az ellenfél visszacsatlakozott.");
       });
 
       socket.on("game:new-question", (data) => {
         this.actualAnswers = {
           correctAnswerId: null,
-          opponentAnswerId: null
-        }
+          opponentAnswerId: null,
+        };
 
         this.currentRound = data.currentRound;
         this.currentSubject = data.subject;
@@ -118,7 +118,6 @@ export const useGameStore = defineStore("game", {
         this.currentQuestionToken = data.questionToken;
 
         if (!this.rejoining) {
-
           this.timeExpired = null;
           this.startTimerFrom = import.meta.env.VITE_RANKED_MAX_GUESS_TIME ?? 30;
           this.selectedAnswer = null;
@@ -129,7 +128,7 @@ export const useGameStore = defineStore("game", {
       socket.on("game:answers", (data) => {
         this.actualAnswers = {
           correctAnswerId: data.correctAnswerId,
-          opponentAnswerId: data.opponentAnswerId
+          opponentAnswerId: data.opponentAnswerId,
         };
 
         console.log("answers received", this.actualAnswers);
@@ -155,13 +154,10 @@ export const useGameStore = defineStore("game", {
           toast.error("Hiba történt - a játszma törölve.");
           router.push("/dashboard");
           this.handleStopMatch();
-        }
-        else {
+        } else {
           if (reason !== "io client disconnect") toast.error("Hiba történt a kapcsolat kiépítésekor");
         }
       });
-    }
-
-  }
-
+    },
+  },
 });

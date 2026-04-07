@@ -6,15 +6,12 @@ export const userAuthMiddleware = async (socket, next) => {
 
     console.log("[WEBSOCKET] Authenticating user");
 
-    const res = await api.get(
-      "/api/socket-auth",
-      {
-        headers: {
-          Cookie: cookie
-        },
-        withCredentials: true
-      }
-    );
+    const res = await api.get("/api/socket-auth", {
+      headers: {
+        Cookie: cookie,
+      },
+      withCredentials: true,
+    });
 
     socket.user = res.data.user;
 

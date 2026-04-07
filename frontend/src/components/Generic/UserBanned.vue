@@ -36,7 +36,10 @@ const formattedDate = computed(() => {
 
       <div class="flex flex-col gap-2">
         <h1 class="text-2xl sm:text-3xl font-bold text-textWhite">Ki lettél tiltva</h1>
-        <p class="text-textGray text-sm sm:text-base">A hozzáférésed a <span class="text-textWhite font-semibold">SkillIssue</span> alkalmazáshoz fel lett függesztve.</p>
+        <p class="text-textGray text-sm sm:text-base">
+          A hozzáférésed a <span class="text-textWhite font-semibold">SkillIssue</span> alkalmazáshoz fel lett
+          függesztve.
+        </p>
       </div>
 
       <div class="w-full flex flex-col gap-3">
@@ -57,7 +60,9 @@ const formattedDate = computed(() => {
         </div>
       </div>
 
-      <p class="text-xs text-textGray">Ha úgy gondolod, hogy ez tévedés, kérjük vedd fel a kapcsolatot egy adminisztrátorral: support@skillissue.hu</p>
+      <p class="text-xs text-textGray">
+        Ha úgy gondolod, hogy ez tévedés, kérjük vedd fel a kapcsolatot egy adminisztrátorral: support@skillissue.hu
+      </p>
     </div>
   </div>
 </template>

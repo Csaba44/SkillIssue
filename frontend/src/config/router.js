@@ -36,7 +36,6 @@ const routes = [
   { path: "/report/question", name: "questionReport", component: ReportView },
   { path: "/report/user", name: "userReport", component: ReportView },
 
-
   { path: "/admin", name: "admin", component: AdminView, meta: { requiresAuth: true, requiresAdmin: true } },
 
   // Test connection with backend services

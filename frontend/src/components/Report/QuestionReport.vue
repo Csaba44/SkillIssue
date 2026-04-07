@@ -66,7 +66,11 @@ const formSubmitted = async () => {
       <div class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl mb-5">
         <p class="text-white/40 text-xs uppercase tracking-widest font-semibold mb-4">Lehetséges válaszok</p>
         <ul class="flex flex-col gap-2">
-          <li v-for="answer in answers" :key="answer.id" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-sm text-white/70">
+          <li
+            v-for="answer in answers"
+            :key="answer.id"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/5 text-sm text-white/70"
+          >
             <i class="fa-regular fa-circle text-white/20 text-xs"></i>
             {{ answer.answer.replace("*", "") }}
           </li>
@@ -80,12 +84,21 @@ const formSubmitted = async () => {
             <i class="fa-solid fa-pen text-accentPurple text-xl"></i>
             <span class="bg-accentPurple ml-2 h-6 w-0.5"></span>
           </div>
-          <textarea v-model="formData.comment" placeholder="Kérlek fejtsd ki a problémát részletesen!" rows="4" class="text-textWhite w-full outline-none bg-transparent py-3 pr-3 resize-none text-sm placeholder:text-white/20" />
+          <textarea
+            v-model="formData.comment"
+            placeholder="Kérlek fejtsd ki a problémát részletesen!"
+            rows="4"
+            class="text-textWhite w-full outline-none bg-transparent py-3 pr-3 resize-none text-sm placeholder:text-white/20"
+          />
         </div>
       </div>
 
       <div class="flex justify-end">
-        <Button title="Bejelentés küldése" class="bg-linear-to-r from-error to-red-400 text-white font-bold rounded-full px-10 py-3 shadow-lg shadow-red-500/20 hover:scale-105 transition-all duration-300" @click="formSubmitted" />
+        <Button
+          title="Bejelentés küldése"
+          class="bg-linear-to-r from-error to-red-400 text-white font-bold rounded-full px-10 py-3 shadow-lg shadow-red-500/20 hover:scale-105 transition-all duration-300"
+          @click="formSubmitted"
+        />
       </div>
     </template>
   </section>

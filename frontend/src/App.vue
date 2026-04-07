@@ -41,5 +41,11 @@ router.afterEach((to, from) => {
   <main>
     <RouterView />
   </main>
-  <Toaster rich-colors position="bottom-left" :closeButton="true" closeButtonPosition="top-right" theme="light"></Toaster>
+  <Toaster
+    rich-colors
+    position="bottom-left"
+    :closeButton="true"
+    closeButtonPosition="top-right"
+    theme="light"
+  ></Toaster>
 </template>

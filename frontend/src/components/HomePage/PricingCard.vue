@@ -15,12 +15,13 @@ const props = defineProps({
 const userStore = useUserStore();
 const { isAuthenticated } = storeToRefs(userStore);
 
-const targetRoute = isAuthenticated.value ? '/dashboard' : '/login?register=1';
+const targetRoute = isAuthenticated.value ? "/dashboard" : "/login?register=1";
 </script>
 
 <template>
   <div
-    class="bg-white text-bgDark rounded-2xl shadow-lg p-6 w-full max-w-sm pb-10 sm:mb-10 flex flex-col justify-between">
+    class="bg-white text-bgDark rounded-2xl shadow-lg p-6 w-full max-w-sm pb-10 sm:mb-10 flex flex-col justify-between"
+  >
     <div>
       <span class="text-lg text-gray-500">{{ subscription }}</span>
       <h3 class="text-5xl font-bold mt-2">{{ price }} Ft<span class="text-base font-medium">/ hónap</span></h3>
@@ -34,12 +35,16 @@ const targetRoute = isAuthenticated.value ? '/dashboard' : '/login?register=1';
     </div>
 
     <div class="flex justify-center mt-8">
-      <component :is="props.buttonDisabled ? 'div' : 'RouterLink'" :to="props.buttonDisabled ? null : targetRoute"
-        class="inline-block">
-        <Button :title="props.buttonTitle" :disabled="props.buttonDisabled" :class="[
-          'md:text-lg text-md text-nowrap',
-          props.buttonDisabled ? 'opacity-50 cursor-not-allowed' : ''
-        ]" />
+      <component
+        :is="props.buttonDisabled ? 'div' : 'RouterLink'"
+        :to="props.buttonDisabled ? null : targetRoute"
+        class="inline-block"
+      >
+        <Button
+          :title="props.buttonTitle"
+          :disabled="props.buttonDisabled"
+          :class="['md:text-lg text-md text-nowrap', props.buttonDisabled ? 'opacity-50 cursor-not-allowed' : '']"
+        />
       </component>
     </div>
   </div>

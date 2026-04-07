@@ -26,7 +26,13 @@ onUnmounted(() => {
       <h2 class="text-2xl font-bold mb-2 tracking-wide">Megtaláltuk ellenfeled</h2>
 
       <p class="text-white/60 mb-6">Fogadd el a meccset</p>
-      <button @click="mm.confirm()" :disabled="mm.isConfirmed" class="w-full py-4 rounded-lg font-bold text-lg text-black transition-all duration-200 bg-green-500 hover:bg-green-400 hover:scale-[1.02] disabled:bg-green-800 disabled:text-white/50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-green-800">{{ mm.isConfirmed ? "ELFOGADVA" : "ELFOGADÁS" }}</button>
+      <button
+        @click="mm.confirm()"
+        :disabled="mm.isConfirmed"
+        class="w-full py-4 rounded-lg font-bold text-lg text-black transition-all duration-200 bg-green-500 hover:bg-green-400 hover:scale-[1.02] disabled:bg-green-800 disabled:text-white/50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-green-800"
+      >
+        {{ mm.isConfirmed ? "ELFOGADVA" : "ELFOGADÁS" }}
+      </button>
 
       <div class="mt-6 text-sm text-white/50">Automatikus visszalépés: {{ seconds }}s</div>
     </div>

@@ -20,11 +20,10 @@ export async function createRankedGame(playerA, playerB) {
       playerB: { ...playerB, connected: true },
       questions: [],
       createdAt: Date.now(),
-    }
+    };
     console.log(match);
 
     return match;
-
   } catch (error) {
     console.error(error);
     return { errorMessage: error.response?.data.message ?? false };
@@ -47,7 +46,7 @@ export function formatFinalResults(match, data) {
 
   const isGameDrawn = isDraw(data.scores);
 
-  const winnerKey = isGameDrawn ? null : (data.winner_id == playerAId ? "playerA" : "playerB");
+  const winnerKey = isGameDrawn ? null : data.winner_id == playerAId ? "playerA" : "playerB";
 
   return {
     isDraw: isGameDrawn,
@@ -56,15 +55,15 @@ export function formatFinalResults(match, data) {
       userName: match.playerA.userName,
       score: data.scores[playerAId],
       won: isGameDrawn ? null : winnerKey == "playerA",
-      eloChange: data.elo_changes[playerAId]
+      eloChange: data.elo_changes[playerAId],
     },
     playerB: {
       userId: playerBId,
       userName: match.playerB.userName,
       score: data.scores[playerBId],
       won: isGameDrawn ? null : winnerKey == "playerB",
-      eloChange: data.elo_changes[playerBId]
-    }
+      eloChange: data.elo_changes[playerBId],
+    },
   };
 }
 
@@ -82,14 +81,14 @@ export function checkQuestionTimes() {
     if (lastQuestion.timeLeft <= 0) continue;
 
     lastQuestion.timeLeft -= 1;
-    console.log("TIMELEFT", lastQuestion.timeLeft)
+    console.log("TIMELEFT", lastQuestion.timeLeft);
 
     if (lastQuestion.timeLeft <= 0) {
       console.log("TIME EXPIRED!");
 
       io.to(game.roomId).emit("game:time-expired", lastQuestion.current_round);
 
-      ["playerA", "playerB"].forEach(playerKey => {
+      ["playerA", "playerB"].forEach((playerKey) => {
         if (!game[playerKey].connected) {
           submitAnswer(null, null, true, game[playerKey].userId);
         }

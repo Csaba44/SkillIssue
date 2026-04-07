@@ -73,7 +73,9 @@ const formSubmitted = async () => {
         <h3 class="text-lg font-bold leading-snug">{{ props.opponentName }}</h3>
       </div>
 
-      <div class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl mb-5 overflow-visible relative z-20">
+      <div
+        class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl mb-5 overflow-visible relative z-20"
+      >
         <p class="text-white/40 text-xs uppercase tracking-widest font-semibold mb-4">Érintett kör</p>
         <p class="text-white/40 text-xs mb-3">Ha mindegyik kör gyanús volt, hagyd az alapértelmezett értéken.</p>
         <Select v-model="formData.round_number" :options="roundOptions" />
@@ -86,12 +88,21 @@ const formSubmitted = async () => {
             <i class="fa-solid fa-pen text-accentPurple text-xl"></i>
             <span class="bg-accentPurple ml-2 h-6 w-0.5"></span>
           </div>
-          <textarea v-model="formData.comment" placeholder="Kérlek fejtsd ki a problémát részletesen!" rows="4" class="text-textWhite w-full outline-none bg-transparent py-3 pr-3 resize-none text-sm placeholder:text-white/20" />
+          <textarea
+            v-model="formData.comment"
+            placeholder="Kérlek fejtsd ki a problémát részletesen!"
+            rows="4"
+            class="text-textWhite w-full outline-none bg-transparent py-3 pr-3 resize-none text-sm placeholder:text-white/20"
+          />
         </div>
       </div>
 
       <div class="flex justify-end">
-        <Button title="Bejelentés küldése" class="bg-linear-to-r from-error to-red-400 text-white font-bold rounded-full px-10 py-3 shadow-lg shadow-red-500/20 hover:scale-105 transition-all duration-300" @click="formSubmitted" />
+        <Button
+          title="Bejelentés küldése"
+          class="bg-linear-to-r from-error to-red-400 text-white font-bold rounded-full px-10 py-3 shadow-lg shadow-red-500/20 hover:scale-105 transition-all duration-300"
+          @click="formSubmitted"
+        />
       </div>
     </template>
   </section>

@@ -36,7 +36,6 @@ export function handleConnection(socket) {
   });
   // ====================================
 
-
   // ============ GAME ============
   socket.on("game:submit-answer", (answerId) => {
     gameController.submitAnswer(socket, answerId);

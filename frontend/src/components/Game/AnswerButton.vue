@@ -31,7 +31,8 @@ const splitStyle = computed(() => {
   if (mine && correct && !opp) return { background: `linear-gradient(135deg, ${yellow} 50%, ${green} 50%)` };
   if (opp && correct && !mine) return { background: `linear-gradient(135deg, ${purple} 50%, ${green} 50%)` };
   if (mine && opp && !correct) return { background: `linear-gradient(135deg, ${yellow} 50%, ${purple} 50%)` };
-  if (mine && opp && correct) return { background: `linear-gradient(135deg, ${yellow} 33.3%, ${purple} 33.3% 66.6%, ${green} 66.6%)` };
+  if (mine && opp && correct)
+    return { background: `linear-gradient(135deg, ${yellow} 33.3%, ${purple} 33.3% 66.6%, ${green} 66.6%)` };
 
   return { background: white };
 });
@@ -40,7 +41,13 @@ const isWin = computed(() => props.isSelected && props.isCorrect);
 </script>
 
 <template>
-  <button @click="emit('click')" :disabled="props.disabled" :style="splitStyle" class="w-full rounded-xl p-2 py-3 text-xl shadow-inner shadow-gray-500/80 transition-all duration-150 ease-in disabled:bg-textDisabled enabled:cursor-pointer text-black enabled:hover:animate-pulse relative overflow-hidden" :class="isWin ? 'win-pulse' : ''">
+  <button
+    @click="emit('click')"
+    :disabled="props.disabled"
+    :style="splitStyle"
+    class="w-full rounded-xl p-2 py-3 text-xl shadow-inner shadow-gray-500/80 transition-all duration-150 ease-in disabled:bg-textDisabled enabled:cursor-pointer text-black enabled:hover:animate-pulse relative overflow-hidden"
+    :class="isWin ? 'win-pulse' : ''"
+  >
     <slot></slot>
   </button>
 </template>
