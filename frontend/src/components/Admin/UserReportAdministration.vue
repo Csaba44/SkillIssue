@@ -31,6 +31,13 @@ const statusTranslations = {
   Closed: "Lezárva",
 };
 
+// Segédfüggvény a lokális idő UTC-be forgatásához a backendnek
+const toUTCString = (localDateTime) => {
+  if (!localDateTime) return null;
+  const date = new Date(localDateTime);
+  return date.toISOString().slice(0, 19).replace("T", " ");
+};
+
 const filteredReports = computed(() => {
   const order = { Investigating: 1, Open: 2, Closed: 3 };
 
@@ -92,12 +99,13 @@ const banUser = async () => {
 
   isBanning.value = true;
 
-  const formattedDate = banForm.value.release_date.replace("T", " ") + ":00";
+  // Lokális idő konvertálása UTC-re beküldés előtt
+  const utcDate = toUTCString(banForm.value.release_date);
 
   try {
     await api.post("/api/ban", {
       user_id: selectedReport.value.user_reported?.id,
-      release_date: formattedDate,
+      release_date: utcDate,
       reason: banForm.value.reason,
     });
 
@@ -109,7 +117,7 @@ const banUser = async () => {
     toast.success(`${selectedReport.value.user_reported?.name} sikeresen kitiltva.`);
     isModalOpen.value = false;
   } catch (error) {
-    console.error("Ban hiba:", error.response?.data);
+    console.error("Kitiltás során hiba:", error.response?.data);
     toast.error("Hiba történt a tiltás során.");
   } finally {
     isBanning.value = false;
@@ -263,12 +271,12 @@ const banUser = async () => {
           <div class="border-t border-white/5 pt-5">
             <button @click="showBanForm = !showBanForm" class="flex items-center gap-2 text-red-400/70 hover:text-red-400 text-[11px] font-bold uppercase tracking-widest transition-all">
               <i :class="showBanForm ? 'fa-solid fa-chevron-up' : 'fa-solid fa-ban'"></i>
-              {{ showBanForm ? "Ban visszavonása" : "Játékos kitiltása" }}
+              {{ showBanForm ? "Kitiltás visszavonása" : "Játékos kitiltása" }}
             </button>
 
             <div v-if="showBanForm" class="mt-4 bg-red-500/5 border border-red-500/15 rounded-2xl p-5 flex flex-col gap-4">
               <div>
-                <label class="text-red-300/50 text-[10px] uppercase font-bold tracking-widest block mb-2">Ban oka</label>
+                <label class="text-red-300/50 text-[10px] uppercase font-bold tracking-widest block mb-2">Kitiltás oka</label>
                 <input v-model="banForm.reason" type="text" placeholder="pl. Csalás, toxic viselkedés..." class="w-full bg-white/5 border border-red-500/20 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/50 transition-all" />
               </div>
               <div>
@@ -277,7 +285,7 @@ const banUser = async () => {
               </div>
               <button @click="banUser" :disabled="isBanning" class="w-full bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-ban"></i>
-                {{ isBanning ? "Tiltás folyamatban..." : `${selectedReport.user_reported?.name} kitiltása` }}
+                {{ isBanning ? "Kitiltás folyamatban..." : `${selectedReport.user_reported?.name} kitiltása` }}
               </button>
             </div>
           </div>

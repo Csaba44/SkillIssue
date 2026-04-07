@@ -4,7 +4,7 @@ import Navbar from "../components/Dashboard/Navbar.vue";
 import ProtectedPageContainer from "../components/Generic/ProtectedPageContainer.vue";
 import QuestionAdministration from "../components/Admin/QuestionAdministration.vue";
 import QuestionReportAdministration from "../components/Admin/QuestionReportAdministration.vue";
-import UserReportAdministration from "../components/Admin/UserReportAdministration.vue"; // Az új komponens
+import UserReportAdministration from "../components/Admin/UserReportAdministration.vue";
 import { toast } from "vue-sonner";
 import api from "../config/api";
 import BanAdministration from "../components/Admin/BanAdministration.vue";
@@ -103,7 +103,7 @@ onBeforeMount(() => {
 
         <button @click="activeTab = 'u-reports'" :class="[activeTab == 'u-reports' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-user-shield mr-2"></i> Játékos Reportok</button>
 
-        <button @click="activeTab = 'bans'" :class="[activeTab == 'bans' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-ban mr-2"></i> Banok</button>
+        <button @click="activeTab = 'bans'" :class="[activeTab == 'bans' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/50 hover:bg-white/10']" class="px-6 py-3 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 text-xs"><i class="fa-solid fa-ban mr-2"></i> Kitiltások</button>
       </div>
 
       <div v-if="activeTab == 'questions'" class="fade-in">

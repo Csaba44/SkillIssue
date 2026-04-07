@@ -14,7 +14,16 @@ const props = defineProps({
 
 const formattedDate = computed(() => {
   if (!props.releaseDate) return "Ismeretlen";
-  return props.releaseDate.split(".")[0].replace("T", " ");
+
+  const date = new Date(props.releaseDate + "Z");
+
+  return date.toLocaleString("hu-HU", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 });
 </script>
 
