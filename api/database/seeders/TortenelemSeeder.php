@@ -285,8 +285,6 @@ class TortenelemSeeder extends Seeder
                 ],
             ],
 
-            // ── Új kérdések ──────────────────────────────────────────────
-
             [
                 'question' => 'Mi volt a királyi kancellária fő feladata?',
                 'answers' => [

@@ -1,0 +1,130 @@
+\chapter{Játékmechanika}
+A rendszer alapvetően két játékformát valósít meg: Egyjátékos gyakorló mód és Rangsorolt többjátékos (1 vs. 1) mód. 
+
+\section{Egyjátékos mód}
+Tét nélküli gyakorló játékmód. A felhasználó feleletválasztós kérdéseket kap, ahol csak egy jó válasz lehetséges. Adott időn belül válaszolnia kell a kérdésre. Amennyiben nem válaszol, üres válasz lesz eltárolva, és nem kap érte pontot. Válaszadás esetén (legyen az üres válasz, vagy a felhasználó által kiválasztott) a következő kérdés automatikusan lekérésre kerül, miután a rendszer megmutatta a helyes választ a felhasználónak. Ez a folyamat a konfigurációtól függően $n$ körig folytatódik. Az utolsó kör végén a válasz beküldésével a rendszer összesíti a helyes válaszokat és ennek megfelelően XP-vel jutalmazza a játékost, ahol minden helyes válasz után 10 XP jár. Negatív végeredmény nincsen, a rendszer XP-t vagy bármi más pontot nem von le a játékostól.
+\section{Rangsorolt 1 vs. 1 mód}
+Rangsorolt játszma, azaz XP mellett ELO pontokat is szerezhet a játékos; viszont itt már negatív eredmény is kerülhet számításra az ELO esetében.
+\\
+A játékos belép a meccskeresési folyamatba (bővebben: \ref{sec:matchmaking}. szakasz). Amikor a rendszer megfelelő ellenfelet talál a felhasználónak, el kell azt fogadnia, ezzel megerősíti, hogy a számítógép előtt tartózkodik, és készen áll a meccsre. Amennyiben nem erősíti meg valamelyik játékos, a meccskeresés számukra leáll, és jelzi a rendszer, hogy legalább az egyik játékos nem fogadta el a játszmát. Amennyiben mindkét játékos elfogadja, továbbjutnak a játék oldalra.
+\\
+Az egyjátékos módhoz hasonlóan, feleletválasztós formában kapnak kérdéseket. Mindkét játékos ugyan azt a kérdést kapja, ugyan azokkal a válaszokkal. Szintén, egy helyes válasz lehetséges az adott kérdésnél. A játékosoknak megadott idő áll rendelkezésre, hogy beküldjék a válaszukat. Amennyiben az idő letelik, vagy mindkét felhasználó beküldi a válaszát az idő letelte előtt, a rendszer sárga színnel jelzi a felhasználó válaszát, lilával az ellenfél válaszát, és zölddel a helyes választ. Amennyiben a helyes válasz, a felhasználó válasza, és az ellenfél válasza közül legalább kettő ugyan az a válasz, a háttérszínük megoszlik, kettő vagy három részre. Például, ha a legelső volt a helyes válasz, és a felhasználó, valamint az ellenfél válasza is, akkor az első válasz háttérszínének első harmada sárga, második harmada lila, és utolsó harmada zöld háttérszínű lesz, így jelezve a felhasználónak, hogy mindenki a helyes választ küldte be.
+\\
+Amennyiben az idő letelik, és van megjelölt, de még nem beküldött válasza valamelyik felhasználónak, a rendszer automatikusan beküldi azt. Ha nincs, üres válasz kerül beküldésre. Ilyenkor a következő kör automatikusan indul.
+\\
+Az utolsó kör végén, amikor mindkét felhasználó beküldte a válaszát, vagy letelt az idő, a rendszer összegzi a játszmát, és kiszámítja a hozzáadott és levont pontokat, valamint a nyertest (Bővebben: \ref{sec:pontozas}. szakasz).
+
+\newpage
+\section{Matchmaking folyamat}
+\label{sec:matchmaking}
+A meccskeresés úgynevezett képességalapú párosítást használ (SBMM\footnotemark).
+\footnotetext{A Skill Based Matchmaking (képességalapú párosítás) olyan párosító rendszer, amit gyakran játékok használnak arra, hogy minden félnek élvezetes és kompetitív élményt nyújtsanak - egyik játékos se érezze, hogy hatalmas hátrányban van ellenfelével szemben.}
+\\
+Működése: Konstans változók tárolják azokat az értékeket, amik befolyásolják, milyen a játszma, ami a leginkább unfair, de még az elfogadható tartományba tartozik. A következők kerülnek definiálásra:
+\begin{description}
+    \item[Base elo range] Az alapbeállítás, ekkora ELO különbségben keresi az ellenfelet a játékosnak a rendszer. 
+    \item[Maximum elo range] A maximum elfogadható ELO különbség a két játékos között
+    \item[Long wait time] Az a másodpercben megadott időtartam, ami már "hosszú meccskeresésnek" minősül. A felhasználóbázis méretéhez érdemes beállítani.
+\end{description}
+
+Lépésről lépésre:
+\begin{enumerate}
+    \item Növekvő sorba rendezi az összes queue-ban lévő felhasználót, ELO szerint.
+    \item A for ciklus végig iterál a queue hosszán, ahol mindig a jelenlegi és a sorban következő játékost keresi. Ha nincs következő játékos, a folyamat megáll.
+    \item Megnézi a két vizsgált felhasználó közül, melyikük áll régebb óta sorban: $maxWait$. Ezzel kiszámolja a maximum elo különbséget az adott esetre:
+    
+    \begin{equation*}
+        \text{FACTOR} = \frac{\text{MAX ELO RANGE} - \text{BASE ELO RANGE}}{\text{LONG WAIT TIME}}
+    \end{equation*}
+    
+    \begin{equation*}
+        \text{ELO RANGE} = \text{BASE ELO RANGE} + (maxWait \cdot \text{FACTOR})
+    \end{equation*}
+
+    \item Ha $\text{ELO DIFF} <= \text{ELO RANGE}$ (ahol ELO DIFF = a két felhasználó közötti ELO különbség), akkor párosításra kerülnek. Egyéb esetben a ciklus átugorja a vizsgált játékost.
+\end{enumerate}
+Összességében a rendszer működését a következőképpen lehet leírni: Sorba rendezve vizsgálja a queue-ban lévő játékosokat, és a queue-ban eltöltött idő mértékével nő a maximum elfogadható ELO különbség is, annak érdekében, hogy minél hamarabb meccset találjon a rendszer. A meccskeresési folyamat minden 2 másodpercben egyszer fut le.
+\\
+Kódrészlet:
+\begin{minted}{javascript}
+// === MATCHMAKING LOGIC CONSTANTS ===
+const MAX_ELO_RANGE = 500;
+const BASE_ELO_RANGE = 200;
+const LONG_WAIT_TIME = 120;
+const FACTOR = (MAX_ELO_RANGE - BASE_ELO_RANGE) / LONG_WAIT_TIME;
+// ===================================
+export function matchmake(queue) {
+  queue = queue.sort((a, b) => a.elo - b.elo)
+  const pairs = [];
+  for (let i = 0; i < queue.length; i++) {
+    const currPlayer = queue[i];
+    const nextPlayer = queue[i + 1] ?? false;
+    if (!nextPlayer) break;
+    const maxWait = Math.max(currPlayer.waitTime, nextPlayer.waitTime)
+    const eloRange = BASE_ELO_RANGE + (maxWait * FACTOR);
+    const eloDiff = Math.abs(currPlayer.userElo - nextPlayer.userElo);
+    if (eloDiff <= eloRange) {
+      pairs.push([currPlayer, nextPlayer]);
+      i++; // skip next player
+    }
+  }
+  return pairs;
+};
+\end{minted}
+\newpage
+Az algoritmus előnyei és hátrányai:
+\\
+Előnyök:
+\begin{itemize}
+    \item Gyors meccskeresés
+    \item Alacsony erőforrás igény
+    \item Garantálja, hogy a régóta várakozó játékosok előbb-utóbb találnak ellenfelet
+\end{itemize}
+Hátrányok:
+\begin{itemize}
+    \item Mivel közvetlen szomszédokat vizsgál, előfordulhat, hogy jobb párosítás is létezik, mint amivel a rendszer végül előáll.
+    \item Egy hosszú ideje várakozó játékos "lerontja" a meccskeresés eredményét, mivel nagyobb ELO különbséget enged meg.
+    \item Csak ELO alapján dönt, nem figyel más paramétereket (winrate, pontosság)
+\end{itemize}
+
+
+\section{Pontozás és rangsor}
+\label{sec:pontozas}
+A pontozás az ELO rendszer segítségével történik. Ez a pontozási rendszer első sorban a sakkban terjedt el, de manapság már számos online játék használja. Az ELO rendszerben a pontok különbsége nagyságrendileg a következőket jelentik:
+\\
+\begin{center}
+    \begin{tabular}{|c|c|}
+         \hline
+         ELO különbség & Erősebb játékos nyerési esélye \\
+         \hline
+         0 & 50\% \\
+         \hline
+         100 & ~64\% \\
+         \hline
+         200 & ~76\% \\
+         \hline
+         400 & ~90\% \\
+         \hline
+         500 & ~95\% \\
+         \hline
+    \end{tabular}    
+\end{center}
+
+A folyamat, lépésről lépésre:
+\begin{enumerate}
+    \item Várt nyerési esély kiszámítása: A rendszer alapja, hogy kiszámítsuk a várt nyerési esélyét mindkét játékosnak. Ez a következőképpen kerül számításra:
+    \begin{equation}
+        ExpectedA = \frac{1}{1 + 10^\text{(RatingB - RatingA) / 400}}
+    \end{equation}
+    
+    \item ELO pontszám változás kiszámítása: \begin{equation}
+            \Delta Rating = K \cdot (S_a - S_e)
+    \end{equation}
+    Ahol K, úgynevezett K factor a rendszer érzékenységét jelenti. A SkillIssue rendszerében ez 30. Összehasonlításképpen: a FIDE\footnotemark\ rendszerében a K értéke 10-40 között mozog, a játékos tapasztalatától függően.
+
+    \item Adatbázis módosítás: A kiszámított ELO (Rating) változás hozzáadódik a felhasználó jelenlegi pontszámához. Amennyiben az ELO változás értéke negatív, levonásra kerül.
+\end{enumerate}
+
+\footnotetext{Nemzetközi Sakkszövetség (Fédération Internationale des Échecs)}
+
+\textbf{Összegzés:} Azért az ELO rendszer lett alkalmazva, mivel több iparágban is gyakran használt, jól kitapasztalt rendszer. Biztosítja, hogy amennyiben egy tapasztalatlanabb játékos játszik egy tapasztalt ellen, kevesebb lesz az ELO változása, ha veszít. Ugyanígy, ha egy gyenge játékos döntetlen mérkőzést játszik egy erős ellen, az eredmény ellenére növekedni fog az ELO-ja, az erősebb játékosnak akár ELO levonás is történhet ilyen esetben. Összességében, garantálja, hogy a rendszer fair, és minden játékost képességéhez mérten jutalmaz. 

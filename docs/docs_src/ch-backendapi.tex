@@ -1,0 +1,71 @@
+\chapter{Backend - API}
+
+\section{Autentikáció}
+A SkillIssue a felhasználó autentikációjához a Sanctum csomagot használja, azon belül is cookie alapú session autentikációt. Ennek az az előnye, hogy a kérésekkel automatikusan elküldődik a süti, így könnyen azonosítható a felhasználó egyéb fejlécek megadása nélkül. A projekt megvalósítása webes felületen történik, ezért nincs szükség a JWT és egyéb autentikációra szolgáló tokenek sokoldalúságára, viszont a jövőbeli igények figyelembevételével később jó fejlesztési lehetőség lehet.
+
+\section{Felhasználókezelés}
+A felhasználókról a következő információk kerülnek tárolásra:
+\begin{itemize}
+    \item Név
+    \item Email
+    \item Jelszó (Bcrypt hash)
+    \item ELO
+    \item XP
+    \item Adminisztrátori jogosultsággal rendelkezik-e?
+    \item Bejelentkezésekhez tartozó IP címek (hash-elt formában, csupán összehasonlításra)\footnotemark
+\end{itemize}
+
+A felhasználókat továbbá ki lehet tiltani a rendszerből, ez valójában egy új adatbázis-rekord létrehozását jelenti a \texttt{bans} táblában. Amennyiben a felhasználónak aktív kitiltása van, a rendszer nem engedi játszani, és tájékoztatja a kitiltás indokáról és annak lejáratáról.
+
+\footnotetext{A rendszer a $V\curversion$ verzióban nem használja fel a tárolt IP címeket semmilyen módon. Jövőbeli fejlesztési lehetőségek megalapozására kerülnek tárolásra.}
+
+
+\section{Kérdéskezelés}
+A kérdéseket lekérni normál felhasználónak nincs jogosultsága, csak az adminisztrátoroknak. Az adminisztrátor jogosultsággal rendelkező felhasználók kérdéseket módosíthatnak, törölhetnek, vagy adhatnak hozzá - már létező, vagy új tantárgy megadásával. 
+\\
+Normál felhasználó csak akkor kérhet le kérdést, amennyiben aktív játékmenetben van (JWT tokennel azonosítva) és a \texttt{/api/questions/get-one} útvonalat használja. Ez egy véletlenszerűen választott kérdést ad vissza (amelyet a felhasználó még nem látott a meccs során) a válaszokkal együtt.
+
+\newpage
+\section{Meccs és kör logika}
+\subsection{Egyjátékos mód}
+
+Játszma folyamata lépésről lépésre: 
+\begin{enumerate}
+    \item \textbf{Indítás:} A játékos elindítja a játszmát. Ilyenkor az API felé kérést indít (POST \texttt{/practice-sessions}), ami elkészíti a játszmát az adatbázisban, illetve létrehozza a JWT token-t (\textit{GameToken}), ami a játszma azonosítására szolgál az API és a Frontend kommunikációjában. A token eltárolja a felhasználó azonosítóját és az elkészített játszma azonosítóját. Amennyiben a felhasználó aktív kitiltás alatt áll, a játszma nem lesz létrehozva, és az API 403-as hibával tér vissza.
+    \item \textbf{Átirányítás:} A játékos átkerül egy új oldalra, amelyen az URL paraméterben a játszma JWT tokenje található meg. Ez biztosítja, hogy amennyiben elhagyja a játékot, vissza tud lépni, és nem veszti el a teljes előrehaladását.
+    \item \textbf{Kérdés lekérése:} A kör elején a Frontend POST kérést küld a \texttt{/api/questions/get-one} útvonalra, amely válaszol a véletlenszerűen kiválasztott kérdéssel, illetve az azokra eltárolt lehetséges válaszokat is visszaadja, összekevert sorrendben. A kérés csak akkor végződik sikeresen, ha a játszma elkészítésekor létrehozott JWT token el lett küldve, és megfelelő (felhasználó azonosító egyezik a kérést elküldő felhasználóéval). Új JWT token kerül kiállításra (\textit{QuestionToken}), amely tartalmazza a kérdés és a felhasználó azonosítóját. 
+    \\
+    Amennyiben az adatbázisban nincs elegendő kérdés \textit{(körök száma > kérdések száma)}, a játszma csak addig folytatódik, ameddig el nem fogynak a felhasználó által (az adott játszmában) még nem látott kérdések; ezek után hibát ad.
+    \item \textbf{Válaszadás:} Amennyiben a játékos be kívánja küldeni a válaszát, ki kell választani az általa helyesnek vélt választ, majd az alsó \textit{"Beküldés"} gombra kattintva elküldeni a szervernek. Ilyenkor POST kérés fog végbemenni a \texttt{/api/answers/verify/\{válasz azonosító\}} végpontra, mely kötelezően elvárja a QuestionToken-t és a GameToken-t. Amennyiben a válasz azonosító helyén a \texttt{null} literál szerepel, az eltárolt válasz is \texttt{NULL} értékű lesz, ez jelzi, hogy a felhasználó nem adott választ időben. A kérésre válaszként megérkezik, hogy a válasz helyes volt-e, illetve hogy mi lett volna a helyes válasz. Amennyiben a játékos az utolsó kérdésre válaszolt, visszaadja a megszerzett XP pontokat is ($n_{\text{helyes válaszok}} \cdot 10$). Amennyiben a felhasználó nem küldi be magától az idő leteltével a válaszát, a rendszer automatikusan beküldi a kiválasztottat - ha van olyan - egyébként üres választ küld be (\texttt{null}).
+\end{enumerate}
+
+\subsection{Többjátékos (Rangsorolt 1 vs. 1) mód}
+A többjátékos módhoz a lekéréseket a WebSocket szolgáltatás végzi, a belső \texttt{/api/internal} előtaggal ellátott végpontokra. 
+\\Ezek a végpontok a következők:
+\begin{itemize}
+    \item \texttt{/game-matches}: A törzsben 2 paramétert kaphat: \texttt{user\_a\_id} és \texttt{user\_b\_id}. Amennyiben a felhasználók közül valamelyik jelenleg aktív kitiltás alatt van, a játszma nem lesz létrehozva, és 403-as hibakóddal tér vissza az API. Adatbázis tranzakcióban kezeli a meccs létrehozását a rendszer, ugyanis egy játszma két adatbázis rekordnak felel meg (Részletek: \ref{sec:adatbazis}. szakasz). Ez kiküszöböli annak lehetőségét, hogy az egyik meccs létrehozásra kerüljön, a másik viszont sikertelen legyen. A JWT token payloadjában a következő adatok szerepelnek: Egyedi meccsazonosító, A felhasználó azonosítója és B felhasználó azonosítója. A rendszer továbbá kiszámolja a várt nyerési arányt a játékosoknak, a \ref{sec:pontozas} szakasz alapján, majd visszaküldi a két felhasználó nevét, hogy a játékosok ismerhessék az ellenfelüket.
+    \item \texttt{/questions/get-one}: Arra szolgál, hogy a WebSocket lekérhesse a következő kérdést, amit feltesz a játékosoknak. A rendszer kezeli, hogy olyan kérdéseket kapjanak a játékosok, amit még nem láttak az adott játszmában, valamint azt, hogy a válaszok sorrendje összekevert legyen. A rendszer azt is kezeli, hogyha tévesen bejönne még 1 kérés egy olyan meccsre, ami már véget ért (következő kör > maximum körök). Kiállít egy \texttt{QuestionToken}-t, a két felhasználó azonosítójával, valamint a kérdés azonosítójával.  Tranzakcióban bejegyzi az adatbázisba a kérdéseket, a lejárati idejükkel együtt.
+    \item \texttt{/answers/verify/\{válasz azonosító\}}: Arra szolgál, hogy visszaadja a helyes választ az adott kérdésre, bejegyezze a felhasználó válaszát és kezelje a játszma lezárását (ha az utolsó körben érkezik a kérés). A beküldő felhasználó azonosítója a kérés törzsében érkezik. A rendszer kezeli, ha olyan felhasználó küld be választ, aki nem vesz részt azon a játszmán, illetve azt is, ha nem küld be választ a felhasználó (\texttt{NULL}). A rendszer továbbá azzal is foglalkozik, ha a válasz nem az adott körben következő kérdéshez tartozik, továbbá figyelembe veszi a kérdés lejáratát is. Az adatbázisban a felhasználó válaszadási idejét is tárolja a rendszer, amit a kérdés elkészítési időbélyegből és a szerveridőből számol. A rendszer nem korrigál a felhasználó hálózati késleltetése alapján, sem az adatbázis lekérésének sebességével - nagyságrendileg a valóságnak megfelelő értéket tárol. Amennyiben az utolsó válasz kerül beküldésre, a rendszer kiszámolja az eltárolt várható nyerési esély alapján az ELO nyereséget/veszteséget, majd visszaküldi azt, a helyes válasszal együtt.
+\end{itemize}
+\textbf{Megjegyzés:} A többjátékos módhoz tartozó \texttt{/api/internal} előtagú végpontok nem ugyanazokat a controllereket használják, mint az egyjátékos módban, annak ellenére, hogy nevük ugyanaz. Az elnevezés oka a két játékmenet logikájának hasonlóságán alapszik.
+
+
+\section{Bejelentő rendszer}
+Két fajta bejelentést különböztet meg a rendszer: játékos bejelentés és kérdés bejelentés.
+
+\subsection{Játékos bejelentés}
+Bármelyik játékos bejelentheti az ellenfelét az 1 vs. 1 rangsorolt meccsek folyamán. Olyan személyek bejelentésére nincs lehetőség, akikkel nem játszott együtt a játékos. Az adatbázis tárolja a bejelentéseknél többek között azt, hogy melyik körben lett jelentve az ellenfél (a könnyebb kivizsgálás érdekében), de ezt a felhasználó felülírhatja, hogy melyik volt számára a leggyanúsabb kör. Emellett szöveges leírást is adhat az eseményről. 
+
+\subsection{Kérdés bejelentés}
+Amennyiben a felhasználó egy adott kérdést és/vagy az azokra megadott válaszokat helytelennek találja, esetleg hibás "helyes válasz" van megjelölve, bejelentést tehet. Szöveges megjegyzés formájában leírhatja mi volt a probléma az adott kérdéssel. 
+
+\subsection{Kérdések elbírálása}
+Az alábbi állítások mind a kérdés -és a játékos bejelentésekre igazak.
+\begin{itemize}
+    \item Normál felhasználó csak POST kéréseket küldhet a végpontokra; más, illetve saját bejelentéseit nem tekintheti meg.
+    \item Az adminisztrátor jogosultsággal rendelkező felhasználók egy külön felületen tekinthetik meg a beérkezett jelentéseket. Azok státuszát (nyitva, vizsgálat alatt, lezárva) módosíthatják, reportokat törölhetnek. Játékos bejelentés esetében látják a felhasználó statisztikáját is, kérdés bejelentésnél pedig a kérdést és a hozzá tartozó válaszokat. Az adminisztrátorok saját megjegyzésüket is odaírhatják a felhasználóé mellé, így jelezve a többi adminisztrátornak észrevételüket.
+\end{itemize}
+
+\section{Service-to-service kommunikáció}
+A több szolgáltatáson keresztül való kommunikációk validálására az API az \texttt{EnsureServiceTokenIsValid} nevű middleware-t használja. Ennek feladata mindössze annyi, hogy összehasonlítsa a \texttt{.env} fájlban meghatározott kulccsal a fejlécben megadott Bearer token-t.
+

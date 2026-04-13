@@ -1,0 +1,33 @@
+\chapter{Frontend}
+A projekt Frontend megoldása Vue.js-en, annak is a modern Composition API-án alapul. Azért a Vue.js-re esett a választás más keretrendszerek helyett, mert a Vue olyan megoldásokat biztosít, amelyek egy kis-közepes projekt számára előnyösebbek. Könnyebb tiszta, jól átlátható és egyszerűen fenntartható kódot írni, mint egy komplexebb keretrendszerben (pl. Angular, React). Emellett a támogatása is kiemelkedő, olyan csomagokkal, mint például a Pinia és a Vue Router.
+
+\section{Oldalak és navigáció}
+A navigációhoz a Vue Router csomagot használja az alkalmazás. Több előnye is van ennek a megoldásnak:
+\begin{enumerate}
+    \item Az oldalak nem töltődnek újra, csak a komponensek cserélődnek ki
+    \item Lehetőség van Eager- és Lazy loading alkalmazására is
+    \item Könnyen megoldható a jogosultságok ellenőrzése
+    \item Jól bevált ipari standard
+\end{enumerate}
+A Vue Router-ben a \texttt{WebHistory} előzménymódot használja az alkalmazás, mivel ez ideális egy SPA számára. 
+
+\section{Komponensstruktúra}
+A Frontend kódbázis mappastruktúrájának kialakításakor elsődleges szempont az átláthatóság és a könnyű kezelhetőség. Ennek érdekében a komponensek külön \texttt{components} könyvtárban helyezkednek el. Ezen könyvtáron belül altípusok mappái találhatóak, pl.: Auth, Dashboard, Game, Generic. A komponensek elkészítése során fő szempont a modularitás, így kiemelt szerepet kapnak a prop-ok a komponensek kiépítésében.
+
+\section{Állapotkezelés}
+A prop-drilling megakadályozására Pinia store-t használ a rendszer, amelyek a kódbázis \texttt{stores} könyvtárában helyezkednek el. A kialakításuk során fontos szempont, hogy a Single Responsibility Principle-nek megfeleljenek, azaz csak egy jól körülhatárolt feladatot végezzenek. A következő állapotkezelésre alkalmas store-ok találhatóak meg a projektben:
+\begin{description}
+    \item[UserStore] A felhasználó bejelentkeztetése, azonosítása, kijelentkeztetése, és adatinak tárolása.
+    \item[MatchmakingStore] WebSocket kommunikáció létesítése, események kezelése, meccskeresés elindítása, befejezése, átirányítás a játék oldalra találat esetén.
+    \item[GameStore] Minden játék közbeni esemény lekezelése, válasz beküldése, új kérdés fogadása, felhasználó visszacsatlakoztatása folyamatban lévő játszma esetén.
+\end{description}
+
+\section{WebSocket integráció kliens oldalon}
+\subsection{Konfiguráció}
+Frontend oldalon az alkalmazás a Socket.IO kliensének NPM csomagját használja. Olyan módon van konfigurálva, hogy amennyiben a felhasználó böngészője támogatja a WebSocket kapcsolatokat, elsődlegesen azt használja, de fallback-ként HTTP polling-ra is képes.
+
+\subsection{WebSocket kapcsolat}
+A WebSocket kapcsolat akkor jön létre, amikor a felhasználó megnyitja az oldalt. Amennyiben több mint egy lapról van megnyitva a skillissue.hu oldal egy felhasználó alatt, a megfelelő működés csak az elsőként megnyitott lapon garantált. Kivétel ez alól az összes bejelentő oldal, amelynél külön kikapcsolásra kerül a WebSocket kapcsolat annak érdekében, hogy a bejelentő oldal a folyamatban lévő játékmenetet ne zavarja. 
+
+\subsection{Eseménykezelés}
+A WebSocket kliensnek érkező eseményeket az adott eseményhez kapcsolódó Pinia store figyeli. Hiba esetén (pl. WebSocket szolgáltatás megáll) értesíti a felhasználót a rendszer, és leállítja a folyamatban lévő meccskeresést (amennyiben van ilyen).

@@ -1,0 +1,52 @@
+\chapter{Technológiák}
+
+\section{Backend - Laravel}
+A Backend oldalon a megvalósítás a PHP nyelvre épül, azon belül is a \textbf{Laravel} keretrendszer köré.
+
+\begin{description}
+    \item[Autentikáció]A Sanctum csomag használatával valósul meg az autentikációs réteg. Előnye, hogy egyszerűen használható, lightweight megoldás. Mivel a SkillIssue alkalmazás csakis webes megvalósítással rendelkezik, Cookie alapú session autentikáció mellett döntöttünk. Az API a REST elveit követi, kivéve az autentikációs réteget, ahol a bejelentkezett felhasználó session-je
+    tárolódik.
+    \item[EloquentORM]ORM használata megkönnyíti a fejlesztői munkafolyamatot, azáltal, hogy migration-ökben tárolódnak az adatbázis táblák sémái, és osztályok példányain érhetőek el az entitások. Kiküszöböli az SQL injection veszélyeit, mivel nem nyers SQL utasításokra épül a rendszer.
+    \item[PHP-FPM/FastCGI]Gyors, skálázható kiszolgálási forma az API számára
+    \item[MySQL]Azért esik a MySQL adatbázisra a választás, mert gyors lekérdezéseket és könnyű integrációt biztosít a Laravel-lel. Más lehetséges megoldások, például a SQLite, azért nem kerül alkalmazásra, mivel kevésbé skálázható adatbázis megoldásokat biztosít.
+    \item[JWT tokenek]Az alkalmazás a JWT tokeneket nem autentikációhoz használja, hanem 3 különböző tokent képes kiállítani a megfelelő lekérdezések alkalmával: Kérdés token, egyjátékos meccs token, és rangsorolt (1 vs. 1) meccs token. Ezekre a megoldásokra azért van szükség, hogy kódolt formában tudjon adatot továbbítani a kliens számára, és ne plaintext formában küldjön fontos adatokat. Továbbá, a JWT tokenek működési elvéből adódóan könnyen kezelhető a tokenek lejárati ideje, így például lehetőség van a megoldás beküldésének elutasítására, amennyiben a kérdés token lejár.
+    
+\end{description}
+
+\newpage
+
+\section{WebSocket - Node.js}
+A WebSocket megvalósítása a Socket.IO csomaggal történik. Az említett csomagnak az előnye, hogy könnyen kiépíthető a WebSocket kapcsolat, emellett lehetőséget biztosít HTTP Polling fallback-re, amennyiben a kliens nem képes WebSocket kapcsolatot kezdeményezni.\\
+A WebSocket megvalósítása nem tartalmaz üzleti logikát, és adatbázis módosítást nem végez. Ezek helyett az API-val kommunikál.
+
+\begin{description}
+    \item[WebSocket $\rightarrow$ API kapcsolat]A WebSocket és a Laravel API közös környezeti változókból dolgozik. Ez teszi lehetővé, hogy egy közös token-t tudnak olvasni, amelyet service-to-service tokenként nevezünk. Ez egy konstans token, amely nem tárol semmilyen adatot, csupán validációra szolgál, mivel az összes \texttt{/api/internal/}-al kezdődő útvonalat csakis a WebSocket veheti igénybe, felhasználó közvetlenül nem.
+    \item[Felhasználó autentikáció]A WebSocket külön, belső API útvonalon autentikálja a felhasználót. Ennél a folyamatnál kihasználja azt, hogy a sütik minden lekérésnél továbbmennek a lekérés helyére. Ezáltal a cookie-kat manuálisan elküldve egy belső útvonalnak, könnyedén kinyerhetőek a felhasználó adatai.
+    \item[Állapotkezelés]Az ideiglenes állapotkezelésre a legegyszerűbb módot alkalmazza a rendszer, így Hash Map formájában tárolja a különböző adatokat, amelyek a következők: Meccskeresési queue, megerősítésre váró meccsek\footnotemark és folyamatban lévő meccsek. Ennek a tárolási módszernek a legnagyobb hátránya, hogy ha a WebSocket szolgáltatás váratlanul újraindul, a folyamatban lévő meccsek elvesznek, ezáltal nem befejezhetőek. \textit{Ilyenkor Elo változás nem történik.}
+\end{description}
+\footnotetext{A két játékosnak, akiket a Matchmaking rendszer összesorol, meg kell erősíteni a játszmát - Ne kezdődjön el úgy meccs, hogy egyik felhasználó nincs a számítógép előtt (AFK).}
+
+
+\section{Frontend - Vue.js}
+A Frontend szolgáltatáshoz a Vite build tool-t alkalmazza a rendszer, ami fejlesztői környezetben lehetővé teszi a projekt gyors elindítását, fejlesztői webszervert futtat, és hot reload funkciót is biztosít.\\
+Mivel a SkillIssue egy közepes méretű projekt, a Vue.js egy gyors, egyszerű és átlátható fejlesztési folyamatot biztosít. Más keretrendszerek, például az Angular azért nem kerül alkalmazásra, mert a projekt méretéhez képest indokolatlanul komplex megoldás lenne.
+
+\begin{description}
+    \item[Útvonalválasztás]A routing problémáját a Vue Router oldja meg, ami a standard megoldás egy Vue alkalmazás esetében. Lehetővé teszi, hogy átirányítson, URL paramétereket fogadjon, és metaadatot kapcsoljon bizonyos oldalakhoz (például vendég elérheti-e).
+    \item[Állapotkezelés]A prop drilling elkerülése érdekében a Pinia csomagot alkalmazza a rendszer, ami egy Vue.js-re szabott állapotkezelő megoldás. A Pinia került alkalmazásra a projekt megvalósítása során, mivel ez az egyik legkönnyebben használható store csomag a Vue ökoszisztémában. Emellett a hivatalos Vue dokumentáció is a Pinia Store-t javasolja, illetve jól integrálható a Vue Dev Tools kiegészítővel is.
+    \item[WebSocket kliens oldalon]A WebSocket kapcsolatot a Frontend bejelentkezéskor kezdeményezi, vagy már bejelentkezett felhasználó esetén akkor, amikor validálásra kerül a felhasználó bejelentkezett állapota. Ez teszi lehetővé, hogy az alkalmazás érzékelje a már megkezdett meccseket, és automatikusan visszacsatlakoztassa a felhasználót a folyamatban lévő többjátékos meccsbe. A meccskeresés és játékmenet elkülönítve, store-ban kerül tárolásra. Itt futnak azok a listener-ök is, amelyek figyelik a WebSocket felől érkező eseményeket.
+    \item[HTTP Kérések]Az API-hoz intézett kérések kezeléséhez az Axios csomagot alkalmazza a projekt. Ennek előnye, hogy megkönnyíti a HTTP kérések folyamatát a JavaScript-be beépített fetch API-hoz képest. Saját Axios példányt alkalmaz a projekt, ezáltal letisztultabb, átláthatóbb kódot biztosít, hiszen bizonyos szükséges fejlécek automatikusan kitöltésre kerülnek.  
+    \item[Design]A projekt megvalósítása során felhasználásra került a Tailwind CSS keretrendszer, amely egyszerűbbé teszi az oldalon megjelenő elemek stílusának személyre szabását. A Tailwind kellő szabadságot biztosít a fejlesztőnek, hogy egyedi Design-t alkothasson, szemben olyan framework-ökkel, mint például a Bootstrap, ami sokkal szigorúbb keretek közé szorítja a design-t. A projekt egy letisztult, konzisztens, glassmorph elemekkel díszített arculatot valósít meg. A színpaletta élénk színeket tartalmaz, amely tovább fokozza az oldal játékos hangulatát. A Tailwind mellett a FontAwesome ikonkönyvtár ingyenes verziója lett alkalmazva, a nagy választék miatt. A FontAwesome CDN linken keresztül kerül beágyazásra.
+\end{description}
+
+\newpage
+
+\section{Konténerizáció - Docker}
+\label{sec:dockeconfig}
+\begin{description}
+    \item[Döntés indoklása]Két fős projektként a Docker megkönnyíti a fejlesztési  folyamatot, mivel azonos környezeten tudnak dolgozni a csapattagok. Ezzel elkerülve azt a gyakori problémát, hogy az egyik számítógépen működik, a másikon pedig nem, például verziókülönbség miatt.
+    \item[Megvalósítás]A projekt Docker Compose-t használ, ezáltal könnyedén futtatható több szolgáltatás egyszerre, összehangolt módon. A két környezet (production, development) külön compose fájlokban van definiálva. 
+    \item[Fejlesztői környezet elvárásai]Könnyen elindítható, fejlesztő-barát megoldás megvalósítása. A hot-reload támogatása és a host számítógép és a konténer közötti jogosultságok szinkronizálása, különösen az \texttt{artisan} parancssori eszköz esetében, hiszen az képes fájlokat létrehozni a host számítógépen. Ezek miatt szükséges a volume-ok kialakítása, amivel a hot-reload és a MySQL hosszú távú adattárolása megvalósulhat. A jogosultságok érdekében a host felhasználó Group ID és User ID értékeit használja a konténer is.
+    \item[Éles (production) környezet elvárásai]Egyszerű szállítás és deployment. Megoldásként a Makefile parancsai szolgálnak, amelyek lehetővé teszik, hogy egyszerűen egy paranccsal kiadható legyen egy új verzió. A másik fontos szempont a biztonság, ezért ahol csak lehetséges, non-root felhasználó van konfigurálva a konténerben. A gyors kiszolgálás és proxy-zás érdekében nginx webszerver került alkalmazásra. Az nginx a Cloudflare origin SSL-t alkalmazza, a HTTPS kapcsolat kiépítésének érdekében. A konfiguráció továbbá lehetővé teszi, hogy ameddig az alkalmazás tesztelési fázisában van, jelszóval védett legyen a virtuális hoszt. További információ: \ref{fig:architektura}. ábra
+    
+\end{description}

@@ -1,0 +1,38 @@
+\chapter{Bevezetés}
+\section{A projekt célja}
+A SkillIssue nevű projekt célja, hogy megvalósítson egy olyan platformot, amely az érettségi vizsga előtt álló diákok számára biztosít lehetőséget eredményes és ingyenes felkészülésre. A webalkalmazás lehetőséget biztosít a fejlődés nyomon követésére, szintlépés, illetve rangrendszer formájában.
+\\
+Elsődleges célcsoportunk a fiatal, érettségi vizsga előtt álló diákok, azonban alkalmazásunk lehetőséget nyújt azok számára is, akik szeretnék felfrissíteni tudásukat, vagy az életük későbbi szakaszában készülnek érettségi vizsgatételre. A SkillIssue gamifikált kialakítása lehetővé teszi, hogy az alkalmazást az érettségi felkészülésen túl bármilyen más célra is használják - akár hobbiból, akár önfejlesztés céljából.
+\section{Inspiráció és motiváció}
+Érettségi vizsgára felkészüléskor észrevettük, hogy nincs jelenleg olyan alkalmazás magyar nyelven, a magyar érettségi követelményekre szabva, amely lehetővé tenné, hogy játékos formában készüljenek a diákok a vizsgatételre. Ez motiválja a csapatot a SkillIssue projekt megvalósítására.\\
+Ihletet merít a projekt hasonló, játékosított elemeket tartalmazó alkalmazásokból, mint például a Duolingo\footnotemark és a GeoGuessr\footnotemark. Ezeket az ismereteket kombinálja a tapasztalatokkal, hogy olyan alkalmazást készítsen, amely egyaránt érdekes és élvezetes, de emellett oktató jellegű is.
+\footnotetext[1]{Nyelvtanuló alkalmazás nagy felhasználóbázissal, amely játékos formában nyújt lehetőséget a tanulásra.}
+\footnotetext[2]{Google Maps-re épülő játékalkalmazás, többjátékos móddal, rangsorolt játékmóddal. Lényege: megtalálni a Google Street View lokációt a térképen.}
+\section{Csapattagok és szerepkörök}
+A projektet két fős csapat valósítja meg: Csörgő Csaba és Flender Dávid.
+\\
+A projektcsapat tagjainak kiválasztása azon alapul, hogy a csapat tagjai korábban már sikeresen megvalósították a gördülékeny munkavégzést más, különböző jellegű projekteken is.
+
+\subsection{Felelősségek}
+A projektcsapat tagjai az alkalmazás minden részében egyaránt szerepet vállaltak, de fő szerepvállalásuk az alábbiak szerint csoportosítható:
+
+\begin{description}
+    \item[Csörgő Csaba] Fő felelőssége a DevOps és a Backend munkavégzési folyamatok, főként az autentikáció, és a WebSocket működése.
+    \item[Flender Dávid] Fő felelőssége a design kialakítása, a WebSocket funkciók frontend oldali integrálása és a megfelelő végfelhasználói élmény biztosítása.
+\end{description}
+
+\subsection{Projektszervezés}
+A projekt szervezése egy közös kanban táblán történt. Erre a célra a Trello alkalmazás került kiválasztásra. A feladatokat a következő oszlopokra lehet osztani: To Do, In Progress, Blocked, Review, Done, Released.
+
+\subsection{Verziókezelés}
+A verziókezelést a Git alkalmazás biztosítja, amely megkönnyíti a csapatmunkát és a párhuzamos munkavégzést. A Git mellett a projekt a GitHub felhőszolgáltatást is használja.
+
+A fejlesztés során szigorú elnevezési konvenciókat követ a csapat a repository átláthatósága érdekében. A branch-ek neveit a feladat jellegétől függően az alábbi előtagokra lehet bontani:
+\begin{itemize}
+    \item \texttt{feature/}: Új funkciók implementálása.
+    \item \texttt{bugfix/}: Hibák javítása.
+    \item \texttt{refactor/}: Kód újrastrukturálása és optimalizálása.
+    \item \texttt{main}: A stabil, tesztelt és kiadásra kész állapotú kód ága.
+\end{itemize}
+
+A commit üzenetek esetében is hasonló következetességre törekszik a csapat. Minden beküldött módosítás tartalmazza a változtatás típusát, például: \texttt{Feature: [leírás]}, \texttt{Fix: [leírás]} vagy \texttt{Refactor: [leírás]}. Ez a strukturált megközelítés lehetővé teszi a projekt történetének gyors és egyértelmű visszakövethetőségét.

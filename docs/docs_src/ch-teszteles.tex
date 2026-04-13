@@ -1,0 +1,20 @@
+\section{Tesztelési stratégia}
+
+A SkillIssue projekt tesztelési stratégiájának kialakításakor az elsődleges szempont a rendelkezésre álló szűkös időkeret, valamint a két fős csapatméret volt. Mivel az alkalmazás jelenlegi formájában egy MVP (Minimum Viable Product), amelynek magját a komplex, valós idejű WebSocket események és a gyorsan változó felhasználói felületek adják, az automatizált tesztek (Unit és E2E tesztek) megírása, illetve azok folyamatos karbantartása aránytalanul nagy fejlesztői erőforrást emésztett volna fel.
+
+Ezen tényezők mérlegelése után a projektcsapat a manuális tesztelési módszertan kizárólagos alkalmazása mellett döntött. Ez a megközelítés biztosította a megfelelő rugalmasságot, és lehetővé tette a valós felhasználói élmény, valamint a hálózati kommunikáció azonnali validálását a fejlesztés teljes ciklusa alatt.
+
+\section{Manuális tesztelés}
+
+A manuális tesztelési folyamat két jól elkülöníthető fázisban és módszertannal valósult meg a projekt során.
+
+\begin{description}
+    \item[Fejlesztői tesztelés (WhiteBox megközelítés)] Az első ágat a kódismereten alapuló tesztelés jelentette. Minden kódmódosítás, refaktorálás vagy új funkció implementálása után, a rendszerarchitektúra pontos ismeretének fényében vizsgáltuk az alkalmazást. A tesztelés során célzottan azokat a modulokat, komponenseket és API végpontokat terheltük, amelyekre az adott módosítások a legnagyobb eséllyel hatással lehettek. Ezzel a módszerrel a regressziós hibák nagy része (például egy elrontott adatbázis migráció vagy egy hibás állapotkezelés a Pinia store-ban) már a fejlesztői környezetben kiküszöbölésre került.
+
+    \item[Harmadik fél általi tesztelés (BlackBox megközelítés)] A rendszer komplexitásából és a valós idejű játékmenetből adódóan a fejlesztői tesztelés önmagában nem volt elegendő, hiszen a fejlesztői "csőlátás" miatt bizonyos felhasználói viselkedésminták rejtve maradhattak. Ennek elkerülése érdekében bevontunk harmadik feleket (diáktársakat, barátokat) is a tesztelési folyamatba. Az ő feladatuk az volt, hogy a kódbázis és az üzleti logika ismerete nélkül, átlagos felhasználóként navigáljanak az oldalon, próbáljanak meg lejátszani egyjátékos és rangsorolt meccseket, valamint kíséreljék meg "elrontani" a rendszert a megszokottól eltérő, váratlan interakciókkal. Ez a fajta tesztelés kiemelkedően hasznosnak bizonyult az úgynevezett edge-case-ek feltárásában. Számos olyan hibára (bug-ra) derült fény – például a böngészőlap meccs közbeni frissítése, a váratlan hálózati megszakadások vagy a nem egyértelmű UX/UI elemek kezelése terén –, amelyek javítása elengedhetetlen volt egy stabil, a végfelhasználók számára is élvezetes alkalmazás kiadásához.
+\end{description}
+
+
+
+
+

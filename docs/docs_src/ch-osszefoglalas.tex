@@ -1,0 +1,46 @@
+\chapter{Összefoglalás}
+
+\section{Megvalósított funkciók}
+Végeredményben a rendszer egy komplex kvízalkalmazást valósít meg, mely egyesíti a többjátékos kompetitív élményt oktatási funkciókkal. A rendszer központi elemei a valós idejű rangsorolt játékmenet, a fejlődés nyomonkövetését elősegítő rendszerek valamint az adminisztrációs rendszer.
+
+A rendszer a következő funkciókat valósítja meg:
+\begin{itemize}
+    \item Reszponzív viselkedésforma
+    \item Regisztráció, Autentikáció
+    \item Játékosprofilok
+    \item ELO rangrendszer
+    \item XP rendszer
+    \item Daily streak (napi sorozat) számítás
+    \item Winstreak (nyerési sorozat) számítás
+    \item Egyjátékos gyakorló meccsek
+    \item Többjátékos meccskeresési funkció (SBMM)
+    \item 1 vs. 1 rangsorolt mérkőzések
+    \item Játékos -és kérdés bejelentési funkciók
+    \item Jogosultságrendszer
+    \item Adminisztrációs rendszer
+\end{itemize}
+
+\section{Nehézségek és tanulságok}
+A rendszer komplexitása miatt több helyen is szükség volt kreativitásra a problémák megoldása érdekében:
+
+\begin{itemize}
+    \item \textbf{Egyszerű csalásra használható scriptek kiküszöbölése:} A lehető legminimálisabb információkat szabad közölni a klienssel, annak érdekében, hogy az automatizált csalásokat - amelyek a hálózati kéréseket figyelik - kiküszöbölje a rendszer.
+    \item \textbf{Valós idejű játékmenet:} Edge case-ek kiküszöbölése: játékos nem fogadja el a meccset, kilép, visszacsatlakozik, több lapon használja az alkalmazást. 
+    \item \textbf{Meccskeresés:} Fair, jól balance-olt rendszer kialakítása, minimális erőforrásigénnyel.
+    \item \textbf{Tesztelés:} A sok funkció manuális tesztelése nehézkes volt, ami rávilágított az automatizált tesztek fontosságára.
+\end{itemize}
+
+\newpage
+
+\section{Továbbfejlesztési lehetőségek}
+A rendszer jelenlegi állapota egy MVP-t (Minimum viable product) valósít meg. A rendszer számos továbbfejlesztési lehetőséggel rendelkezik, amelynél a fő szempontok a következők: csalás kiküszöbölése, SBMM továbbfejlesztése, játékmódok bővítése.
+
+Néhány példa továbbfejlesztési lehetőségekre:
+\begin{itemize}
+    \item \textbf{Csalás kiküszöbölése:} Rangsorolt meccs folyamán több adat rögzítése, annak érdekében, hogy könnyebben eldönthető lehessen, hogy csalt-e a játékos. Például: Focus loss detection (játékos elhagyja-e az oldalt meccs közben - "tab-out"), pontosabb guess time számítás.
+    \item \textbf{Új játékmódok:} Olyan játékmódok bevezetése, amelyek elősegítik a tanulást: CO-OP játékmód, ahol több játékos együttes munkával megismer egy adott érettségi témát; csoportos kompetitív játékmódok.
+    \item \textbf{Kérdések bővítése:} Olyan közösségi felület, ahol a játékosok kérdéseket javasolhatnak.
+    \item \textbf{Mobilapplikáció:} Android, iOS alkalmazás fejlesztése a jobb felhasználói élmény érdekében, például Flutter segítségével.
+    \item \textbf{Badge és Achievement rendszer:} Bizonyos mérföldkövek után a játékos Badge-eket kap, amelyek megjelennek a profiljukon, ezzel növelve a motivációt. (A Badge rendszer adatbázis struktúrája megtalálható az MVP-ben, de a implementálásra nem kerül)
+    \item \textbf{Távoli jövő - teljes érettségi felkészítő platform:} Monetizált érettségi felkészítő platform, ahol a jelenleg ismertetett funkciókon kívül megtalálható hivatalos tanári segítség és több erőforrás a tanuló felkészülésének elősegítése érdekében.
+\end{itemize}

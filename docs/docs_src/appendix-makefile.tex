@@ -1,0 +1,46 @@
+\chapter{Makefile parancsok referencia}
+\label{ch:makefile}
+
+A projekt gyökérkönyvtárában található \texttt{Makefile} segítségével egyszerűsíthetők a gyakran ismételt Docker, Laravel és karbantartási feladatok. Az alábbi táblázat összefoglalja a rendelkezésre álló parancsokat és azok funkcióit.
+
+\begin{table}[h!]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|l|X|X|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Parancs} & \textbf{Futtatott művelet} & \textbf{Leírás} \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Fejlesztői környezet (DEV)}} \\ \hline
+        \texttt{make dev-key} & \texttt{docker compose run artisan key:generate} & Új Laravel \texttt{APP\_KEY} generálása a fejlesztői környezethez. \\ \hline
+        \texttt{make dev-up} & \texttt{docker compose up -{}-build} & Konténerek indítása az előtérben, kényszerített újraépítéssel. \\ \hline
+        \texttt{make dev-up-d} & \texttt{docker compose up -d} & Konténerek indítása a háttérben (detached mód). \\ \hline
+        \texttt{make dev-down} & \texttt{docker compose down} & Fejlesztői konténerek leállítása. \\ \hline
+        \texttt{make dev-down-v} & \texttt{docker compose down -v} & Leállítás és az adatbázis volume-ok teljes törlése. \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Adatbázis műveletek (MIGRATE)}} \\ \hline
+        \texttt{make migrate} & \texttt{./artisan migrate} & Új adatbázis migrációk futtatása. \\ \hline
+        \texttt{make migrate-seed} & \texttt{./artisan migrate -{}-seed} & Migrálás és alapértelmezett adatok feltöltése. \\ \hline
+        \texttt{make migrate-fresh} & \texttt{./artisan migrate:fresh} & Összes tábla törlése és migrációk újrafuttatása. \\ \hline
+        \texttt{make migrate-fresh-seed} & \texttt{./artisan migrate:fresh -{}-seed} & Teljes alaphelyzetbe állítás tesztadatok betöltésével. \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Build \& Publish}} \\ \hline
+        \texttt{make build} & \texttt{docker build -t ...} & Éles Docker image-ek összeállítása (opcionális verziózással). \\ \hline
+        \texttt{make push} & \texttt{docker push ...} & Elkészült image-ek feltöltése a Docker Hub tárhelyre. \\ \hline
+        \texttt{make release} & \texttt{make build push} & Verziózott kiadás gyártása és publikálása egy lépésben. \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Éles környezet (PROD)}} \\ \hline
+        \texttt{make prod-up} & \texttt{docker compose up} & Éles környezet indítása az előtérben. \\ \hline
+        \texttt{make prod-up-d} & \texttt{docker compose up -d} & Éles környezet indítása a háttérben. \\ \hline
+        \texttt{make prod-pull} & \texttt{docker compose pull} & Legfrissebb image-ek letöltése a Docker Hub-ról. \\ \hline
+        \texttt{make prod-db-seed} & \texttt{docker compose run artisan db:seed} & Éles adatbázis inicializálása (csak egyszeri futtatásra). \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Segédprogramok (UTILS)}} \\ \hline
+        \texttt{make logs} & \texttt{docker compose logs -f} & Éles naplófájlok (\textit{logs}) folyamatos követése. \\ \hline
+        \texttt{make ps} & \texttt{docker compose ps} & Futó konténerek és állapotuk listázása. \\ \hline
+        \texttt{make prettier} & \texttt{npx prettier -{}-write ...} & Forráskód automatikus formázása (Frontend és Websocket). \\ \hline
+    \end{tabularx}
+    \caption{A projektben használt automatizációs parancsok listája}
+\end{table}
+
+\noindent \textbf{Megjegyzés:} A táblázatban szereplő \texttt{migrate} parancsok közvetlenül a gazdagépen futtatott \texttt{./artisan} scriptet használják, amely a megfelelő Docker konténerben hajtja végre a műveletet.

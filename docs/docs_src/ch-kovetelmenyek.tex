@@ -1,0 +1,93 @@
+\chapter{Követelmények}
+\section{Funkcionális követelmények}
+\subsection*{Felhasználó}
+\begin{itemize}
+    \item \textbf{Autentikáció:} A felhasználó tud regisztrálni és bejelentkezni
+    \item \textbf{Bejelentkezések tárolása:} A felhasználó bejelentkezéseinek tárolása
+    \item \textbf{Jogkörök:} Felhasználó jogkörének kezelése: felhasználó, adminisztrátor, vendég
+\end{itemize}
+\subsection*{Előrehaladás}
+\begin{itemize}
+    \item \textbf{Rangrendszer:} Elo\footnotemark{} pontrendszerhez hasonló rangrendszer megvalósítása (többjátékos módhoz)
+    \item \textbf{Tapasztalati pontok:} XP\footnotemark{} eltárolása minden felhasználóhoz, aminek értéke minden helyes válaszadással nő
+\end{itemize}
+\subsection*{Játékmenet}
+\begin{itemize}
+    \item \textbf{Egyjátékos játékmód:} Egyjátékos gyakorló játékmód, feleletválasztós kérdésekkel
+    \item \textbf{Többjátékos játékmód:} Többjátékos rangsorolt játékmód, feleletválasztós kérdésekkel, 1 vs. 1 formátumban
+    \item \textbf{Meccskeresés:} Két játékos összesorolása, rang alapján
+\end{itemize}
+\subsection*{Bejelentések}
+\begin{itemize}
+    \item \textbf{Kérdés bejelentés:} Lehetőség bejelenteni hibásnak vélt kérdéseket
+    \item \textbf{Felhasználó bejelentése:} Lehetőség bejelenteni ellenfelet, amennyiben csalást feltételez a felhasználó
+\end{itemize}
+\footnotetext{Elo (Élő) pont: Prof. Élő Árpád által kifejlesztett pontszámítási rendszer, amely leginkább a sakkban terjedt el, de napjainkban számos online rangsorolt játékmóddal rendelkező játék használja.}
+\footnotetext{XP: Tapasztalati pont – egy olyan játékmechanikai változó, amely minden játszma után rendszerint $n$ értékkel növekszik, és nem csökkenhet.}
+\newpage
+\section{Nem-funkcionális követelmények}
+\subsection*{Teljesítmény}
+\begin{itemize}
+    \item Az oldalak betöltésének csökkentése, Lazy Loading és Eager Loading alkalmazásával
+    \item Lehetőség szerinti legkevesebb harmadik féltől származó NPM csomagok felhasználása
+\end{itemize}
+\subsection*{Biztonság}
+\begin{itemize}
+    \item Jelszavak titkosított tárolása
+    \item Cookie alapú session autentikáció
+    \item Service-to-service kommunikáció titkosított tokennel (WebSocket és API között)
+    \item Érvényes SSL/TLS tanúsítvány használata
+    \item Minimális jogosultságok Docker konténereken belül
+\end{itemize}
+\subsection*{Használhatóság}
+\begin{itemize}
+    \item Modern böngészők támogatása
+    \item Reszponzív design
+    \item HTTP Polling lehetősége, amennyiben a WebSocket nem támogatott a böngésző által
+\end{itemize}
+\subsection*{Üzemeltetés}
+\begin{itemize}
+    \item Docker segítségével könnyen üzembe helyezhető webalkalmazás létrehozása
+    \item Fejlesztői és éles környezet támogatása, elkülönített konfigurációval
+\end{itemize}
+\subsection*{Statisztika, csalás elleni intézkedések}
+\begin{itemize}
+    \item Backend a legkevesebb adatot küldi a kliensnek
+    \item Felhasználó pontosságának rögzítése
+    \item Válaszadás gyorsaságának rögzítése
+    \item JWT tokenek használata a játékmenet során az adatok integritásának védelmére (kérdés- és meccstokenek)
+\end{itemize}
+\subsection*{Megbízhatóság}
+\begin{itemize}
+    \item A játszma állapotának megőrzése felhasználó kilépése esetén
+    \item Játszma elhagyása esetén ne szakadjon meg a játékmenet a másik félnek
+\end{itemize}
+
+\newpage
+\section{Használati módok (felhasználó, adminisztrátor, vendég)}
+\subsection*{Vendég}
+Nem bejelentkezett felhasználó
+\begin{itemize}
+    \item Főoldal megtekintése
+    \item Bejelentkezés, regisztráció
+    \item Játékos profilok megtekintése
+\end{itemize}
+
+\subsection*{Felhasználó}
+Bejelentkezett felhasználó, normál jogkör
+\begin{itemize}
+    \item Főoldal megtekintése
+    \item Játékos profilok megtekintése
+    \item Egyjátékos, többjátékos (rangsorolt) módok
+    \item Kérdés, ellenfél bejelentése
+\end{itemize}
+
+\subsection*{Adminisztrátor}
+Bejelentkezett felhasználó, emelt jogkör
+\begin{itemize}
+    \item Mindazt, amit a felhasználó
+    \item Kérdések, válaszok hozzáadása, törlése, szerkesztése
+    \item Kérdés -és játékos bejelentések kezelése, bírálása
+    \item Felhasználó kitiltása
+\end{itemize}
+

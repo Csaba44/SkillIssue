@@ -1,0 +1,59 @@
+\documentclass{report}
+\usepackage{graphicx}
+
+\usepackage[magyar]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath,amsthm,amsfonts}
+\usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{float}
+
+\usepackage{minted}
+\usemintedstyle{borland}
+\usepackage[hidelinks]{hyperref} 
+
+\usepackage{tabularx}
+\usepackage[table,xcdraw]{xcolor}
+
+\newcommand{\curversion}{1.0.0}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  \includegraphics[width=200px]{images/logo.png}\\[1cm]
+  {\LARGE\bfseries SkillIssue – Projektleírás\par}
+  \vspace{0.5cm}
+  {\large Neumann János Gimnázium, Technikum és Kollégium\par}
+  \vfill
+  {\large Csörgő Csaba, Flender Dávid\par}
+  \vspace{0.5cm}
+  {\large 2025. december\par}
+\end{titlepage}
+
+
+\newpage
+
+\tableofcontents
+
+\include{ch-bevezetes}
+\include{ch-kovetelmenyek}
+\include{ch-rendszerarchitektura}
+\include{ch-technologiak}
+\include{ch-adatbazisterv}
+\include{ch-backendapi}
+\include{ch-websocketserver}
+\include{ch-frontend}
+\include{ch-jatekmechanika}
+\include{ch-fejlesztoikornyezet}
+\include{ch-teszteles}
+\include{ch-osszefoglalas}
+
+\appendix
+\include{appendix-api-ref}
+\include{appendix-envvar}
+\include{appendix-makefile}
+
+\end{document}

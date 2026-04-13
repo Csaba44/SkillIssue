@@ -42,7 +42,7 @@ class SingleQuestionController extends Controller
                 'question_id' => $randomQuestion->id,
                 'user_id'  => [$userId],
                 'iat'         => time(),
-                'exp'         => time() + 9999, // 45 seconds
+                'exp'         => time() + 60, // seconds
             ];
 
 

@@ -23,7 +23,6 @@ return Application::configure(basePath: dirname(__DIR__))
             StartSession::class,
         ]);
 
-        // Route-model binding apiResource
         $middleware->api(append: [
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);

@@ -1,0 +1,32 @@
+\chapter{WebSocket szerver}
+
+\section{Miért külön szolgáltatás}
+A SkillIssue alkalmazás a WebSocket szervert külön szolgáltatásként definiálja. A cél elérésére a Socket.IO csomagot használja. Ennek okai az alábbiak:
+\begin{itemize}
+    \item Az API-tól függetlenül skálázható megoldás.
+    \item Amennyiben az API újraindul, a WebSocket szolgáltatás továbbra is elérhető marad. Emiatt a folyamatban lévő meccsek nem szakadnak meg, és a legtöbb esetben tovább folytathatók.
+    \item Feladatkörök szétválasztása
+\end{itemize}
+
+\section{Kapcsolat az API-val}
+Az API kommunikáció során az axios példányban meghatározott fejlécek kerülnek elküldésre, amelyekből kiemelten fontos az \texttt{Authorization} header. Ez tartalmazza a service-to-service token-t.
+\\
+A felhasználó azonosításához egy middleware áll rendelkezésre a WebSocket-en belül, amely a kapott cookie-k alapján az API-val való kommunikáció után eltárolja a felhasználó adatait.
+Ezek után a kommunikáció a REST standard szerint történik.
+
+\section{Valós idejű meccs folyamat}
+A folyamat a következők szerint zajlik:
+\begin{enumerate}
+    \item A felhasználó csatlakozik a WebSocket-hez. Amennyiben van aktív játszma hozzárendelve, a WebSocket elküldi ezt a kliensnek, ami automatikusan visszacsatlakoztatja.
+    \item Amennyiben nincs aktív meccs folyamatban, a felhasználó csatlakozhat a Matchmaking Queue-hoz. Ekkor bekerül egy hash map struktúrában tárolt sorba, amit a WebSocket 2 másodpercenként kiértékel \textit{(\ref{sec:matchmaking} fejezet alapján)}.
+    \item Amennyiben sikeresen párosításra kerül 2 játékos, létrejön egy \texttt{Pending match}, amelyet mindkét játékosnak el kell fogadnia. Amennyiben elfogadja, csak akkor kerül át az \texttt{ongoingMatches} hash map-be, és kerül létrehozásra a játszma az adatbázisban.
+    \item Lekérésre kerül egy kérdés, majd ez megjelenítésre kerül a játékosok előtt (mindkét játékos ugyan azt a kérdést kapja).
+    \item Amennyiben egy játékos elküldi a válaszát, kiértékelésre kerül, de még nem látja meg, hogy helyesen válaszolt-e, mindaddig amíg a másik játékos el nem küldi válaszát. Ez idő alatt a WebSocket emit-el egy eseményt, ami által a frontend meg tudja jeleníteni a feliratot: \textit{"Várakozás [Játékos neve] válaszára"}.  
+    \item Amennyiben mindkét felhasználó válaszol, a WebSocket emit-eli a helyes választ, ami megjelenítésre kerül a felhasználók számára. Ezután rövid várakozással a folyamat újraindul a következő kérdéssel. Amennyiben nincs már több kérdés, tehát az utolsó kört játszották, az utolsó válasz beküldése után a játszma kiértékelésre kerül, és a felhasználónak ezt a WebSocket elküldi. A kiértékelést az API végzi, nem a WebSocket. Ilyenkor a felhasználót átirányítja az összegző felületre, ahol láthatja a meccset, és akár meg is tudja osztani másokkal az eredményt.
+    \item Kikerül a játszma az \texttt{OngoingMatches} hash map-ből.
+\end{enumerate}
+
+\begin{description}
+    \item[Matchmaking] Amennyiben a játékos már meccskeresési queue-ban van, nem léphet be újra. Ugyanez a helyzet, ha már van aktív játszma a felhasználónak.
+    \item[WebSocket kapcsolat] Amennyiben a felhasználó több lapról nyitotta meg a böngészőben a SkillIssue alkalmazást, csak az egyikben lesz aktív WebSocket kapcsolata, így a másikról a real-time játékmenet nem fog működni.
+\end{description}
