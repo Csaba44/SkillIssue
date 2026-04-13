@@ -119,79 +119,81 @@ const copyToClipboard = async () => {
       </div>
     </div>
 
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
-        <div class="flex justify-between items-start mb-8">
-          <div>
-            <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> Bejelentés kezelése</h2>
-            <div class="mt-2 flex gap-2">
-              <span class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest"> Aktuális státusz: {{ statusTranslations[selectedReport.status] }} </span>
+    <Teleport to="body">
+      <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md z-[100]">
+        <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
+          <div class="flex justify-between items-start mb-8">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> Bejelentés kezelése</h2>
+              <div class="mt-2 flex gap-2">
+                <span class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest"> Aktuális státusz: {{ statusTranslations[selectedReport.status] }} </span>
+              </div>
             </div>
+            <button @click="copyToClipboard" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
+              <i class="fa-solid fa-copy"></i>
+            </button>
           </div>
-          <button @click="copyToClipboard" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
-            <i class="fa-solid fa-copy"></i>
-          </button>
-        </div>
 
-        <div class="space-y-6 text-left">
-          <div>
-            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Érintett kérdés</label>
-            <div class="text-white bg-white/5 p-4 rounded-xl border border-white/5 text-sm leading-relaxed mb-3">
-              {{ selectedReport.question?.question }}
+          <div class="space-y-6 text-left">
+            <div>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Érintett kérdés</label>
+              <div class="text-white bg-white/5 p-4 rounded-xl border border-white/5 text-sm leading-relaxed mb-3">
+                {{ selectedReport.question?.question }}
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <div v-for="answer in selectedReport.question?.answers" :key="answer.id" class="flex items-center gap-3 px-4 py-3 rounded-xl border text-sm transition-all" :class="answer.answer.endsWith('*') ? 'bg-accentGreen/10 border-accentGreen/30 text-accentGreen' : 'bg-white/3 border-white/5 text-white/50'">
+                  <i class="fa-solid text-xs shrink-0" :class="answer.answer.endsWith('*') ? 'fa-circle-check text-accentGreen' : 'fa-circle text-white/20'"></i>
+                  <span>{{ answer.answer.endsWith("*") ? answer.answer.slice(0, -1) : answer.answer }}</span>
+                  <span v-if="answer.answer.endsWith('*')" class="ml-auto text-[10px] uppercase font-bold tracking-widest text-accentGreen/70">Helyes</span>
+                </div>
+              </div>
             </div>
 
-            <div class="flex flex-col gap-2">
-              <div v-for="answer in selectedReport.question?.answers" :key="answer.id" class="flex items-center gap-3 px-4 py-3 rounded-xl border text-sm transition-all" :class="answer.answer.endsWith('*') ? 'bg-accentGreen/10 border-accentGreen/30 text-accentGreen' : 'bg-white/3 border-white/5 text-white/50'">
-                <i class="fa-solid text-xs shrink-0" :class="answer.answer.endsWith('*') ? 'fa-circle-check text-accentGreen' : 'fa-circle text-white/20'"></i>
-                <span>{{ answer.answer.endsWith("*") ? answer.answer.slice(0, -1) : answer.answer }}</span>
-                <span v-if="answer.answer.endsWith('*')" class="ml-auto text-[10px] uppercase font-bold tracking-widest text-accentGreen/70">Helyes</span>
+            <div>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Felhasználó indoklása</label>
+              <div class="text-red-200/60 bg-red-500/5 p-4 rounded-xl border border-red-500/10 italic text-sm">"{{ selectedReport.comment || "Nincs indoklás." }}"</div>
+            </div>
+
+            <div>
+              <label class="text-white/20 text-[10px] uppercase font-bold tracking-widest block mb-2">Admin megjegyzés (Saját jegyzet)</label>
+              <textarea v-model="adminNote" placeholder="Ide írd a belső jegyzeteidet..." rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm outline-none focus:border-accentGreen/40 transition-all resize-none" />
+            </div>
+
+            <div>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-3">Új állapot beállítása</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
+
+                <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
+
+                <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black shadow-lg shadow-accentGreen/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
               </div>
             </div>
           </div>
 
-          <div>
-            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Felhasználó indoklása</label>
-            <div class="text-red-200/60 bg-red-500/5 p-4 rounded-xl border border-red-500/10 italic text-sm">"{{ selectedReport.comment || "Nincs indoklás." }}"</div>
-          </div>
+          <div class="flex justify-between items-center mt-10 pt-6 border-t border-white/5 sm:flex-row flex-col">
+            <button
+              @click="
+                emit('deleteReport', selectedReport.id);
+                isModalOpen = false;
+              "
+              class="group flex items-center gap-2 px-4 py-2 text-red-500/70 hover:text-red-500 hover:bg-red-500/5 rounded-xl cursor-pointer transition-all duration-300 ease-out active:scale-95 text-[10px] font-bold uppercase"
+            >
+              <i class="fa-solid fa-trash transition-transform group-hover:rotate-12 group-hover:scale-110"></i>
+              Törlés
+            </button>
 
-          <div>
-            <label class="text-white/20 text-[10px] uppercase font-bold tracking-widest block mb-2">Admin megjegyzés (Saját jegyzet)</label>
-            <textarea v-model="adminNote" placeholder="Ide írd a belső jegyzeteidet..." rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm outline-none focus:border-accentGreen/40 transition-all resize-none" />
-          </div>
+            <div class="flex gap-4 sm:mt-0 mt-2">
+              <button @click="isModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center gap-2">Mégse</button>
 
-          <div>
-            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-3">Új állapot beállítása</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
-
-              <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
-
-              <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black shadow-lg shadow-accentGreen/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
+              <button @click="saveUpdate()" :disabled="isSubmitting" class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-accentGreen/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                {{ isSubmitting ? "Mentés..." : "Változtatások mentése" }}
+              </button>
             </div>
           </div>
         </div>
-
-        <div class="flex justify-between items-center mt-10 pt-6 border-t border-white/5 sm:flex-row flex-col">
-          <button
-            @click="
-              emit('deleteReport', selectedReport.id);
-              isModalOpen = false;
-            "
-            class="group flex items-center gap-2 px-4 py-2 text-red-500/70 hover:text-red-500 hover:bg-red-500/5 rounded-xl cursor-pointer transition-all duration-300 ease-out active:scale-95 text-[10px] font-bold uppercase"
-          >
-            <i class="fa-solid fa-trash transition-transform group-hover:rotate-12 group-hover:scale-110"></i>
-            Törlés
-          </button>
-
-          <div class="flex gap-4 sm:mt-0 mt-2">
-            <button @click="isModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center gap-2">Mégse</button>
-
-            <button @click="saveUpdate()" :disabled="isSubmitting" class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-accentGreen/20 disabled:opacity-50 disabled:cursor-not-allowed">
-              {{ isSubmitting ? "Mentés..." : "Változtatások mentése" }}
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>

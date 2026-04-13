@@ -48,13 +48,13 @@ const openCreateModal = () => {
         <input v-model="searchQuery" type="text" placeholder="Keress a kérdések között..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white outline-none focus:border-accentGreen transition-all" />
       </div>
 
-      <button @click="openCreateModal" class="bg-accentGreen text-black px-8 py-3 rounded-full font-extrabold hover:scale-105 transition-all shadow-lg shadow-accentGreen/20"><i class="fa-solid fa-plus mr-2"></i> ÚJ KÉRDÉS</button>
+      <button @click="openCreateModal" class="cursor-pointer bg-accentGreen text-black px-8 py-3 rounded-full font-extrabold hover:scale-105 transition-all shadow-lg shadow-accentGreen/20"><i class="fa-solid fa-plus mr-2"></i> ÚJ KÉRDÉS</button>
     </div>
 
     <div class="flex flex-wrap gap-2">
-      <button @click="selectedSubjectFilter = null" :class="selectedSubjectFilter === null ? 'bg-white text-black' : 'bg-white/5 text-white/60 hover:bg-white/10'" class="px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">Összes ({{ initialQuestions.length }})</button>
+      <button @click="selectedSubjectFilter = null" :class="selectedSubjectFilter === null ? 'bg-white text-black' : 'bg-white/5 text-white/60 hover:bg-white/10'" class="px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer">Összes ({{ initialQuestions.length }})</button>
 
-      <button v-for="subject in activeSubjects" :key="subject.id" @click="selectedSubjectFilter = subject.id" :class="selectedSubjectFilter === subject.id ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/60 hover:bg-white/10'" class="px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+      <button v-for="subject in activeSubjects" :key="subject.id" @click="selectedSubjectFilter = subject.id" :class="selectedSubjectFilter === subject.id ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/60 hover:bg-white/10'" class="cursor-pointer px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
         {{ subject.name }}
       </button>
     </div>

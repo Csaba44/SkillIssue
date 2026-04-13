@@ -56,9 +56,7 @@ const eloToNextRank = computed(() => {
   <div class="w-full flex justify-center items-center relative z-50">
     <Widget class="rounded-full! px-10 py-4 w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 items-center relative">
       <div class="text-center md:text-left">
-        <RouterLink to="/" class="text-xl text-white font-bold"
-          >Skill<span class="text-primary">Issue</span>
-        </RouterLink>
+        <RouterLink to="/" class="text-xl text-white font-bold">Skill<span class="text-primary">Issue</span> </RouterLink>
       </div>
 
       <div class="hidden md:flex justify-center">
@@ -76,11 +74,7 @@ const eloToNextRank = computed(() => {
             ></div>
           </div>
 
-          <div
-            class="absolute top-10 bg-bgDark text-textWhite text-xs px-3 py-1 rounded-md opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap"
-          >
-            {{ eloToNextRank }} Elo a következő rangig
-          </div>
+          <div class="absolute top-10 bg-bgDark text-textWhite text-xs px-3 py-1 rounded-md opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap">{{ eloToNextRank }} Elo a következő rangig</div>
         </div>
       </div>
 
@@ -91,43 +85,22 @@ const eloToNextRank = computed(() => {
         </div>
 
         <div v-if="isAuthenticated" class="relative" ref="dropdownRef">
-          <button
-            @click.stop="isUserDropdownVisible = !isUserDropdownVisible"
-            class="text-lg font-medium hover:text-primary cursor-pointer transition-colors"
-          >
+          <button @click.stop="isUserDropdownVisible = !isUserDropdownVisible" class="text-lg font-medium hover:text-primary cursor-pointer transition-colors">
             {{ user.name }}
             <i class="fa-solid fa-chevron-down text-xs ml-1 opacity-50"></i>
           </button>
 
           <transition name="dropdown">
-            <div
-              v-if="isUserDropdownVisible"
-              class="absolute right-0 mt-4 bg-bgAlternate rounded-xl w-44 p-4 flex flex-col gap-2 shadow-2xl border border-white/5 z-[100]"
-            >
+            <div v-if="isUserDropdownVisible" class="absolute right-0 mt-4 bg-bgAlternate rounded-xl w-44 p-4 flex flex-col gap-2 shadow-2xl border border-white/5 z-[100]">
               <RouterLink :to="'/profiles/' + user.id">
-                <button
-                  class="text-left hover:text-warning transition w-full cursor-pointer"
-                  @click="isUserDropdownVisible = false"
-                >
-                  Profilom
-                </button>
+                <button class="text-left hover:text-warning transition w-full cursor-pointer" @click="isUserDropdownVisible = false">Profilom</button>
               </RouterLink>
 
               <RouterLink v-if="userStore.user.is_admin" to="/admin">
-                <button
-                  class="text-left hover:text-warning transition w-full cursor-pointer"
-                  @click="isUserDropdownVisible = false"
-                >
-                  Admin panel
-                </button>
+                <button class="text-left hover:text-warning transition w-full cursor-pointer" @click="isUserDropdownVisible = false">Admin panel</button>
               </RouterLink>
 
-              <button
-                @click="logoutClicked"
-                class="text-left text-error hover:opacity-80 transition w-full cursor-pointer"
-              >
-                Kijelentkezés
-              </button>
+              <button @click="logoutClicked" class="text-left text-error hover:opacity-80 transition w-full cursor-pointer">Kijelentkezés</button>
             </div>
           </transition>
         </div>

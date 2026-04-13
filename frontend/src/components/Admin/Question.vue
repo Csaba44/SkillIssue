@@ -19,11 +19,11 @@ const emit = defineEmits(["delete", "edit"]);
     </div>
 
     <div class="flex gap-2 sm:order-2 order-1">
-      <button @click="emit('edit')" class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all text-white/40 hover:text-white">
+      <button @click="emit('edit')" class="cursor-pointer w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10 transition-all text-white/40 hover:text-white">
         <i class="fa-solid fa-pen-to-square"></i>
       </button>
 
-      <button @click="emit('delete', questionData.id)" class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/20 transition-all text-white/40 hover:text-red-500">
+      <button @click="emit('delete', questionData.id)" class="cursor-pointer w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/20 transition-all text-white/40 hover:text-red-500">
         <i class="fa-solid fa-trash"></i>
       </button>
     </div>

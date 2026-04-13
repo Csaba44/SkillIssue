@@ -192,24 +192,19 @@ onBeforeMount(getData);
 
 <template>
   <ProtectedPageContainer class="relative overflow-hidden">
-    <i
-      class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-    ></i>
+    <i class="pointer-events-none fa-solid fa-graduation-cap rotate-30 text-accentPurple text-[2190px] absolute z-0 opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+
     <Navbar minimal />
 
-    <section v-if="profile" class="relative z-10 mt-20 max-w-6xl mx-auto px-4 text-textWhite">
+    <section v-if="profile" class="mt-20 max-w-6xl mx-auto px-4 text-textWhite">
       <p class="text-textWhite/30 mb-3 visible sm:hidden z-0">A legjobb élmény érdekében fordítsd el a kijelződet!</p>
       <div class="mb-8">
         <h2 class="text-4xl font-bold">{{ profile.name }} profilja</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div
-          class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl flex items-center gap-5"
-        >
-          <div
-            class="w-16 h-16 rounded-2xl bg-accentGreen/20 flex items-center justify-center text-accentGreen text-3xl"
-          >
+        <div class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl flex items-center gap-5">
+          <div class="w-16 h-16 rounded-2xl bg-accentGreen/20 flex items-center justify-center text-accentGreen text-3xl">
             <i class="fa-solid fa-calendar-check"></i>
           </div>
           <div>
@@ -218,12 +213,8 @@ onBeforeMount(getData);
           </div>
         </div>
 
-        <div
-          class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl flex items-center gap-5"
-        >
-          <div
-            class="w-16 h-16 rounded-2xl bg-accentOrange/20 flex items-center justify-center text-accentOrange text-3xl"
-          >
+        <div class="p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-xl flex items-center gap-5">
+          <div class="w-16 h-16 rounded-2xl bg-accentOrange/20 flex items-center justify-center text-accentOrange text-3xl">
             <i class="fa-solid fa-fire-flame-curved"></i>
           </div>
           <div>
@@ -248,17 +239,12 @@ onBeforeMount(getData);
         </div>
 
         <div class="w-full h-5 bg-white/10 rounded-full overflow-hidden p-[3px]">
-          <div
-            class="h-full rounded-full bg-gradient-to-r from-accentYellow via-accentGreen to-emerald-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(234,179,8,0.2)]"
-            :style="{ width: `${xpProgress}%` }"
-          ></div>
+          <div class="h-full rounded-full bg-gradient-to-r from-accentYellow via-accentGreen to-emerald-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(234,179,8,0.2)]" :style="{ width: `${xpProgress}%` }"></div>
         </div>
 
         <div class="flex justify-between mt-3 text-xs text-textWhite/40 font-bold tracking-widest">
           <span class="uppercase">Level {{ profile.level.level }}</span>
-          <span v-if="profile.next_level" class="tracking-normal hidden sm:flex">
-            Még {{ profile.next_level.min_xp - profile.xp }} XP kell a szintlépéshez!
-          </span>
+          <span v-if="profile.next_level" class="tracking-normal hidden sm:flex"> Még {{ profile.next_level.min_xp - profile.xp }} XP kell a szintlépéshez! </span>
         </div>
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-semibold flex items-center gap-2">
@@ -271,10 +257,7 @@ onBeforeMount(getData);
           <VueApexCharts type="line" height="350" :options="options" :series="series" />
         </div>
 
-        <div
-          v-else
-          class="h-[350px] flex items-center justify-center text-white/20 border-2 border-dashed border-white/5 rounded-2xl text-center"
-        >
+        <div v-else class="h-[350px] flex items-center justify-center text-white/20 border-2 border-dashed border-white/5 rounded-2xl text-center">
           <div>
             <i class="fa-solid fa-gamepad text-4xl mb-3 block opacity-20"></i>
             Még nincsenek lejátszott meccsek.
@@ -294,12 +277,7 @@ onBeforeMount(getData);
           <VueApexCharts type="heatmap" height="350" :options="heatmapOptions" :series="heatmapSeries" />
         </div>
 
-        <div
-          v-else
-          class="h-[200px] flex items-center justify-center text-white/20 border-2 border-dashed border-white/5 rounded-2xl text-center"
-        >
-          Nincs elegendő adat az aktivitási térképhez.
-        </div>
+        <div v-else class="h-[200px] flex items-center justify-center text-white/20 border-2 border-dashed border-white/5 rounded-2xl text-center">Nincs elegendő adat az aktivitási térképhez.</div>
       </div>
     </section>
   </ProtectedPageContainer>

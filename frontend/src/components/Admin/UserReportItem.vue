@@ -37,7 +37,7 @@ const statusConfig = {
     </div>
 
     <div class="flex gap-2 sm:mt-0 mt-5">
-      <button @click="emit('view', report)" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-xs font-bold uppercase active:scale-95">Részletek</button>
+      <button @click="emit('view', report)" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all text-xs font-bold uppercase active:scale-95 cursor-pointer">Részletek</button>
       <button @click="emit('delete', report.id)" class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-red-500/20 text-white/20 hover:text-red-500 transition-all active:scale-90">
         <i class="fa-solid fa-trash"></i>
       </button>
