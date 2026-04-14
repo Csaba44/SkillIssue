@@ -270,40 +270,42 @@ onMounted(() => {
       </div>
     </Teleport>
 
-    <div v-if="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
-        <div class="flex justify-between items-start mb-8">
-          <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-user-slash text-red-500"></i> Új kitiltás létrehozása</h2>
-          <button @click="isAddModalOpen = false" class="cursor-pointer text-white/20 hover:text-white transition-colors">
-            <i class="fa-solid fa-xmark text-xl"></i>
-          </button>
-        </div>
-
-        <div class="space-y-6 text-left">
-          <div>
-            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Felhasználó</label>
-            <Select :options="userOptions" v-model="addForm.user_id" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-red-500/40 transition-all" />
+    <Teleport to="body">
+      <div v-if="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
+          <div class="flex justify-between items-start mb-8">
+            <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-user-slash text-red-500"></i> Új kitiltás létrehozása</h2>
+            <button @click="isAddModalOpen = false" class="cursor-pointer text-white/20 hover:text-white transition-colors">
+              <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
           </div>
 
-          <div>
-            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Kitiltás oka</label>
-            <input v-model="addForm.reason" type="text" placeholder="pl. Csalás, toxic viselkedés..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/40 transition-all" />
+          <div class="space-y-6 text-left">
+            <div>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Felhasználó</label>
+              <Select :options="userOptions" v-model="addForm.user_id" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-red-500/40 transition-all" />
+            </div>
+
+            <div>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Kitiltás oka</label>
+              <input v-model="addForm.reason" type="text" placeholder="pl. Csalás, toxic viselkedés..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/40 transition-all" />
+            </div>
+
+            <div>
+              <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Lejárat dátuma</label>
+              <input v-model="addForm.release_date" type="datetime-local" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/40 transition-all" />
+            </div>
           </div>
 
-          <div>
-            <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-2">Lejárat dátuma</label>
-            <input v-model="addForm.release_date" type="datetime-local" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/40 transition-all" />
+          <div class="flex justify-end gap-4 mt-10 pt-6 border-t border-white/5">
+            <button @click="isAddModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out">Mégse</button>
+            <button @click="createBan()" :disabled="isSubmitting" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center gap-2">
+              <i class="fa-solid fa-ban"></i>
+              {{ isSubmitting ? "Létrehozás..." : "Kitiltás létrehozása" }}
+            </button>
           </div>
-        </div>
-
-        <div class="flex justify-end gap-4 mt-10 pt-6 border-t border-white/5">
-          <button @click="isAddModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out">Mégse</button>
-          <button @click="createBan()" :disabled="isSubmitting" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center gap-2">
-            <i class="fa-solid fa-ban"></i>
-            {{ isSubmitting ? "Létrehozás..." : "Kitiltás létrehozása" }}
-          </button>
         </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>
