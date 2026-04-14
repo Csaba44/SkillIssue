@@ -82,14 +82,14 @@ const submitForm = async () => {
 
 <template>
   <Teleport to="body">
-    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+    <div class="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
       <div class="bg-bgDark border border-white/10 w-full max-w-2xl rounded-3xl p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
         <div class="flex justify-between items-center mb-8">
           <h2 class="text-2xl font-bold text-white flex items-center gap-3">
             <i :class="isEdit ? 'fa-solid fa-pen text-primary' : 'fa-solid fa-plus text-accentGreen'"></i>
             {{ isEdit ? "Kérdés szerkesztése" : "Új kérdés hozzáadása" }}
           </h2>
-          <button @click="emit('close')" class="text-white/20 hover:text-white transition-colors">
+          <button @click="emit('close')" class="text-white/20 hover:text-white transition-colors cursor-pointer">
             <i class="fa-solid fa-xmark text-2xl"></i>
           </button>
         </div>
@@ -124,7 +124,7 @@ const submitForm = async () => {
 
           <div class="flex justify-end gap-4 pt-6 sm:flex-row flex-col">
             <button @click="emit('close')" class="px-6 py-3 text-white/40 font-bold uppercase text-xs transition-all duration-200 ease-in-out hover:text-white hover:scale-105 active:scale-95 active:opacity-70 cursor-pointer">Mégse</button>
-            <Button @click="submitForm" :title="isSubmitting ? 'Folyamatban...' : isEdit ? 'Változtatások mentése' : 'Kérdés rögzítése'" class="bg-accentGreen text-black font-extrabold px-10 py-3 rounded-full" />
+            <Button @click="submitForm" :title="isSubmitting ? 'Folyamatban...' : isEdit ? 'Változtatások mentése' : 'Kérdés rögzítése'" class="bg-accentGreen text-black font-extrabold px-10 py-3 rounded-full"/>
           </div>
         </div>
       </div>

@@ -177,7 +177,7 @@ onMounted(() => {
         <div class="text-white/40 text-sm font-medium">
           Összesen: <span class="text-white">{{ bans.length }}</span> kitiltás
         </div>
-        <button @click="openAddModal" class="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold uppercase text-[10px] tracking-widest px-4 py-2.5 rounded-xl transition-all">
+        <button @click="openAddModal" class="cursor-pointer flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold uppercase text-[10px] tracking-widest px-4 py-2.5 rounded-xl transition-all">
           <i class="fa-solid fa-plus"></i>
           Új kitiltás
         </button>
@@ -274,7 +274,7 @@ onMounted(() => {
       <div class="bg-bgDark border border-white/10 w-full max-w-xl rounded-3xl sm:p-8 p-3 shadow-2xl overflow-y-auto max-h-[95vh]">
         <div class="flex justify-between items-start mb-8">
           <h2 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-user-slash text-red-500"></i> Új kitiltás létrehozása</h2>
-          <button @click="isAddModalOpen = false" class="text-white/20 hover:text-white transition-colors">
+          <button @click="isAddModalOpen = false" class="cursor-pointer text-white/20 hover:text-white transition-colors">
             <i class="fa-solid fa-xmark text-xl"></i>
           </button>
         </div>
@@ -298,7 +298,7 @@ onMounted(() => {
 
         <div class="flex justify-end gap-4 mt-10 pt-6 border-t border-white/5">
           <button @click="isAddModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out">Mégse</button>
-          <button @click="createBan()" :disabled="isSubmitting" class="bg-red-500 hover:bg-red-600 text-white font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center gap-2">
+          <button @click="createBan()" :disabled="isSubmitting" class="cursor-pointer bg-red-500 hover:bg-red-600 text-white font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center gap-2">
             <i class="fa-solid fa-ban"></i>
             {{ isSubmitting ? "Létrehozás..." : "Kitiltás létrehozása" }}
           </button>

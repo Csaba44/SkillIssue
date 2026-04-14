@@ -223,9 +223,9 @@ const banUser = async () => {
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-3">Státusz váltás</label>
               <div class="grid grid-cols-3 gap-2">
-                <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
-                <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
-                <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/40'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
+                <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white' : 'bg-white/5 text-white/40'" class="cursor-pointer py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
+                <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40'" class="cursor-pointer py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
+                <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black' : 'bg-white/5 text-white/40'" class="cursor-pointer py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
               </div>
             </div>
 
@@ -272,7 +272,7 @@ const banUser = async () => {
             </div>
 
             <div class="border-t border-white/5 pt-5">
-              <button @click="showBanForm = !showBanForm" class="flex items-center gap-2 text-red-400/70 hover:text-red-400 text-[11px] font-bold uppercase tracking-widest transition-all">
+              <button @click="showBanForm = !showBanForm" class="cursor-pointer flex items-center gap-2 text-red-400/70 hover:text-red-400 text-[11px] font-bold uppercase tracking-widest transition-all">
                 <i :class="showBanForm ? 'fa-solid fa-chevron-up' : 'fa-solid fa-ban'"></i>
                 {{ showBanForm ? "Kitiltás visszavonása" : "Játékos kitiltása" }}
               </button>
@@ -286,7 +286,7 @@ const banUser = async () => {
                   <label class="text-red-300/50 text-[10px] uppercase font-bold tracking-widest block mb-2">Lejárat dátuma</label>
                   <input v-model="banForm.release_date" type="datetime-local" class="w-full bg-white/5 border border-red-500/20 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-red-500/50 transition-all" />
                 </div>
-                <button @click="banUser" :disabled="isBanning" class="w-full bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+                <button @click="banUser" :disabled="isBanning" class="cursor-pointer w-full bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2">
                   <i class="fa-solid fa-ban"></i>
                   {{ isBanning ? "Kitiltás folyamatban..." : `${selectedReport.user_reported?.name} kitiltása` }}
                 </button>
@@ -307,7 +307,7 @@ const banUser = async () => {
             </button>
             <div class="flex gap-4 sm:mt-0 mt-2">
               <button @click="isModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center gap-2">Bezárás</button>
-              <button @click="saveUpdate()" :disabled="isSubmitting" class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-accentGreen/20">
+              <button @click="saveUpdate()" :disabled="isSubmitting" class="cursor-pointer bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 transition-all shadow-lg shadow-accentGreen/20">
                 {{ isSubmitting ? "Mentés..." : "Rögzítés" }}
               </button>
             </div>
