@@ -121,8 +121,8 @@ async function confirmMatchmaking(socket, tmpUuid) {
 
     const match = await createRankedGame(playerA, playerB);
 
+    gameState.pendingGames.delete(pendingMatch.tmpUuid);
     if (match.errorMessage) {
-      gameState.pendingGames.delete(pendingMatch.tmpUuid);
       io.to(playerA.socketId).emit("matchmaking:error", { message: match.errorMessage });
       io.to(playerB.socketId).emit("matchmaking:error", { message: match.errorMessage });
       return match.errorMessage;
