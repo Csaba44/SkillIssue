@@ -161,7 +161,12 @@ const banUser = async () => {
                   class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest">
                   Állapot: {{ statusTranslations[selectedReport.status] }} </span>
               </div>
+
             </div>
+            <button @click="isModalOpen = false"
+              class="text-white/20 hover:text-white transition-colors cursor-pointer">
+              <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
           </div>
 
           <div class="space-y-6 text-left">
@@ -186,7 +191,7 @@ const banUser = async () => {
                 <p v-if="selectedReport.match_details?.length"
                   :class="['font-mono font-bold text-sm', selectedReport.match_details.reduce((s, d) => s + d.user_guess_time_ms, 0) / selectedReport.match_details.length < 1000 ? 'text-red-500' : 'text-accentGreen']">
                   {{(selectedReport.match_details.reduce((s, d) => s + d.user_guess_time_ms, 0) /
-                    selectedReport.match_details.length / 1000).toFixed(2) }}s</p>
+                    selectedReport.match_details.length / 1000).toFixed(2)}}s</p>
                 <p v-else class="text-white/20 italic text-[10px]">Nincs adat</p>
               </div>
             </div>
@@ -225,7 +230,7 @@ const banUser = async () => {
                   <p class="font-bold text-sm"
                     :class="(selectedReport.user_reported?.accuracy ?? 0) >= 60 ? 'text-accentGreen' : (selectedReport.user_reported?.accuracy ?? 0) >= 35 ? 'text-accentYellow' : 'text-red-400'">
                     {{ selectedReport.user_reported?.accuracy != null ? selectedReport.user_reported.accuracy.toFixed(1)
-                    + "%" : "–" }}
+                      + "%" : "–" }}
                   </p>
                 </div>
               </div>
