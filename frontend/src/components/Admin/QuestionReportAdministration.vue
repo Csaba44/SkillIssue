@@ -129,7 +129,7 @@ const copyToClipboard = async () => {
                 <span class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-white/40 tracking-widest"> Aktuális státusz: {{ statusTranslations[selectedReport.status] }} </span>
               </div>
             </div>
-            <button @click="copyToClipboard" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
+            <button @click="copyToClipboard" class="cursor-pointer w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/40 hover:text-white transition-all">
               <i class="fa-solid fa-copy"></i>
             </button>
           </div>
@@ -163,11 +163,11 @@ const copyToClipboard = async () => {
             <div>
               <label class="text-white/30 text-[10px] uppercase font-bold tracking-widest block mb-3">Új állapot beállítása</label>
               <div class="grid grid-cols-3 gap-2">
-                <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
+                <button @click="activeStatus = 'Open'" :class="activeStatus == 'Open' ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all cursor-pointer"><i class="fa-solid fa-envelope-open mb-1 block"></i> Nyitott</button>
 
-                <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
+                <button @click="activeStatus = 'Investigating'" :class="activeStatus == 'Investigating' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] cursor-pointer transition-all"><i class="fa-solid fa-magnifying-glass mb-1 block"></i> Vizsgálat</button>
 
-                <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black shadow-lg shadow-accentGreen/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
+                <button @click="activeStatus = 'Closed'" :class="activeStatus == 'Closed' ? 'bg-accentGreen text-black shadow-lg shadow-accentGreen/20' : 'bg-white/5 text-white/40 hover:bg-white/10'" class="py-3 rounded-xl font-bold uppercase text-[10px] transition-all cursor-pointer"><i class="fa-solid fa-check-double mb-1 block"></i> Lezárva</button>
               </div>
             </div>
           </div>
@@ -187,7 +187,7 @@ const copyToClipboard = async () => {
             <div class="flex gap-4 sm:mt-0 mt-2">
               <button @click="isModalOpen = false" class="px-6 py-2 text-white/40 font-bold uppercase text-xs cursor-pointer hover:text-white hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex items-center gap-2">Mégse</button>
 
-              <button @click="saveUpdate()" :disabled="isSubmitting" class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-accentGreen/20 disabled:opacity-50 disabled:cursor-not-allowed">
+              <button @click="saveUpdate()" :disabled="isSubmitting" class="bg-accentGreen text-black font-extrabold px-8 py-2 rounded-full text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-accentGreen/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
                 {{ isSubmitting ? "Mentés..." : "Változtatások mentése" }}
               </button>
             </div>
