@@ -104,6 +104,7 @@ export async function submitAnswer(socket, answerId, isForced = false, forcedUse
     if (bothFinishedForRound) {
       const playerAAnswer = question.playerAnswers.playerA.answerId;
       const playerBAnswer = question.playerAnswers.playerB.answerId;
+      io.to(match.roomId).emit("game:round-over");
 
       sendCorrectAndOpponentAnswers(match, res.data.correct_answer_id, { playerA: playerAAnswer, playerB: playerBAnswer });
 

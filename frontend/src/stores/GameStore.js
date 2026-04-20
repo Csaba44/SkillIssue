@@ -101,6 +101,10 @@ export const useGameStore = defineStore("game", {
         console.log("RECONNECT")
       });
 
+      socket.on("game:round-over", () => {
+        this.rejoining = false;
+      });
+
       socket.on("game:new-question", (data) => {
         this.actualAnswers = {
           correctAnswerId: null,
@@ -132,6 +136,7 @@ export const useGameStore = defineStore("game", {
       });
 
       socket.on("game:time-expired", (roundNumber) => {
+        this.rejoining = false;
         this.timeExpired = true;
       });
 
