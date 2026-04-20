@@ -74,14 +74,13 @@ watch(
   },
   { immediate: true },
 );
-
 const opponent = computed(() => determineOpponent(user.value, gameStore.match));
 
 const correctAnswerId = computed(() => actualAnswers.value?.correctAnswerId ?? null);
 const opponentAnswerId = computed(() => actualAnswers.value?.opponentAnswerId ?? null);
 
 watch(currentQuestion, (newQuestion, prevQuestion) => {
-  if (newQuestion != prevQuestion) {
+  if (newQuestion != prevQuestion && prevQuestion !== null) {
     countdownEnded.value = false;
     isSubmitting.value = false;
     showWaiting.value = false;
