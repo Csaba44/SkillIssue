@@ -24,21 +24,18 @@ class PracticeSession extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Questions in the session (via pivot)
     public function questions(): BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'practice_session_question')
             ->withPivot('user_answer_id', 'correct_answer_id', 'round_number', 'user_guess_time_ms');
     }
 
-    // Answers the user actually picked (via pivot.user_answer_id)
     public function userAnswers(): BelongsToMany
     {
         return $this->belongsToMany(Answer::class, 'practice_session_question', 'practice_session_id', 'user_answer_id')
             ->withPivot('question_id', 'correct_answer_id', 'round_number', 'user_guess_time_ms');
     }
 
-    // Correct answers for those questions (via pivot.correct_answer_id)
     public function correctAnswers(): BelongsToMany
     {
         return $this->belongsToMany(Answer::class, 'practice_session_question', 'practice_session_id', 'correct_answer_id')
@@ -48,7 +45,7 @@ class PracticeSession extends Model
     public function correctAnswersCount(): int
     {
         return $this->sessionQuestions->filter(function ($sq) {
-            return $sq->user_answer_id === $sq->correct_answer_id;
+            return $sq->user_answer_id == $sq->correct_answer_id;
         })->count();
     }
 
