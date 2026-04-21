@@ -66,6 +66,11 @@ class UserAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+        }
+
         return response()->json([
             'message' => 'Logged out'
         ]);

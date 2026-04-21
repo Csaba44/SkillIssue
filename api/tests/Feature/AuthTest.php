@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Auth;
 
 class AuthTest extends TestCase
 {
@@ -53,5 +54,60 @@ class AuthTest extends TestCase
 
         $response->assertStatus(401);
         $this->assertGuest();
+    }
+
+    public function test_user_cannot_register_with_existing_email()
+    {
+        $existingUser = User::factory()->create([
+            'email' => 'foglalt@gmail.com'
+        ]);
+
+        $response = $this->postJson('/api/register', [
+            'name' => 'joska',
+            'email' => 'foglalt@gmail.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_user_cannot_register_with_invalid_email()
+    {
+        $response = $this->postJson('/api/register', [
+            'name' => 'joska',
+            'email' => 'hibas-email-cim',
+            'password' => 'password123'
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_user_cannot_register_with_short_password()
+    {
+        $response = $this->postJson('/api/register', [
+            'name' => 'józsef',
+            'email' => 'teszt@gmail.com',
+            'password' => '123'
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_user_can_logout()
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('test-token')->plainTextToken;
+
+        $response = $this->withToken($token)->postJson('/api/logout');
+        $response->assertStatus(200);
+
+        Auth::forgetUser();
+
+        $this->assertDatabaseMissing('personal_access_tokens', [
+            'tokenable_id' => $user->id,
+        ]);
+        $protectedResponse = $this->getJson('/api/user');
+
+        $protectedResponse->assertStatus(401);
     }
 }
