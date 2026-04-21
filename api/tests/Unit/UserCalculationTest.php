@@ -5,6 +5,9 @@ namespace Tests\Unit;
 use App\Models\User;
 use App\Models\GameMatch;
 use App\GameResultEnum;
+use App\Models\MatchQuestion;
+use App\Models\PracticeSession;
+use App\Models\PracticeSessionQuestion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -46,5 +49,36 @@ class UserCalculationTest extends TestCase
         GameMatch::factory()->for($user)->create(['match_result' => GameResultEnum::CANCELLED]);
 
         $this->assertEquals(2, $user->played_matches_count);
+    }
+
+    public function test_accuracy_calculation()
+    {
+        $user = User::factory()->create();
+        $match = GameMatch::factory()->for($user)->create();
+        $session = PracticeSession::factory()->for($user)->create();
+
+        $answer1 = \App\Models\Answer::factory()->create();
+        $answer2 = \App\Models\Answer::factory()->create();
+        $answer3 = \App\Models\Answer::factory()->create();
+
+        MatchQuestion::factory()->create([
+            'game_match_id' => $match->id,
+            'user_answer_id' => $answer1->id,
+            'correct_answer_id' => $answer1->id
+        ]);
+
+        MatchQuestion::factory()->create([
+            'game_match_id' => $match->id,
+            'user_answer_id' => $answer2->id,
+            'correct_answer_id' => $answer1->id
+        ]);
+
+        \App\Models\PracticeSessionQuestion::factory()->create([
+            'practice_session_id' => $session->id,
+            'user_answer_id' => $answer3->id,
+            'correct_answer_id' => $answer3->id
+        ]);
+
+        $this->assertEquals(66.67, $user->accuracy);
     }
 }
