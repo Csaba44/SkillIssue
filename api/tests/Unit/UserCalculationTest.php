@@ -8,6 +8,7 @@ use App\GameResultEnum;
 use App\Models\MatchQuestion;
 use App\Models\PracticeSession;
 use App\Models\PracticeSessionQuestion;
+use App\Models\Rank;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -80,5 +81,16 @@ class UserCalculationTest extends TestCase
         ]);
 
         $this->assertEquals(66.67, $user->accuracy);
+    }
+
+    public function test_rank_and_next_rank_calculation()
+    {
+        Rank::create(['name' => 'Bronz', 'min_elo' => 0]);
+        Rank::create(['name' => 'Ezüst', 'min_elo' => 1000]);
+
+        $user = User::factory()->create(['elo' => 500]);
+
+        $this->assertEquals('Bronz', $user->rank->name);
+        $this->assertEquals('Ezüst', $user->next_rank->name);
     }
 }
