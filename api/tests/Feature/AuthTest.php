@@ -110,4 +110,10 @@ class AuthTest extends TestCase
 
         $protectedResponse->assertStatus(401);
     }
+
+    public function test_unauthenticated_user_cannot_access_protected_route()
+    {
+        $response = $this->getJson('/api/user');
+        $response->assertStatus(401);
+    }
 }
