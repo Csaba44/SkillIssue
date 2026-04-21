@@ -14,10 +14,8 @@ class AnswerFactory extends Factory
     {
         return [
             'question_id' => Question::factory(),
-            'text' => $this->faker->sentence(), 
-            'is_correct' => false,             
-            'created_at' => now(),
-            'updated_at' => now(),
+            'answer' => $this->faker->sentence(),
+            'is_correct' => false,
         ];
     }
 
