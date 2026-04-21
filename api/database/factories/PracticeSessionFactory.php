@@ -1,57 +1,22 @@
 <?php
 
-namespace App\Models;
+namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\PracticeSession;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PracticeSession extends Model
+class PracticeSessionFactory extends Factory
 {
-    use HasFactory;
-    protected $fillable = [
-        "user_id",
-        "rounds",
-        "xp_before",
-        "xp_after"
-    ];
+    protected $model = PracticeSession::class;
 
-
-    public function user(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function questions(): BelongsToMany
-    {
-        return $this->belongsToMany(Question::class, 'practice_session_question')
-            ->withPivot('user_answer_id', 'correct_answer_id', 'round_number', 'user_guess_time_ms');
-    }
-
-    public function userAnswers(): BelongsToMany
-    {
-        return $this->belongsToMany(Answer::class, 'practice_session_question', 'practice_session_id', 'user_answer_id')
-            ->withPivot('question_id', 'correct_answer_id', 'round_number', 'user_guess_time_ms');
-    }
-
-    public function correctAnswers(): BelongsToMany
-    {
-        return $this->belongsToMany(Answer::class, 'practice_session_question', 'practice_session_id', 'correct_answer_id')
-            ->withPivot('question_id', 'user_answer_id', 'round_number', 'user_guess_time_ms');
-    }
-
-    public function correctAnswersCount(): int
-    {
-        return $this->sessionQuestions->filter(function ($sq) {
-            return $sq->user_answer_id == $sq->correct_answer_id;
-        })->count();
-    }
-
-
-    public function sessionQuestions(): HasMany
-    {
-        return $this->hasMany(PracticeSessionQuestion::class);
+        return [
+            'user_id' => User::factory(),
+            'rounds' => 5,
+            'xp_before' => 0,
+            'xp_after' => 0,
+        ];
     }
 }
