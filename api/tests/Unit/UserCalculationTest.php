@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\User;
 use App\Models\GameMatch;
 use App\GameResultEnum;
+use App\Models\Ban;
 use App\Models\MatchQuestion;
 use App\Models\PracticeSession;
 use App\Models\PracticeSessionQuestion;
@@ -92,5 +93,21 @@ class UserCalculationTest extends TestCase
 
         $this->assertEquals('Bronz', $user->rank->name);
         $this->assertEquals('Ezüst', $user->next_rank->name);
+    }
+
+    public function test_is_banned_attribute()
+    {
+        $user = User::factory()->create();
+
+        Ban::factory()->for($user)->create([
+            'release_date' => now()->addDays(1)
+        ]);
+        $this->assertTrue($user->is_banned != false);
+
+        $user2 = User::factory()->create();
+        Ban::factory()->for($user2)->create([
+            'release_date' => now()->subDays(1)
+        ]);
+        $this->assertFalse($user2->is_banned != false);
     }
 }
