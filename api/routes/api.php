@@ -59,10 +59,6 @@ Route::get('/profiles/{user}', [ProfileController::class, 'show']);
 
 Route::middleware("auth:sanctum")->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
-
-    Route::get('/user', function (\Illuminate\Http\Request $request) {
-        return $request->user();
-    });
     
     Route::get('/users/all', AllUsersController::class); // admin
 

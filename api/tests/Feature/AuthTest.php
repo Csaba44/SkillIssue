@@ -106,14 +106,14 @@ class AuthTest extends TestCase
         $this->assertDatabaseMissing('personal_access_tokens', [
             'tokenable_id' => $user->id,
         ]);
-        $protectedResponse = $this->getJson('/api/user');
+        $protectedResponse = $this->getJson('/api/users');
 
         $protectedResponse->assertStatus(401);
     }
 
     public function test_unauthenticated_user_cannot_access_protected_route()
     {
-        $response = $this->getJson('/api/user');
+        $response = $this->getJson('/api/users');
         $response->assertStatus(401);
     }
 }
