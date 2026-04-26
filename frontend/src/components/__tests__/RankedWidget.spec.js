@@ -31,14 +31,14 @@ describe('RankedWidget.vue', () => {
     },
   });
 
-  it('1. Render teszt: megjelenik a komponens', async () => {
+  it('1. Render teszt', async () => {
     const wrapper = mountComponent();
     await wrapper.vm.$nextTick();
     
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('2. Logikai teszt: beküldéskor meghívja a gameStore.submitAnswer-t', async () => {
+  it('2. Beküldéskor meghívja a gameStore.submitAnswer-t', async () => {
     const wrapper = mountComponent();
     await wrapper.vm.$nextTick();
 

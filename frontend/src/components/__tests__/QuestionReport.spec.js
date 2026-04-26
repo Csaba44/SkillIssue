@@ -25,7 +25,7 @@ describe('QuestionReport.vue', () => {
     answers: [{ id: 1, answer: 'A' }]
   };
 
-  it('1. Renderelődik', () => {
+  it('1. Render teszt', () => {
     const wrapper = shallowMount(QuestionReport, { props: mockProps });
     expect(wrapper.exists()).toBe(true);
   });
