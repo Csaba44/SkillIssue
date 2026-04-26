@@ -36,13 +36,13 @@ describe('QuestionReport.vue', () => {
 
   it('2. Hibát dob üres komment esetén', async () => {
     const wrapper = shallowMount(QuestionReport, { props: mockProps });
-    
+
     await wrapper.find('textarea').setValue('');
-    
+
     await wrapper.findComponent(Button).trigger('click');
-    
+
     expect(toast.error).toHaveBeenCalledWith(
-      "Minden mező kitöltése kötelező.", 
+      "Minden mező kitöltése kötelező.",
       { duration: 3000 }
     );
   });
@@ -50,7 +50,7 @@ describe('QuestionReport.vue', () => {
   it('3. API hívás helyes paraméterekkel', async () => {
     const wrapper = shallowMount(QuestionReport, { props: mockProps });
     const comment = 'Teszt hiba';
-    
+
     await wrapper.find('textarea').setValue(comment);
     await wrapper.findComponent(Button).trigger('click');
 
@@ -62,9 +62,9 @@ describe('QuestionReport.vue', () => {
 
   it('4. Sikeres beküldés esetén isSubmitted true lesz', async () => {
     const wrapper = shallowMount(QuestionReport, { props: mockProps });
-    
+
     toast.promise.mockImplementation((promise, options) => {
-      options.success(); 
+      options.success();
     });
 
     await wrapper.find('textarea').setValue('Valami hiba');

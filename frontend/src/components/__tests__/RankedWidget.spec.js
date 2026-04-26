@@ -11,20 +11,20 @@ describe('RankedWidget.vue', () => {
         createTestingPinia({
           createSpy: vi.fn,
           initialState: {
-            counter: { 
-              isAuthenticated: true, 
-              user: { id: 1, name: 'Teszt' } 
+            counter: {
+              isAuthenticated: true,
+              user: { id: 1, name: 'Teszt' }
             },
-            game: { 
+            game: {
               match: {
                 match_uuid: '123',
-                playerA: { userId: 1 }, 
+                playerA: { userId: 1 },
                 playerB: { userId: 2 }
               },
               currentAnswers: [{ id: 1, text: 'Válasz 1' }],
               currentQuestion: { id: 1, text: 'Kérdés?' },
               selectedAnswer: null
-            } 
+            }
           },
         }),
       ],
@@ -34,7 +34,7 @@ describe('RankedWidget.vue', () => {
   it('1. Render teszt', async () => {
     const wrapper = mountComponent();
     await wrapper.vm.$nextTick();
-    
+
     expect(wrapper.exists()).toBe(true);
   });
 
@@ -43,13 +43,13 @@ describe('RankedWidget.vue', () => {
     await wrapper.vm.$nextTick();
 
     const gameStore = useGameStore();
-    
+
     gameStore.selectedAnswer = 1;
 
     const button = wrapper.find('button.bg-linear-to-r');
-    
+
     if (!button.exists()) {
-        throw new Error("A teszt nem találta a gombot. Ellenőrizd az osztálynevet!");
+      throw new Error("A teszt nem találta a gombot. Ellenőrizd az osztálynevet!");
     }
 
     await button.trigger('click');

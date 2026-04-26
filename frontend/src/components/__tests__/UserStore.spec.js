@@ -28,7 +28,7 @@ describe('UserStore', () => {
   it('1. Sikeres verifySession esetén beállítja a felhasználót', async () => {
     const userStore = useUserStore();
     const mockUser = { id: 1, name: 'Teszt Elek' };
-    
+
     api.get.mockResolvedValue({ data: mockUser });
 
     await userStore.verifySession();
@@ -40,7 +40,7 @@ describe('UserStore', () => {
 
   it('2. 401 hiba esetén kilépteti a felhasználót', async () => {
     const userStore = useUserStore();
-    
+
     api.get.mockRejectedValue({
       response: { status: 401 }
     });
@@ -55,7 +55,7 @@ describe('UserStore', () => {
     const userStore = useUserStore();
     api.get.mockResolvedValue({});
     api.post.mockResolvedValue({});
-    
+
     userStore.user = { name: 'Teszt' };
     userStore.isAuthenticated = true;
 
@@ -63,6 +63,6 @@ describe('UserStore', () => {
 
     expect(api.post).toHaveBeenCalledWith('/api/logout');
     expect(socket.disconnect).toHaveBeenCalled();
-    expect(api.get).toHaveBeenCalledWith('/api/users'); 
+    expect(api.get).toHaveBeenCalledWith('/api/users');
   });
 });
