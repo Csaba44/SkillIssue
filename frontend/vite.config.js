@@ -20,4 +20,8 @@ export default defineConfig({
     },
     allowedHosts: ["skillissue.local"],
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
 });
