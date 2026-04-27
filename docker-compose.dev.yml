@@ -25,6 +25,7 @@ services:
     volumes:
       - ./api:/var/www
       - ./api/docker/dev/entrypoint.sh:/docker/entrypoint.sh
+      - ./.env.dev:/var/www/.env
     env_file:
       - .env.dev
     healthcheck:

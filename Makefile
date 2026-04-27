@@ -26,6 +26,7 @@ help:
 	@echo "  make dev-up-d       Start dev stack (detached)"
 	@echo "  make dev-down       Stop dev stack"
 	@echo "  make dev-down-v     Stop dev stack and REMOVE volumes (DB reset)"
+	@echo "  make test                Run backend (artisan) and frontend (npm) tests"
 	@echo ""
 	@echo "MIGRATE (DEV):"
 	@echo "  make migrate             Run migrations"
@@ -203,3 +204,14 @@ prettier:
 	cd websocket && npx prettier --write "**/*.{js,ts,json}"
 
 	@echo "Done."
+
+# -------------------------
+# TESTS
+# -------------------------
+.PHONY: test
+test:
+	@echo "Running backend tests..."
+	./artisan migrate:fresh --seed
+	./artisan test
+	@echo "Running frontend tests..."
+	cd frontend && npm install && npm run test
