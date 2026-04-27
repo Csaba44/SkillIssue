@@ -1,20 +1,70 @@
 \section{Tesztelési stratégia}
 
-A SkillIssue projekt tesztelési stratégiájának kialakításakor az elsődleges szempont a rendelkezésre álló szűkös időkeret, valamint a két fős csapatméret volt. Mivel az alkalmazás jelenlegi formájában egy MVP (Minimum Viable Product), amelynek magját a komplex, valós idejű WebSocket események és a gyorsan változó felhasználói felületek adják, az automatizált tesztek (Unit és E2E tesztek) megírása, illetve azok folyamatos karbantartása aránytalanul nagy fejlesztői erőforrást emésztett volna fel.
+A SkillIssue projekt tesztelési stratégiájának kialakításakor a szűkös időkeret és a kétfős csapatméret jelentette a legnagyobb kihívást. Bár az alkalmazás egy MVP (Minimum Viable Product), a komplex, valós idejű WebSocket események, az összetett statisztikai számítások és a kritikus állapotkezelés megkövetelte a tesztelési szintek kombinálását. 
 
-Ezen tényezők mérlegelése után a projektcsapat a manuális tesztelési módszertan kizárólagos alkalmazása mellett döntött. Ez a megközelítés biztosította a megfelelő rugalmasságot, és lehetővé tette a valós felhasználói élmény, valamint a hálózati kommunikáció azonnali validálását a fejlesztés teljes ciklusa alatt.
+A tisztán manuális tesztelés helyett egy hibrid megközelítést alkalmaztunk. A backend üzleti logikáját (pl. statisztikák számítása, jogosultságkezelés) és a frontend legfontosabb komponenseit, illetve állapotkezelőit automatizált Unit és Feature tesztekkel védtük le. Ezzel párhuzamosan a valós idejű játékmenetet, a hálózati anomáliákat és a felhasználói élményt kiterjedt manuális teszteléssel validáltuk. Ez a stratégia biztosította, hogy az alapvető funkciók stabilak maradjanak a fejlesztés során, miközben az edge-case-ek is feltárásra kerültek.
 
 \section{Manuális tesztelés}
 
 A manuális tesztelési folyamat két jól elkülöníthető fázisban és módszertannal valósult meg a projekt során.
 
 \begin{description}
-    \item[Fejlesztői tesztelés (WhiteBox megközelítés)] Az első ágat a kódismereten alapuló tesztelés jelentette. Minden kódmódosítás, refaktorálás vagy új funkció implementálása után, a rendszerarchitektúra pontos ismeretének fényében vizsgáltuk az alkalmazást. A tesztelés során célzottan azokat a modulokat, komponenseket és API végpontokat terheltük, amelyekre az adott módosítások a legnagyobb eséllyel hatással lehettek. Ezzel a módszerrel a regressziós hibák nagy része (például egy elrontott adatbázis migráció vagy egy hibás állapotkezelés a Pinia store-ban) már a fejlesztői környezetben kiküszöbölésre került.
+    \item[Fejlesztői tesztelés (WhiteBox megközelítés)] Az első ágat a kódismereten alapuló tesztelés jelentette. Minden kódmódosítás, refaktorálás vagy új funkció implementálása után, a rendszerarchitektúra pontos ismeretének fényében vizsgáltuk az alkalmazást. A tesztelés során célzottan azokat a modulokat és API végpontokat terheltük, amelyekre az adott módosítások a legnagyobb eséllyel hatással lehettek. Ezzel a módszerrel a UI hibák és a hálózati deszinkronizációk nagy része már a fejlesztői környezetben kiküszöbölésre került.
 
-    \item[Harmadik fél általi tesztelés (BlackBox megközelítés)] A rendszer komplexitásából és a valós idejű játékmenetből adódóan a fejlesztői tesztelés önmagában nem volt elegendő, hiszen a fejlesztői "csőlátás" miatt bizonyos felhasználói viselkedésminták rejtve maradhattak. Ennek elkerülése érdekében bevontunk harmadik feleket (diáktársakat, barátokat) is a tesztelési folyamatba. Az ő feladatuk az volt, hogy a kódbázis és az üzleti logika ismerete nélkül, átlagos felhasználóként navigáljanak az oldalon, próbáljanak meg lejátszani egyjátékos és rangsorolt meccseket, valamint kíséreljék meg "elrontani" a rendszert a megszokottól eltérő, váratlan interakciókkal. Ez a fajta tesztelés kiemelkedően hasznosnak bizonyult az úgynevezett edge-case-ek feltárásában. Számos olyan hibára (bug-ra) derült fény – például a böngészőlap meccs közbeni frissítése, a váratlan hálózati megszakadások vagy a nem egyértelmű UX/UI elemek kezelése terén –, amelyek javítása elengedhetetlen volt egy stabil, a végfelhasználók számára is élvezetes alkalmazás kiadásához.
+    \item[Harmadik fél általi tesztelés (BlackBox megközelítés)] A rendszer komplexitásából és a valós idejű játékmenetből adódóan a fejlesztői tesztelés önmagában nem volt elegendő. Bevontunk harmadik feleket (diáktársakat, barátokat) is a tesztelési folyamatba, akiknek az volt a feladatuk, hogy a kódbázis ismerete nélkül, átlagos felhasználóként navigáljanak az oldalon. Megpróbáltak lejátszani egyjátékos és rangsorolt meccseket, valamint váratlan interakciókkal "elrontani" a rendszert. Számos olyan hibára (például a böngészőlap meccs közbeni frissítése vagy a hálózati megszakadások kezelése) derült fény, amelyek javítása elengedhetetlen volt egy stabil alkalmazás kiadásához.
 \end{description}
 
+\section{Automatizált tesztelés}
 
+Az automatizált tesztek feladata a regressziós hibák elkerülése, a kritikus backend üzleti logika hibátlan működésének garantálása, és a frontend állapotkezelésének validálása volt. A teszteket két fő részre bontottuk: a backend tesztek a PHPUnit keretrendszerrel, míg a frontend tesztek a Vitest és a Vue Test Utils segítségével készültek.
 
+\subsection{Backend tesztek (Laravel / PHPUnit)}
 
+A backend automatizált tesztjei elsősorban a jogosultságkezelésre, a mérkőzések érvényesítésére (JWT tokenek), valamint a felhasználói statisztikák (Win rate, Elo) pontos kiszámítására fókuszálnak.
 
+\begin{table}[h!]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|l|X|X|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Tesztfájl / Osztály} & \textbf{Típus} & \textbf{Leírás és vizsgált funkciók} \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Autentikáció és Jogosultságok (Feature)}} \\ \hline
+        \texttt{AuthTest} & Feature & Regisztráció, bejelentkezés, helytelen jelszó kezelése, email validáció, kijelentkezés és a védett útvonalak (Auth middleware) tesztelése. \\ \hline
+        \texttt{AdminAccessTest} & Feature & Ellenőrzi, hogy csak az adminisztrátorok férhetnek hozzá a védett végpontokhoz (pl. tantárgyak létrehozása, felhasználók tiltása - Ban, meccsek törlése). \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Játékmenet és Működés (Feature)}} \\ \hline
+        \texttt{VerifyAnswerTest} & Feature & Komplex teszt a válaszok beküldésére. Validálja a többszörös JWT tokeneket (Question, Practice Session, Ranked, Service tokenek) és az adatbázis frissülését. \\ \hline
+        \texttt{UserReportTest} & Feature & Megbizonyosodik róla, hogy a felhasználók megfelelően tudnak mérkőzéseket és kérdéseket jelenteni érvényes azonosítókkal. \\ \hline
+        \texttt{HealthTest} & Feature & A rendszer alapvető elérhetőségét (Health check) vizsgálja. \\ \hline
+
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Üzleti Logika (Unit)}} \\ \hline
+        \texttt{UserCalculationTest} & Unit & A felhasználói statisztikák (Győzelmi arány, Win streak, Pontosság) és a rangok (Elo rendszer) számításának ellenőrzése. Vizsgálja a kitiltás (Ban) állapotának helyes lekérdezését is. \\ \hline
+    \end{tabularx}
+    \caption{Backend automatizált tesztek és azok funkciói}
+\end{table}
+
+\subsection{Frontend tesztek (Vue 3 / Vitest)}
+
+A frontend tesztek célja a Pinia store-ok (állapotkezelés) és a Vue komponensek megfelelő renderelésének és interaktivitásának biztosítása.
+
+\begin{table}[h!]
+    \centering
+    \small
+    \begin{tabularx}{\textwidth}{|l|X|X|}
+        \hline
+        \rowcolor[HTML]{EFEFEF} 
+        \textbf{Tesztfájl / Osztály} & \textbf{Érintett Modul} & \textbf{Leírás és vizsgált funkciók} \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Állapotkezelés és Útválasztás}} \\ \hline
+        \texttt{UserStore.spec.js} & Pinia Store & Munkamenet ellenőrzése (\texttt{verifySession}), sikeres bejelentkezés állapota. Kiemelten kezeli a 401-es hibát (automatikus kijelentkezés) és a WebSocket kapcsolat megfelelő felépítését, illetve bontását (logout esetén). \\ \hline
+        \texttt{router.spec.js} & Vue Router & Router Guard-ok tesztelése. Ellenőrzi, hogy az autentikálatlan felhasználók a login oldalra, a jogosulatlanok pedig az admin oldalról a főoldalra lesznek-e átirányítva. \\ \hline
+        
+        \multicolumn{3}{|l|}{\cellcolor[HTML]{F5F5F5}\textit{Komponensek és Interakciók}} \\ \hline
+        \texttt{SoloWidget.spec.js} & UI Komponens & Egyjátékos modul. Teszteli a kérdések és adatok helyes renderelését, a válaszadás gomb működését (\texttt{emit}), a hiányzó válasz esetén felugró hibaüzeneteket, és a jelentés megnyitását. \\ \hline
+        \texttt{RankedWidget.spec.js} & UI Komponens & Rangsorolt widget működése, a GameStore-ral való megfelelő integráció, valamint a válaszok helyes API beküldésének szimulációja. \\ \hline
+        \texttt{QuestionReport.spec.js} & UI Komponens & Kérdésjelentő űrlap tesztje: megjelenítés, üres mezők validációja (hibaüzenet-megjelenítés), valamint API hívások paramétereinek és a beküldés sikerességének (isSubmitted) ellenőrzése. \\ \hline
+    \end{tabularx}
+    \caption{Frontend automatizált tesztek és azok funkciói}
+\end{table}
